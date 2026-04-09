@@ -10,6 +10,17 @@
 4. **图表容器尺寸固定**：所有 `<div id="chart-*">` 容器的 `width` 和 `height` 必须与模板中一致，不得更改。
 5. **输出单一 `.html` 文件**：完全自包含，文件名 `{公司英文缩写}_Research_CN.html`。
 
+## 可审计生成流程（推荐，唯一结构来源）
+
+**不得**从 `workspace/` 下其他公司的成品 HTML 复制骨架再改字。锁定结构**仅**允许来自本文件「完整 HTML 模板」一节中唯一的 HTML 语言围栏（由 `scripts/extract_report_template.py` 抽取，保证与磁盘上的 `.md` 逐字一致）。
+
+1. **抽取锁定模板**（与本仓库 `agents/report_writer_cn.md` 逐字一致）：
+   ```bash
+   python3 scripts/extract_report_template.py --lang cn --sha256 -o workspace/{Company}_{Date}/_locked_cn_skeleton.html
+   ```
+2. 在抽取出的文件（或等价地在本文件模板视图中）**仅**替换 `{{PLACEHOLDER}}`，保存为 `{Company}_Research_CN.html`。
+3. 可选：将 `--sha256` 输出记入运行日志，便于复现与同版本比对；`_locked_cn_skeleton.html` 可在交付前删除或随 run 归档以供审计。
+
 ## 输入文件（从 workspace 目录读取）
 
 - `financial_data.json`

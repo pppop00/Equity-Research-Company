@@ -26,6 +26,10 @@ The workflow collects data, runs financial and industry analysis, and produces *
 Equity-Research-Skill/
 ├── SKILL.md                 # ★ Start here — main orchestration flow
 ├── README.md                # This file
+├── scripts/
+│   └── extract_report_template.py  # ★ Extract locked HTML fenced block from report_writer_*.md (Phase 5)
+├── tests/
+│   └── test_extract_report_template.py  # CN/EN extraction + CLI + SHA256 snapshot tests
 ├── agents/
 │   ├── report_writer_cn.md  # ★ Locked Chinese HTML template
 │   ├── report_writer_en.md  # ★ Locked English HTML template (same structure)
@@ -43,6 +47,23 @@ Equity-Research-Skill/
 ```
 
 > **Do not** change the HTML/CSS/JS skeleton inside `agents/report_writer_cn.md` or `agents/report_writer_en.md`. Dynamic content is injected **only** via placeholders; see the rules at the top of each file.
+
+**Auditable HTML generation:** To reproduce the locked skeleton without copying another company’s finished report, run:
+
+```bash
+python3 scripts/extract_report_template.py --lang cn --sha256 -o workspace/MyCo_2026-04-08/_locked_cn_skeleton.html
+# or: --lang en
+```
+
+Then replace `{{PLACEHOLDER}}` markers only. See `SKILL.md` Phase 5.
+
+**Tests (template extract, Chinese + English):**
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+If you change the fenced HTML inside `agents/report_writer_*.md`, update the expected SHA256 hashes in `tests/test_extract_report_template.py`.
 
 ---
 

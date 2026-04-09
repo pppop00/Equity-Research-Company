@@ -1,6 +1,10 @@
 .DS_Store
 .claude/
 
+# Python
+__pycache__/
+*.py[cod]
+
 # 本地运行产物（可选：若希望把 archive 一并提交备份，可删除下行）
 archive/
 

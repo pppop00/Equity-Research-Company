@@ -156,13 +156,29 @@ Build actual and forecast Sankey JS objects from `financial_data.json` and predi
 **Style:** `references/report_style_guide_cn.md`  
 **Output:** `workspace/{Company}_{Date}/{Company}_Research_CN.html`  
 
-Fill **only** `{{PLACEHOLDER}}` markers; do not alter the locked HTML/CSS/JS skeleton.
+**Reproducible / auditable structure:** Run the extractor **before** filling placeholders (do **not** copy skeleton from another company’s HTML in `workspace/`):
+
+```bash
+python3 scripts/extract_report_template.py --lang cn --sha256 \
+  -o workspace/{Company}_{Date}/_locked_cn_skeleton.html
+```
+
+Then fill **only** `{{PLACEHOLDER}}` markers in the extracted file (or paste into your editor from the same extract) and save as `{Company}_Research_CN.html`. Do not alter the locked HTML/CSS/JS skeleton.
 
 ### If `report_language = en`
 
 **File:** `agents/report_writer_en.md`  
 **Style:** `references/report_style_guide_en.md`  
 **Output:** `workspace/{Company}_{Date}/{Company}_Research_EN.html`  
+
+**Reproducible / auditable structure:**
+
+```bash
+python3 scripts/extract_report_template.py --lang en --sha256 \
+  -o workspace/{Company}_{Date}/_locked_en_skeleton.html
+```
+
+Then fill **only** placeholders and save as `{Company}_Research_EN.html`.
 
 - Header: **English legal name** in the first name line; **ticker only** on the second line (see `report_writer_en.md` rules).  
 - Use `{{RATING_EN}}`, `{{CONFIDENCE_EN}}` per the English template.  

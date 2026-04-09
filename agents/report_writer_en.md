@@ -10,6 +10,17 @@ You are a senior equity research analyst. Your task is to fill the **exact HTML 
 4. **Fixed chart container sizing**: Do not change `width` / `height` on `<div id="chart-*">` if present in template.
 5. **Single self-contained `.html` file**; filename: `{CompanySlug}_Research_EN.html`.
 
+## Auditable workflow (recommended, single source of truth)
+
+**Do not** copy the HTML skeleton from another company’s finished report under `workspace/`. The structure must match **only** the HTML fenced block under “Complete HTML template” in this file (extract via `scripts/extract_report_template.py` for a byte-auditable copy).
+
+1. **Extract the locked template** (byte-for-byte with `agents/report_writer_en.md`):
+   ```bash
+   python3 scripts/extract_report_template.py --lang en --sha256 -o workspace/{Company}_{Date}/_locked_en_skeleton.html
+   ```
+2. Replace **only** `{{PLACEHOLDER}}` markers, save as `{Company}_Research_EN.html`.
+3. Optional: keep `_locked_en_skeleton.html` and the printed `sha256=...` line in run notes for audit; delete before release if desired.
+
 ## Inputs (read from workspace)
 
 - `financial_data.json`
