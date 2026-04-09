@@ -1,0 +1,71 @@
+{
+  "company": "Epsilon Data Management LLC",
+  "methodology_note": "分部 beta 取自 references/prediction_factors.md 之 Communication Services；因子变动%与同文件夹已生成研报一致；因主体非上市，Predicted Growth 仅为 proxy 收入情景的解释性分解，非二级市场一致预期。",
+  "baseline_revenue_growth_pct": 8.0,
+  "factors": [
+    {
+      "name": "美国联邦基金利率",
+      "current_value": 3.625,
+      "historical_value": 3.4,
+      "beta": 0.2,
+      "adjustment_pct": 0.62
+    },
+    {
+      "name": "美国实际GDP增长率",
+      "current_value": 4.348,
+      "historical_value": 4.15,
+      "beta": 1.0,
+      "adjustment_pct": 2.17
+    },
+    {
+      "name": "核心PCE通胀",
+      "current_value": 2.688,
+      "historical_value": 2.888,
+      "beta": -0.1,
+      "adjustment_pct": -0.42
+    },
+    {
+      "name": "美元指数DXY",
+      "current_value": 104.0,
+      "historical_value": 106.048,
+      "beta": -0.2,
+      "adjustment_pct": 0.19
+    },
+    {
+      "name": "WTI原油价格",
+      "current_value": 61.34,
+      "historical_value": 68.81,
+      "beta": 0.0,
+      "adjustment_pct": 0.0
+    },
+    {
+      "name": "美国消费者情绪指数",
+      "current_value": 95.0,
+      "historical_value": 92.15,
+      "beta": 0.8,
+      "adjustment_pct": 1.24
+    }
+  ],
+  "macro_subtotal_pct": 3.8,
+  "company_specific_adjustments": [
+    {
+      "name": "云与身份联盟（Microsoft / LiveRamp 等）带来的渗透与 ARPU",
+      "adjustment_pct": 0.35
+    },
+    {
+      "name": "隐私合规模块与测效重建成本",
+      "adjustment_pct": -0.2
+    },
+    {
+      "name": "AI 产品化（细分/创意/报告自动化）",
+      "adjustment_pct": 0.35
+    }
+  ],
+  "company_subtotal_pct": 0.5,
+  "predicted_revenue_growth_pct": 12.3,
+  "confidence_interval": {
+    "low_pct": 7.5,
+    "high_pct": 16.5,
+    "rationale": "宽幅区间反映：单体不披露、广告周期与监管事件的胖尾。"
+  }
+}

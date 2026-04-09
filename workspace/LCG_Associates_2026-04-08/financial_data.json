@@ -1,0 +1,78 @@
+{
+  "company": "LCG Associates, Inc.",
+  "ticker": null,
+  "sector": "专业服务",
+  "sub_industry": "机构投资咨询 / Investment Consulting",
+  "fiscal_year": "CY2025（估计）",
+  "fiscal_year_end": "2025-12-31",
+  "prior_fiscal_year": "CY2024（估计）",
+  "currency": "USD",
+  "data_source": "web search",
+  "data_confidence": "low",
+  "income_statement": {
+    "current_year": {
+      "label": "CY2025（公开信息与行业结构估计）",
+      "revenue": 22.3,
+      "cogs": 6.69,
+      "gross_profit": 15.61,
+      "rd_expense": 0.2,
+      "sm_expense": 2.5,
+      "ga_expense": 10.5,
+      "total_opex": 13.2,
+      "operating_income": 2.41,
+      "interest_expense": 0.05,
+      "pretax_income": 2.36,
+      "income_tax": 0.46,
+      "net_income": 1.9,
+      "diluted_eps": 1.9,
+      "diluted_shares": 1.0
+    },
+    "prior_year": {
+      "label": "CY2024（估计）",
+      "revenue": 20.6,
+      "cogs": 6.18,
+      "gross_profit": 14.42,
+      "rd_expense": 0.18,
+      "sm_expense": 2.35,
+      "ga_expense": 9.67,
+      "total_opex": 12.2,
+      "operating_income": 2.22,
+      "interest_expense": 0.05,
+      "pretax_income": 2.17,
+      "income_tax": 0.37,
+      "net_income": 1.8,
+      "diluted_eps": 1.8,
+      "diluted_shares": 1.0
+    },
+    "unit": "millions USD"
+  },
+  "balance_sheet": {
+    "label": "CY2025 年末（估计）",
+    "cash_and_equivalents": 4.2,
+    "short_term_investments": 0,
+    "total_assets": 16.5,
+    "total_liabilities": 7.7,
+    "total_debt": 2.1,
+    "total_equity": 8.8,
+    "shares_outstanding": null,
+    "unit": "millions USD"
+  },
+  "cash_flow": {
+    "label": "CY2025（估计）",
+    "operating_cash_flow": 3.1,
+    "capex": -0.45,
+    "free_cash_flow": 2.65,
+    "unit": "millions USD"
+  },
+  "segment_data": [
+    {"name": "机构与退休计划咨询费", "revenue": 12.5, "pct_of_total": 56.0},
+    {"name": "捐赠基金与非营利客户", "revenue": 6.9, "pct_of_total": 30.9},
+    {"name": "家族办公室与高净值相关", "revenue": 2.9, "pct_of_total": 13.1}
+  ],
+  "notes": [
+    "公司为100%员工持股的独立投资咨询公司，无上市证券，无经审计公开的完整10-K。",
+    "营业收入区间参考 Growjo（约2,230万美元）、Datanyze（约1,890万美元）及 CaseBasix（约1,900万美元）等第三方估算，本报告取中高位并配合典型咨询业成本结构进行模拟拆解。",
+    "客户与AUA口径来自官网事实清单（截至2026-01-01：约110家客户、约1,070亿美元AUA/AUM），不代表公司自身表内资产。",
+    "资产负债表与现金流为基于营收规模与行业周转的估算，用于满足模型与研报模板一致性，非投资级审计数据。"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "company": "Tesla, Inc.",
+  "sector": "Consumer Discretionary",
+  "sector_note": "Tesla 兼具汽车、储能与 AI 软件属性；默认使用 Consumer Discretionary β，但对部分因子做下调以反映业务多元化。",
+  "phi": 0.5,
+  "beta_source": "adjusted",
+  "data_freshness": "2026-04-08",
+  "factors": [
+    {
+      "name": "Fed Funds Rate",
+      "current_value": 3.625,
+      "forecast_value": 3.375,
+      "factor_change_pct": 6.9,
+      "factor_change_note": "按 (当前中点-年末预测中点)/|当前|×100 计算，以匹配“降息利好可选消费”方向。",
+      "beta": 0.35,
+      "phi": 0.5,
+      "adjustment_pct": 1.208,
+      "unit": "percent level",
+      "source": "Federal Reserve 2026-03-18 SEP。"
+    },
+    {
+      "name": "GDP Growth",
+      "current_value": 2.2,
+      "forecast_value": 2.4,
+      "factor_change_pct": 9.09,
+      "beta": 0.9,
+      "phi": 0.5,
+      "adjustment_pct": 4.091,
+      "unit": "percent YoY",
+      "source": "Federal Reserve 2026-03-18 SEP。"
+    },
+    {
+      "name": "PCE Inflation",
+      "current_value": 2.8,
+      "forecast_value": 2.7,
+      "factor_change_pct": -3.57,
+      "beta": -0.25,
+      "phi": 0.5,
+      "adjustment_pct": 0.446,
+      "unit": "percent YoY",
+      "source": "Federal Reserve 2026-03-18 SEP。"
+    },
+    {
+      "name": "USD Index (DXY)",
+      "current_value": 100.48,
+      "forecast_value": 100.0,
+      "factor_change_pct": -0.48,
+      "beta": -0.15,
+      "phi": 0.5,
+      "adjustment_pct": 0.036,
+      "unit": "index level",
+      "source": "第三方美元指数行情快照，2026-03-31。"
+    },
+    {
+      "name": "WTI Crude Oil",
+      "current_value": 101.5,
+      "forecast_value": 89.0,
+      "factor_change_pct": -12.32,
+      "beta": -0.1,
+      "phi": 0.5,
+      "adjustment_pct": 0.616,
+      "unit": "USD/bbl",
+      "source": "EIA/市场报道，2026Q1 油价冲高后按年末回落情景估算。"
+    },
+    {
+      "name": "Consumer Confidence",
+      "current_value": 91.8,
+      "forecast_value": 93.0,
+      "factor_change_pct": 1.31,
+      "beta": 0.6,
+      "phi": 0.5,
+      "adjustment_pct": 0.393,
+      "unit": "index level",
+      "source": "The Conference Board 2026-03-31。"
+    }
+  ],
+  "total_macro_adjustment_pct": 6.79,
+  "notes": [
+    "由于卖方一致预期已部分吸收宏观信息，宏观调整项更应视为方向性情景，而非可直接叠加的精确增量。"
+  ]
+}

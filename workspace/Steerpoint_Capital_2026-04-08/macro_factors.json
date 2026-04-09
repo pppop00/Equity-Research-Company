@@ -1,0 +1,82 @@
+{
+  "company": "Steerpoint Capital",
+  "sector": "Real Estate",
+  "sector_note": "公司并非上市 REIT，而是私营商业地产投资/顾问平台；宏观 β 以 Real Estate / REITs 为底稿，并按平台费收入特征做下调。",
+  "phi": 0.5,
+  "beta_source": "adjusted",
+  "data_freshness": "2026-04-08",
+  "factors": [
+    {
+      "name": "Fed Funds Rate",
+      "current_value": 3.625,
+      "forecast_value": 3.375,
+      "factor_change_pct": 6.9,
+      "factor_change_note": "利率因子按 (当前中点-年末预测中点)/|当前|×100 计算，以反映降息对交易活跃度和资本化率压缩的正向影响。",
+      "beta": 1.1,
+      "phi": 0.5,
+      "adjustment_pct": 3.795,
+      "unit": "percent level",
+      "source": "Federal Reserve March 18, 2026 SEP；当前目标区间 3.50%-3.75%，2026 年中位数 3.375%。"
+    },
+    {
+      "name": "GDP Growth",
+      "current_value": 2.2,
+      "forecast_value": 2.4,
+      "factor_change_pct": 9.09,
+      "beta": 0.9,
+      "phi": 0.5,
+      "adjustment_pct": 4.091,
+      "unit": "percent YoY",
+      "source": "Federal Reserve March 18, 2026 SEP：2025 实际 GDP 2.2%，2026 中位数 2.4%。"
+    },
+    {
+      "name": "PCE Inflation",
+      "current_value": 2.8,
+      "forecast_value": 2.7,
+      "factor_change_pct": -3.57,
+      "beta": -0.2,
+      "phi": 0.5,
+      "adjustment_pct": 0.357,
+      "unit": "percent YoY",
+      "source": "Federal Reserve March 18, 2026 SEP：2025 实际 PCE 2.8%，2026 中位数 2.7%。"
+    },
+    {
+      "name": "USD Index (DXY)",
+      "current_value": 100.48,
+      "forecast_value": 100.0,
+      "factor_change_pct": -0.48,
+      "beta": 0.05,
+      "phi": 0.5,
+      "adjustment_pct": -0.012,
+      "unit": "index level",
+      "source": "LongForecast 2026-03-31 现值 100.48；年末按近似持平处理，影响极小。"
+    },
+    {
+      "name": "WTI Crude Oil",
+      "current_value": 101.5,
+      "forecast_value": 89.0,
+      "factor_change_pct": -12.32,
+      "beta": -0.15,
+      "phi": 0.5,
+      "adjustment_pct": 0.924,
+      "unit": "USD/bbl",
+      "source": "EIA/市场报道显示 2026Q1 受中东冲击油价一度升至约 101-102 美元；年末按 EIA 低于 90 美元情景估算。"
+    },
+    {
+      "name": "Consumer Confidence",
+      "current_value": 91.8,
+      "forecast_value": 93.0,
+      "factor_change_pct": 1.31,
+      "beta": 0.3,
+      "phi": 0.5,
+      "adjustment_pct": 0.197,
+      "unit": "index level",
+      "source": "The Conference Board：2026-03 指数 91.8；年末按温和修复至 93.0 的情景估算。"
+    }
+  ],
+  "total_macro_adjustment_pct": 9.352,
+  "notes": [
+    "由于 Steerpoint 的收入更像平台费而非物业租金，利率敏感度低于典型上市 REIT，因此对默认 β 做了下调。",
+    "DXY 与油价对公司直接财务影响较弱，更多通过风险偏好、施工与消费者支出间接传导。"
+  ]
+}

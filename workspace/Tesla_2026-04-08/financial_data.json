@@ -1,0 +1,85 @@
+{
+  "company": "Tesla, Inc.",
+  "ticker": "TSLA",
+  "sector": "Consumer Discretionary",
+  "sub_industry": "Automobile Manufacturers / EV / AI Mobility",
+  "fiscal_year": "FY2025",
+  "fiscal_year_end": "2025-12-31",
+  "prior_fiscal_year": "FY2024",
+  "currency": "USD",
+  "data_source": "10-K / 8-K / web search",
+  "data_confidence": "high",
+  "income_statement": {
+    "current_year": {
+      "revenue": 94827,
+      "cogs": 77733,
+      "gross_profit": 17094,
+      "rd_expense": 6411,
+      "sm_expense": 0,
+      "ga_expense": 5834,
+      "total_opex": 12739,
+      "operating_income": 4355,
+      "interest_expense": 338,
+      "pretax_income": 5278,
+      "income_tax": 1423,
+      "net_income": 3794,
+      "diluted_eps": 1.08,
+      "diluted_shares": 3528
+    },
+    "prior_year": {
+      "revenue": 97690,
+      "cogs": 80240,
+      "gross_profit": 17450,
+      "rd_expense": 4540,
+      "sm_expense": 0,
+      "ga_expense": 5150,
+      "total_opex": 10374,
+      "operating_income": 7076,
+      "interest_expense": 350,
+      "pretax_income": 8990,
+      "income_tax": 1837,
+      "net_income": 7091,
+      "diluted_eps": 2.04,
+      "diluted_shares": 3498
+    },
+    "unit": "millions USD"
+  },
+  "balance_sheet": {
+    "cash_and_equivalents": 16513,
+    "short_term_investments": 27546,
+    "total_assets": 137806,
+    "total_debt": 8376,
+    "total_equity": 82137,
+    "shares_outstanding": 3752.432,
+    "unit": "millions USD"
+  },
+  "cash_flow": {
+    "operating_cash_flow": 14747,
+    "capex": -8527,
+    "free_cash_flow": 6220,
+    "unit": "millions USD"
+  },
+  "segment_data": [
+    {
+      "name": "Automotive",
+      "revenue": 69526,
+      "pct_of_total": 73.3
+    },
+    {
+      "name": "Energy generation and storage",
+      "revenue": 12771,
+      "pct_of_total": 13.5
+    },
+    {
+      "name": "Services and other",
+      "revenue": 12530,
+      "pct_of_total": 13.2
+    }
+  ],
+  "notes": [
+    "FY2025 财务口径来自 Tesla 2025 Form 10-K 与 2026-01-28 Q4/FY2025 Update。",
+    "公司仅披露合并口径 SG&A，未单列销售费用与管理费用；为适配 skill 模板，本报告将 SG&A 全部放入 ga_expense，sm_expense 置零。",
+    "Tesla 在 2026-01-28 Update 中首次清晰披露 Active FSD Subscriptions：FY2025 年末为 1.1 million，定义同时包含一次性买断与月订阅，并排除 free trials。",
+    "截至 2026-04-08，Tesla 尚未发布 Q1 2026 财报，因此 1.1 million 是最新官方 FSD 订阅数。"
+  ]
+}

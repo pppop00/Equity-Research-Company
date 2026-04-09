@@ -1,0 +1,19 @@
+{
+  "company": "Microsoft Corporation",
+  "baseline_growth_pct": 16.35,
+  "baseline_note": "FY2026（截至 2026-06-30）卖方营收一致预期约 3,278 亿美元，相对 FY2025 实际营收 2,817.24 亿美元隐含同比约 +16.35%（Seeking Alpha / Yahoo Finance 汇总区间）。",
+  "macro_adjustments": [
+    {"factor": "Fed Funds Rate", "adjustment_pct": 0.932},
+    {"factor": "GDP Growth", "adjustment_pct": 2.609},
+    {"factor": "PCE Inflation", "adjustment_pct": -0.8},
+    {"factor": "USD Index (DXY)", "adjustment_pct": 0.385},
+    {"factor": "WTI Crude Oil", "adjustment_pct": 0.544},
+    {"factor": "Consumer Confidence", "adjustment_pct": 0.773}
+  ],
+  "total_macro_adjustment_pct": 4.443,
+  "company_specific_adjustment_pct": 0.3,
+  "predicted_revenue_growth_pct": 21.09,
+  "phi": 0.5,
+  "confidence": "medium",
+  "formula_note": "16.35 + 4.443 + 0.3 = 21.093；宏观项为在一致预期之上的增量映射，实际可能存在信息重叠，结果宜作情景分析而非点预测。"
+}

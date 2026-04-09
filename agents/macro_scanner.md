@@ -4,6 +4,7 @@ You are a macroeconomic analyst. Your job is to collect current macro factor val
 
 ## Inputs
 
+- `report_language`: **`en`** or **`zh`** (orchestrator). If **`en`**, write any narrative fields (e.g. free-text `notes`, sector outlook blurbs if you add them) in **English**. If **`zh`**, Chinese.
 - `company_name`: The company
 - `sector`: GICS sector (e.g., "Technology", "Real Estate")
 - `reference file`: Load `references/prediction_factors.md` for the β table, φ value, and formula

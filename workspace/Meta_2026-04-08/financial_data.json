@@ -1,0 +1,73 @@
+{
+  "company": "Meta Platforms, Inc.",
+  "company_name_cn": "Meta Platforms",
+  "ticker": "META",
+  "exchange": "NASDAQ",
+  "sector": "通信服务",
+  "gics_note": "GICS Communication Services / 互动媒体与服务",
+  "fiscal_year": "FY2025",
+  "fiscal_year_end": "2025-12-31",
+  "prior_fiscal_year": "FY2024",
+  "currency": "USD",
+  "data_source": "公司 2025 财年业绩新闻稿及 Form 10-K（公开披露，中等偏高置信度）",
+  "data_confidence": "high",
+  "income_statement": {
+    "current_year": {
+      "revenue": 200966,
+      "cogs": 36175,
+      "gross_profit": 164791,
+      "rd_expense": 57372,
+      "sm_expense": 11991,
+      "ga_expense": 12152,
+      "total_opex": 81515,
+      "operating_income": 83276,
+      "interest_and_other_income": 2656,
+      "pretax_income": 85932,
+      "income_tax": 25474,
+      "net_income": 60458,
+      "diluted_eps": 23.49,
+      "diluted_shares_mn": 2574
+    },
+    "prior_year": {
+      "revenue": 164501,
+      "cogs": 30161,
+      "gross_profit": 134340,
+      "rd_expense": 43873,
+      "sm_expense": 11347,
+      "ga_expense": 9740,
+      "total_opex": 64960,
+      "operating_income": 69380,
+      "interest_and_other_income": 1283,
+      "pretax_income": 70663,
+      "income_tax": 8303,
+      "net_income": 62360,
+      "diluted_eps": 23.86
+    },
+    "unit": "百万美元",
+    "yoy_revenue_pct": 22.2,
+    "yoy_net_income_pct": -3.0
+  },
+  "balance_sheet_highlight": {
+    "cash_and_marketable_securities_bn": 81.59,
+    "long_term_debt_bn": 58.74,
+    "stockholders_equity_bn": 217.2,
+    "unit_note": "十亿美元口径见新闻稿"
+  },
+  "cash_flow": {
+    "operating_cash_flow": 115800,
+    "capex_purchases": 69691,
+    "finance_lease_principal": 2524,
+    "free_cash_flow": 43585,
+    "unit": "百万美元"
+  },
+  "segment_data": [
+    {"name": "Family of Apps（广告为主）", "revenue_bn": 198.8, "note": "十亿美元约数，见 10-K 分部披露"},
+    {"name": "Reality Labs", "revenue_bn": 2.2, "note": "硬件与元宇宙相关收入"}
+  ],
+  "operational_kpis": {
+    "dap_billion": 3.58,
+    "dap_yoy_pct": 7,
+    "ad_impressions_yoy_pct": 12,
+    "avg_price_per_ad_yoy_pct": 9
+  }
+}

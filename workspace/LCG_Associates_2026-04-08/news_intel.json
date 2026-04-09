@@ -1,0 +1,53 @@
+{
+  "company": "LCG Associates, Inc.",
+  "sector": "专业服务",
+  "data_freshness": "2026-04-08",
+  "company_events": [
+    {
+      "type": "brand / industry recognition",
+      "description": "连续多年获评 Crisil Coalition Greenwich「美国中型投资咨询机构综合最佳」类别（2025、2024 及官网披露的2026年评选周期相关结果），有助机构客户采购与续约意愿。",
+      "revenue_impact_pct": 0.35,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "lcgassociates.com；Coalition Greenwich 新闻稿（2025-02-25 等）"
+    },
+    {
+      "type": "client scale",
+      "description": "事实清单显示客户约110家、受托资产约1,070亿美元（AUA/AUM），高单客价值与长期顾问关系支撑费用收入韧性，但亦意味着少数大客户议价可能影响增速。",
+      "revenue_impact_pct": 0.2,
+      "impact_direction": "positive",
+      "confidence": "low",
+      "source": "LCG Fact Sheet 2026-01-01（官网）"
+    },
+    {
+      "type": "people / retention",
+      "description": "公司强调资深分析师平均从业年限高、核心顾问团队稳定性；若劳动力市场紧张，人才成本上行可能部分侵蚀利润率（对营收为间接压力）。",
+      "revenue_impact_pct": -0.05,
+      "impact_direction": "negative",
+      "confidence": "low",
+      "source": "公司官网文化与事实清单；LinkedIn 雇员数变化（第三方）"
+    }
+  ],
+  "company_specific_adjustment_pct": 0.5,
+  "industry_dynamics": {
+    "supplier_power": "中等偏强。核心「投入」为人力资本、数据与合规系统；头部人才与精算/投资研究能力存在议价空间，优秀合伙人稀缺推高用人成本。",
+    "buyer_power": "中高。客户多为大型机构（养老金、基金会、企业计划），采购常伴随RFP与比价；但转换顾问存在知识与流程成本，忠诚度高时议价分散。",
+    "new_entrants": "中低。成立全国性品牌、建立受托研究与合规体系需要时间与资本；但小型精品顾问仍可从细分领域切入。",
+    "substitutes": "中等。机构内部投资团队、OCIO、数字化配置工具与部分智能投顾构成替代；完全替代高复杂度受托咨询仍较难。",
+    "rivalry": "高。与 Callan、NEPC、Wilshire、Rocaton 等大型机构及众多精品顾问竞争，服务同质化压力在标准化模块上更明显。"
+  },
+  "forward_looking": {
+    "supplier_power": "预计温和上升：薪酬与合规科技投入使人才与系统供应商议价维持坚挺。",
+    "buyer_power": "预计略升：费用透明化与并购整合促使客户更积极审视顾问费率与交付形态。",
+    "new_entrants": "维持中低：监管与品牌壁垒仍在，但数字分销可能降低部分获客门槛。",
+    "substitutes": "上升：OCIO 与内嵌式研究工具侵蚀部分传统咨询工时。",
+    "rivalry": "维持高：AUA增长放缓阶段，顾问机构对存量客户的争夺加剧。"
+  },
+  "key_analyst_views": [
+    "非上市公司：无可用的主流卖方目标价或投资评级。",
+    "行业层面可参考 Coalition Greenwich 对投资咨询「关系型、长周期」特征的定性研究。"
+  ],
+  "notes": [
+    "未检索到针对 LCG 的集体诉讼或重大监管处罚的公开报道；若需法律风险深度尽调需另循专业渠道。"
+  ]
+}

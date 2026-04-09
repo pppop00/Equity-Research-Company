@@ -1,0 +1,37 @@
+=== HTML 报告验证报告 ===
+文件：Steerpoint_Capital_Research_CN.html
+验证时间：2026-04-08
+
+[PASS]
+
+--- 1. Section 完整性 ---
+[PASS] 6个section均存在 ✓
+
+--- 2. KPI 卡片 ---
+[PASS] 4张卡片，方向class正确 ✓
+[PASS] 营业收入：HTML显示 460万美元 vs JSON 4.6百万美元（偏差 0%）✓
+
+--- 3. CSS 变量 ---
+[PASS] 所有必须变量存在 ✓
+
+--- 4. 图表容器与数据 ---
+[PASS] Waterfall: 4个bar，首尾类型正确 ✓
+[PASS] Sankey: 9节点/8链接(实际), 9节点/8链接(预测) ✓
+[PASS] Radar: 3组，每组5分值，范围1-5 ✓
+
+--- 5. 波特五力 ---
+[PASS] 3个panel，各5个li，score-dot与数组吻合 ✓
+
+--- 6. 页面结构 ---
+[PASS] 所有必须元素和函数存在 ✓
+
+--- 7. 占位符残留 ---
+[PASS] 无残留占位符 ✓
+
+--- 8. 数字格式 ---
+[PASS] 抽查数字，无 NaN/undefined/null/Infinity，格式规范 ✓
+
+=== 总结 ===
+CRITICAL 错误：0
+WARNING  警告：0
+状态：通过

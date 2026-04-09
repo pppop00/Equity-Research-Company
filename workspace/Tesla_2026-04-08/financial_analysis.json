@@ -1,0 +1,64 @@
+{
+  "profitability": {
+    "gross_margin_current": 18.03,
+    "gross_margin_prior": 17.86,
+    "operating_margin_current": 4.59,
+    "operating_margin_prior": 7.24,
+    "net_margin_current": 4.0,
+    "net_margin_prior": 7.26,
+    "roe_current": 4.62,
+    "roa_current": 2.75,
+    "ebitda_current": 14596,
+    "ebitda_margin_current": 15.39,
+    "ebitda_note": "采用公司在 Q4/FY2025 Update 披露的 Adjusted EBITDA 作为近似。"
+  },
+  "growth": {
+    "revenue_growth_yoy_pct": -2.93,
+    "net_income_growth_yoy_pct": -46.5,
+    "eps_growth_yoy_pct": -47.06,
+    "gross_profit_growth_yoy_pct": -2.04
+  },
+  "cash_flow": {
+    "free_cash_flow": 6220,
+    "free_cash_flow_prior": 3581,
+    "fcf_margin_pct": 6.56,
+    "fcf_conversion_pct": 163.94,
+    "capex_intensity_pct": 8.99
+  },
+  "leverage": {
+    "debt_equity_ratio": 0.102,
+    "net_debt": -35683,
+    "net_debt_ebitda": -2.44,
+    "interest_coverage_ratio": 12.88
+  },
+  "valuation": {
+    "stock_price": 342.69,
+    "pe_ratio": 317.31,
+    "market_cap": 1285921.0,
+    "ev": 1250238.0,
+    "ev_ebitda": 85.66,
+    "note": "股价参考 2026-04-07 第三方行情页；估值仅作快照。"
+  },
+  "trends": {
+    "net_income": {
+      "label": "↓ Decreasing",
+      "class": "negative",
+      "analysis": "FY2025 归母净利润同比下降约 46.5%，核心拖累来自汽车收入同比下降 10%、固定成本与 AI 相关投入抬升，以及监管积分收入回落。Tesla 的利润池仍主要由整车业务承载，而非软件业务单独驱动。"
+    },
+    "net_margin": {
+      "label": "↓ Decreasing",
+      "class": "negative",
+      "analysis": "净利率由 FY2024 的约 7.3% 降至 FY2025 的约 4.0%，说明公司尚未走出价格竞争与产品切换的压力期。高估值背后依赖市场对 Robotaxi、Optimus 与 FSD 订阅化的提前定价。"
+    },
+    "fcf": {
+      "label": "↑ Increasing",
+      "class": "positive",
+      "analysis": "自由现金流由 35.8 亿美元升至 62.2 亿美元，主要受资本开支回落和经营现金流保持韧性推动。换言之，FY2025 的现金表现优于利润表现，但这一优势在 2026 年能否持续仍取决于公司 >200 亿美元 AI 资本开支计划的兑现节奏。"
+    }
+  },
+  "unit": "millions USD",
+  "notes": [
+    "Tesla FY2025 披露的 Adjusted EBITDA 为 145.96 亿美元，非严格 GAAP EBITDA。",
+    "股价、PE、EV/EBITDA 为截至 2026-04-07 的近似快照，后续会随市场波动显著变化。"
+  ]
+}

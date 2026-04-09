@@ -1,0 +1,29 @@
+{
+  "company": "NVIDIA Corporation",
+  "sector": "Semiconductors",
+  "data_freshness": "2026-04-08",
+  "company_events": [
+    {
+      "type": "guidance",
+      "description": "Management guided Q1 FY2027 revenue to about $78.0B ±2% and noted the outlook assumes no Data Center compute revenue from China—increasing transparency on geopolitical revenue risk.",
+      "revenue_impact_pct": -0.35
+    },
+    {
+      "type": "product_cycle",
+      "description": "Blackwell-generation GPUs and related systems continue to drive a platform upgrade cycle across hyperscalers and enterprise AI clusters.",
+      "revenue_impact_pct": 0.55
+    },
+    {
+      "type": "ecosystem",
+      "description": "CUDA, networking (e.g., InfiniBand/Ethernet), and software bundles deepen switching costs for many AI training and inference footprints.",
+      "revenue_impact_pct": 0.25
+    },
+    {
+      "type": "competition",
+      "description": "Custom ASIC programs at large customers and AMD’s MI-series roadmap raise long-run pricing and share pressure—even if near-term demand remains supply-constrained.",
+      "revenue_impact_pct": -0.15
+    }
+  ],
+  "narrative_summary": "The FY2026 print is dominated by record Data Center revenue and continued scarcity economics for leading-edge AI accelerators. Forward debate centers on how much of the next year is already embedded in backlog/capex plans, the China policy path, and whether gross margins re-expand as mix and yields improve. Partners (foundry/assembly) and power/data-center real estate remain the practical bottlenecks—not lack of demand, in most scenarios.",
+  "overall_sentiment": "Constructive with macro/geopolitical tails"
+}

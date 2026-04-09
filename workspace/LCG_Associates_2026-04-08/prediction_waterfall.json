@@ -1,0 +1,20 @@
+{
+  "company": "LCG Associates, Inc.",
+  "sector_used_for_beta": "Industrials",
+  "baseline_growth_pct": 5.5,
+  "baseline_note": "非上市公司无卖方一致预期；基准增速参考第三方营收估算区间、雇员人数变化及中型投资咨询行业温和扩张假设。",
+  "macro_adjustments": [
+    {"factor": "Fed Funds Rate", "adjustment_pct": 1.242},
+    {"factor": "GDP Growth", "adjustment_pct": 2.826},
+    {"factor": "PCE Inflation", "adjustment_pct": -0.8},
+    {"factor": "USD Index (DXY)", "adjustment_pct": 0.288},
+    {"factor": "WTI Crude Oil", "adjustment_pct": 1.631},
+    {"factor": "Consumer Confidence", "adjustment_pct": 1.082}
+  ],
+  "total_macro_adjustment_pct": 6.269,
+  "company_specific_adjustment_pct": 0.5,
+  "predicted_revenue_growth_pct": 12.27,
+  "phi": 0.5,
+  "confidence": "low",
+  "formula_check": "5.5 + 6.269 + 0.5 = 12.269 ≈ 12.3%"
+}

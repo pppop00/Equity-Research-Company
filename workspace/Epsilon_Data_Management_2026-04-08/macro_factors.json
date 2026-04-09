@@ -1,0 +1,55 @@
+{
+  "company": "Epsilon Data Management LLC",
+  "sector_for_beta": "Communication Services（近似：营销服务/数据中介位于广告价值链；与 prediction_factors 表格对齐）",
+  "macro_environment": {
+    "fed_funds_rate": {
+      "current": 3.625,
+      "three_month_ago": 3.400,
+      "trend": "小幅下行（曲线定价偏鸽预期仍与高利率绝对水平并存）"
+    },
+    "us_gdp_growth": {
+      "latest_annualized": 4.348,
+      "trend": "韧性高于年初预期，软着陆叙事强化"
+    },
+    "dxy_index": {
+      "current": 104.00,
+      "three_month_ago": 106.048,
+      "trend": "走弱（利于美国跨国公司海外折算；Epsilon 北美占比高，对汇兑敏感度相对有限但集团合并层面显著）"
+    },
+    "pce_inflation": {
+      "yoy": 2.688,
+      "three_month_ago_yoy": 2.888,
+      "trend": "缓慢下行，压制名义预算增速的风险缓和但未消失"
+    },
+    "vix": {
+      "current": 18.5,
+      "three_month_ago": 16.2,
+      "trend": "波动上行，风险偏好对中小项目制预算不友好"
+    },
+    "oil_wti": {
+      "current": 61.34,
+      "three_month_ago": 68.81,
+      "trend": "回落（energy cost pass-through 对相关广告主类别有温和利好）"
+    },
+    "unemployment": {
+      "rate": 4.1,
+      "three_month_ago": 4.0,
+      "trend": "微升，劳动力市场降温"
+    },
+    "chinese_macro": {
+      "real_estate": "底部震荡，耐用品与进口品牌广告情绪仍偏弱",
+      "consumer": "渐进恢复，但对跨国品牌预算的拉动节奏不均",
+      "policy": "稳增长与产业支持并行，需观察外需链条"
+    }
+  },
+  "sector_impact": "广告与营销技术赛道对名义 GDP、企业盈利预期与消费者情绪敏感；高利率环境抬高项目审批门槛，促使客户更偏好“可测量、可审计”的闭环产品——偏利于具备第一方数据与零售媒介资产的玩家，但也更苛刻地检验 ROI。",
+  "key_risks": [
+    "美国商业周期尾部：企业营销预算突发性收缩",
+    "美元波动影响 Publicis 合并报表折算",
+    "监管意外（州级隐私立法碎片式推进）"
+  ],
+  "opportunities": [
+    "零售商数据网络扩张与 clean room / 身份解析需求",
+    "AI 提升投放效率与创意迭代，可能拉高平台使用强度"
+  ]
+}

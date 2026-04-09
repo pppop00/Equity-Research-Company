@@ -1,0 +1,90 @@
+{
+  "company": "Steerpoint Capital",
+  "ticker": null,
+  "sector": "房地产",
+  "sub_industry": "商业地产投资 / 资产管理 / 咨询",
+  "fiscal_year": "CY2025（估计）",
+  "fiscal_year_end": "2025-12-31",
+  "prior_fiscal_year": "CY2024（估计）",
+  "currency": "USD",
+  "data_source": "web search",
+  "data_confidence": "low",
+  "income_statement": {
+    "current_year": {
+      "label": "CY2025（平台费收入与咨询收入估计）",
+      "revenue": 4.6,
+      "cogs": 1.15,
+      "gross_profit": 3.45,
+      "rd_expense": 0.08,
+      "sm_expense": 0.55,
+      "ga_expense": 2.25,
+      "total_opex": 2.88,
+      "operating_income": 0.57,
+      "interest_expense": 0.09,
+      "pretax_income": 0.48,
+      "income_tax": 0.13,
+      "net_income": 0.35,
+      "diluted_eps": 0.35,
+      "diluted_shares": 1.0
+    },
+    "prior_year": {
+      "label": "CY2024（估计）",
+      "revenue": 3.5,
+      "cogs": 0.88,
+      "gross_profit": 2.62,
+      "rd_expense": 0.05,
+      "sm_expense": 0.42,
+      "ga_expense": 1.72,
+      "total_opex": 2.19,
+      "operating_income": 0.43,
+      "interest_expense": 0.08,
+      "pretax_income": 0.35,
+      "income_tax": 0.1,
+      "net_income": 0.25,
+      "diluted_eps": 0.25,
+      "diluted_shares": 1.0
+    },
+    "unit": "millions USD"
+  },
+  "balance_sheet": {
+    "label": "CY2025 年末（估计）",
+    "cash_and_equivalents": 1.2,
+    "short_term_investments": 0.0,
+    "total_assets": 6.9,
+    "total_liabilities": 4.1,
+    "total_debt": 2.1,
+    "total_equity": 2.8,
+    "shares_outstanding": null,
+    "unit": "millions USD"
+  },
+  "cash_flow": {
+    "label": "CY2025（估计）",
+    "operating_cash_flow": 0.72,
+    "capex": -0.12,
+    "free_cash_flow": 0.6,
+    "unit": "millions USD"
+  },
+  "segment_data": [
+    {
+      "name": "资产管理与执行费",
+      "revenue": 2.2,
+      "pct_of_total": 47.8
+    },
+    {
+      "name": "投资与收购顾问费",
+      "revenue": 1.4,
+      "pct_of_total": 30.4
+    },
+    {
+      "name": "租赁、开发与其他服务费",
+      "revenue": 1.0,
+      "pct_of_total": 21.8
+    }
+  ],
+  "notes": [
+    "Steerpoint Capital 为私营地产投资与顾问平台，并非上市 REIT；公开渠道未提供经审计财报、AUM 或管理费率。",
+    "收入采用平台级费收入与咨询收入口径估算，而非底层商场租金收入；第三方渠道仅能确认该公司为 2022 年成立、员工规模约 1-10/12 人、收入区间低于 500 万美元。",
+    "估算时综合参考官网当前 10 个在管/在投项目、2025 年已披露的 Carlsbad 71.5 百万美元收购、Weberstown 超 50 百万美元交易、Antelope Valley 再投资，以及精品地产投资平台常见的人均产出与费用结构。",
+    "资产负债表与现金流为满足 skill 模板所做的平台层近似，不代表各 SPV 或 JV 资产负债表。"
+  ]
+}

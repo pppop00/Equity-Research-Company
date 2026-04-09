@@ -1,0 +1,55 @@
+{
+  "company": "Epsilon Data Management LLC",
+  "executive_summary": "Epsilon 是阳狮集团 Connected Media/数据战略的核心能力栈之一，强项在于第一方数据、身份解析（CORE ID）与忠诚度/零售媒介产品化；但因无单体财报，只能从集团分部与历史交易价反推“量级”与相对稀缺性。核心矛盾是：数据资产货币化上行 vs 隐私合规与平台（浏览器/操作系统）技术变局带来的结构性摩擦。",
+  "valuation_context": {
+    "direct_ticker": "不适用（非上市子公司）",
+    "parent_ticker": "PUB（EPA Paris）",
+    "implied_approach": "估值应以 Publicis 整体（净收入有机增长、利润率、现金流与资本配置）为主导；Epsilon 更多是集团毛利率/差异化与回购协同的组成部分。"
+  },
+  "profitability": {
+    "gross_margin_proxy": "约 55%（情景值；取决于外包交付与媒介 pass-through 结构）",
+    "operating_margin_proxy": "约 18%（情景值；软件/平台占比提升可改善，但项目制与人力密集仍压制）",
+    "comparison": "低于纯 SaaS、高于纯媒介代理（若媒介购买占比高则 margin 结构更接近代理）——与 Connected Media 混合业务特征一致。"
+  },
+  "growth_drivers": [
+    "零售媒介（off-site / retailer network）扩张与第一方数据货币化",
+    "CDP/PeopleCloud 与云厂商（如 Microsoft）生态绑定带来的企业级渗透率",
+    "忠诚度与会员运营在耐消、快消、金融等行业的持续外包",
+    "AI 辅助的受众构建、创意与测量（提升平台 ARPU 的可能性）"
+  ],
+  "risk_factors": [
+    "全球隐私监管收紧与同意机制成本上升",
+    "第三方 Cookie 受限与测量缺口导致的预算再分配",
+    "大型科技公司自营广告栈与零售商 walled garden 挤压独立数据中介",
+    "人力成本与人才竞争（数据科学、Marriage MarTech 架构师）",
+    "商誉与无形资产减值风险存在于集团合并层面"
+  ],
+  "financial_health": {
+    "liquidity": "单体未知；集团层面流动性通常由总部统筹",
+    "leverage": "单体未知；集团维持投资级区间管理（以公开材料为准）",
+    "credit": "无独立评级；依赖 Publicis 集团"
+  },
+  "credit_analysis": {
+    "standalone_rating": "不适用",
+    "parent_dependency": "经营与资金活动高度依赖集团资本配置与费用分摊政策"
+  },
+  "scenario_table_proxy": {
+    "bear": {
+      "revenue_cagr_pct": 3,
+      "margin_trend": "合规/测效成本侵蚀 1–2ppt"
+    },
+    "base": {
+      "revenue_cagr_pct": 7,
+      "margin_trend": "产品结构小幅优化"
+    },
+    "bull": {
+      "revenue_cagr_pct": 11,
+      "margin_trend": "零售媒介与高毛利平台占比显著提升"
+    }
+  },
+  "investment_thesis": {
+    "long_term": "若集团能持续把“数据+媒介+忠诚度”打包为可量化的生意（而非单次项目），Epsilon 技术栈是差异化来源之一。',
+    "near_term": "宏观广告周期性 + 平台政策不确定性可能使增长呈现抖动；需跟踪 Connected Media 有机增速与利润率协同。"
+  },
+  "parent_stock_snapshot_note": "附录可引用 PUB 股价、前瞻 EV/EBITDA 与股息政策；本文件主体仍为非上市子公司情景分析。"
+}

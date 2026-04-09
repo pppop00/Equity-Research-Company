@@ -1,0 +1,68 @@
+{
+  "profitability": {
+    "gross_margin_current": 75.0,
+    "gross_margin_prior": 74.86,
+    "operating_margin_current": 12.39,
+    "operating_margin_prior": 12.29,
+    "net_margin_current": 7.61,
+    "net_margin_prior": 7.14,
+    "roe_current": 12.5,
+    "roa_current": 5.07,
+    "ebitda_current": 0.69,
+    "ebitda_margin_current": 15.0,
+    "ebitda_note": "D&A 按约 0.12M 估算，反映轻资产平台与有限资本化成本。"
+  },
+  "growth": {
+    "revenue_growth_yoy_pct": 31.43,
+    "net_income_growth_yoy_pct": 40.0,
+    "eps_growth_yoy_pct": 40.0,
+    "gross_profit_growth_yoy_pct": 31.68
+  },
+  "cash_flow": {
+    "free_cash_flow": 0.6,
+    "free_cash_flow_prior": 0.46,
+    "fcf_margin_pct": 13.04,
+    "fcf_conversion_pct": 171.43,
+    "capex_intensity_pct": 2.61
+  },
+  "leverage": {
+    "debt_equity_ratio": 0.75,
+    "net_debt": 0.9,
+    "net_debt_ebitda": 1.3,
+    "interest_coverage_ratio": 6.33
+  },
+  "valuation": {
+    "stock_price": null,
+    "pe_ratio": null,
+    "market_cap": null,
+    "ev": null,
+    "ev_ebitda": null,
+    "note": "非上市企业，无公开股价及一致预期。"
+  },
+  "balance_sheet_ratios": {
+    "asset_liability_ratio_pct": 59.4,
+    "asset_liability_note": "资产负债率 = 总负债 / 总资产 = 4.1 / 6.9。"
+  },
+  "trends": {
+    "net_income": {
+      "label": "↑ Increasing",
+      "class": "positive",
+      "analysis": "在估计口径下，净利润由约25万美元升至35万美元，同比约+40%，主要受 2025 年资产获取、JV 平台扩张和顾问执行费增加驱动；该增幅并不代表底层物业 NOI 同幅增长，而更多体现平台费收入基数仍小。"
+    },
+    "net_margin": {
+      "label": "↑ Increasing",
+      "class": "positive",
+      "analysis": "净利率由约7.1%升至7.6%，反映收入放量开始覆盖团队与业务开发固定成本；但由于交易型收入确认时点离散，季度之间的实际波动可能显著高于年度估计。"
+    },
+    "fcf": {
+      "label": "↑ Increasing",
+      "class": "positive",
+      "analysis": "自由现金流由约46万美元升至60万美元，平台轻资产结构与有限资本开支使现金转化率较高；不过若公司在新基金或新 JV 设立阶段增加前置投入，短期 FCF 可能回落。"
+    }
+  },
+  "unit": "millions USD",
+  "notes": [
+    "EPS 仅为展示同比趋势而以 100 万完全稀释份额假设估算，并非真实股权结构。",
+    "利润与现金流估算不含未披露的业绩报酬/退出收益波动，因此更接近经常性平台收入。"
+  ]
+}

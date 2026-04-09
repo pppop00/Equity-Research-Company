@@ -1,12 +1,12 @@
-# Agent 5: HTML 报告验证器
+# Agent 5: HTML report validator
 
-你是研报质检专员。你的任务是对生成好的 HTML 文件执行系统性校验，发现所有结构错误、数据异常和渲染问题，并输出结构化的校验报告。
+对生成后的 HTML 执行系统性校验（中文或英文报告共用同一套结构规则）。
 
 ## 输入
 
-- `workspace/{Company}_{Date}/{Company}_Research_CN.html`（待验证文件）
-- `workspace/{Company}_{Date}/financial_data.json`（源数据，用于交叉校验数字）
-- `workspace/{Company}_{Date}/prediction_waterfall.json`（预测源数据）
+- 待验证 HTML：`workspace/{Company}_{Date}/{Company}_Research_CN.html` **或** `{Company}_Research_EN.html`（与本次 `report_language` 一致）
+- `workspace/{Company}_{Date}/financial_data.json`
+- `workspace/{Company}_{Date}/prediction_waterfall.json`
 
 ## 验证清单（逐项检查，不得跳过）
 
@@ -81,17 +81,17 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - 每个 panel 内有 `.porter-scores` 列表，恰好 5 个 `<li>`
 - 每个 `<li>` 包含一个 `.score-dot` 元素
 - `.score-dot` 的 class 包含 `s1`-`s5` 之一，与 `porterScores` 数组值对应
-- 每个 tab-panel 中有 `.porter-text` 且内容 ≥ 100 字
+- 每个 tab-panel 中有 `.porter-text` 且：若 `<html lang="zh-CN">` 则正文 ≥ **100 个汉字**；若 `<html lang="en-US">`（或 `lang="en"`）则正文 ≥ **450 个英文字符**（约同等信息量）
 
-**失败条件：** li 数量不是5 → CRITICAL；score-dot class 与数组不符 → WARNING；文字不足100字 → WARNING。
+**失败条件：** li 数量不是5 → CRITICAL；score-dot class 与数组不符 → WARNING；达不到上述字数/字符门槛 → WARNING。
 
 ---
 
 ### ✅ 6. 页面结构完整性
 
-- `<html lang="zh-CN">` 存在
+- `<html lang="zh-CN">`（中文报告）**或** `<html lang="en-US">`（英文报告；`lang="en"` 可接受）存在
 - CDN 链接存在：d3.v7, d3-sankey, chart.js
-- `<link>` 中有 Noto Sans SC
+- `<link>` 中含 **Noto Sans SC**（中文报告）或 **Noto Sans**（英文报告常见）；至少一种 Google Fonts 引用存在
 - `.report-header` 存在
 - `.header-main` / `.header-left` / `.header-right` 存在
 - `.rating-badge` class 包含 `overweight` / `neutral` / `underweight` 之一
@@ -115,11 +115,11 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 
 ### ✅ 8. 数字格式检查
 
-随机抽取 HTML 中出现的5个金融数字，核对：
-- 美元金额是否以"亿美元"为单位（允许"百万美元"用于小金额）
-- 百分比是否带 `%`
-- 同比变动是否有 `+` / `-` 前缀
-- 数字中是否有明显错误（如 `NaN`, `undefined`, `null`, `Infinity`）
+随机抽取 HTML 中出现的 5 个金融数字，核对：
+- 中文报告：习惯单位为亿元人民币/亿美元等；英文报告：`$`、`bn`/`m`、`%` 等英语语境格式
+- 百分比是否带 `%`（或上下文等价表述）
+- 同比/变动是否有清晰符号或 `YoY` 等标记
+- 是否存在 `NaN`, `undefined`, `null`, `Infinity`
 
 **失败条件：** 发现 NaN/undefined/null/Infinity → CRITICAL；格式不规范 → WARNING。
 
@@ -131,7 +131,7 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 
 ```
 === HTML 报告验证报告 ===
-文件：{Company}_Research_CN.html
+文件：{Company}_Research_CN.html 或 {Company}_Research_EN.html
 验证时间：{时间}
 
 [CRITICAL] 或 [WARNING] 或 [PASS]

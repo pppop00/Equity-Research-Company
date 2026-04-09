@@ -1,0 +1,21 @@
+{
+  "company": "NVIDIA Corporation",
+  "sector_beta_row": "Semiconductors (sub-sector)",
+  "phi": 0.5,
+  "baseline_revenue_growth_pct": 28.0,
+  "baseline_note": "FY2027E vs. FY2026 actual baseline anchored below the FY2026 exit growth rate: reflects a still-strong AI demand curve but with tougher comps, supply normalization, and China policy uncertainty (not a wholesale consensus compilation).",
+  "macro_adjustments": [
+    { "factor": "Fed Funds Rate", "macro_change_pct": 6.21, "beta": 0.4, "phi": 0.5, "adjustment_pct": 1.242 },
+    { "factor": "GDP Growth", "macro_change_pct": 4.348, "beta": 1.5, "phi": 0.5, "adjustment_pct": 3.261 },
+    { "factor": "PCE Inflation", "macro_change_pct": 8.0, "beta": -0.2, "phi": 0.5, "adjustment_pct": -0.8 },
+    { "factor": "USD Index (DXY)", "macro_change_pct": -1.923, "beta": -0.3, "phi": 0.5, "adjustment_pct": 0.289 },
+    { "factor": "WTI Crude Oil", "macro_change_pct": -10.87, "beta": -0.1, "phi": 0.5, "adjustment_pct": 0.544 },
+    { "factor": "Consumer Confidence", "macro_change_pct": 3.093, "beta": 0.6, "phi": 0.5, "adjustment_pct": 0.928 }
+  ],
+  "macro_subtotal_pct": 5.463,
+  "company_specific_adjustment_pct": 0.3,
+  "company_specific_note": "Net of product-cycle uplift (Blackwell/Vera Rubin roadmap) and incremental export-control / China revenue drag from disclosed outlook language.",
+  "predicted_revenue_growth_pct": 33.763,
+  "confidence": "medium",
+  "predicted_fiscal_year_label": "FY2027E"
+}

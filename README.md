@@ -1,6 +1,10 @@
 # Equity Research Skill
 
-An **equity research** skill pack for AI assistants such as **ChatGPT**, **Claude**, and **Cursor**. Give a **company name** and/or upload **financial statement PDFs** (e.g. U.S. **10-K / 10-Q**, Hong Kong or A-share annual / interim reports). The workflow collects data, runs financial and industry analysis, and produces **one interactive Chinese HTML research report** with a **Sankey revenue flow**, a **macro-factor waterfall chart**, and a **Porter Five Forces** radar.
+An **equity research** skill pack for AI assistants such as **ChatGPT**, **Claude**, and **Cursor**. Give a **company name** and/or upload **financial statement PDFs** (e.g. U.S. **10-K / 10-Q**, Hong Kong or A-share annual / interim reports).
+
+**Report language:** The orchestrator (**`SKILL.md`**) must **ask once** whether the final HTML should be **English** or **Chinese** if the user did not already specify. **Phase 1 must not start** until the user answers. Intermediate JSON and the final report match that language. **English** reports use the same layout as Chinese; output is `{Company}_Research_EN.html` (header: English name + ticker only). Chinese output remains `{Company}_Research_CN.html`.
+
+The workflow collects data, runs financial and industry analysis, and produces **one interactive HTML research report** with a **Sankey revenue flow**, a **macro-factor waterfall chart**, and a **Porter Five Forces** radar.
 
 **Repository:** [github.com/pppop00/Equity-Research-Skill](https://github.com/pppop00/Equity-Research-Skill)
 
@@ -12,7 +16,7 @@ An **equity research** skill pack for AI assistants such as **ChatGPT**, **Claud
 - **Intermediate JSON:** financials, macro, news intel, prediction waterfall, Porter analysis — easy to audit or pipe into other tools.
 - **Traceable process:** orchestration in **`SKILL.md`** at repo root; sub-tasks in **`agents/`**; formulas and sector β tables in **`references/`**.
 
-> **Note:** The generated **report language is Chinese** (`*_Research_CN.html`). Skill and agent docs in this repo may be bilingual or Chinese-heavy; the English README describes behavior only.
+> **Note:** Final deliverable is either `*_Research_CN.html` or `*_Research_EN.html` per user choice. Agent instructions may mix English and Chinese; templates are locked separately in `agents/report_writer_cn.md` and `agents/report_writer_en.md`.
 
 ---
 
@@ -23,19 +27,22 @@ Equity-Research-Skill/
 ├── SKILL.md                 # ★ Start here — main orchestration flow
 ├── README.md                # This file
 ├── agents/
-│   ├── report_writer_cn.md  # ★ Locked Chinese HTML template (fill {{placeholders}} only)
+│   ├── report_writer_cn.md  # ★ Locked Chinese HTML template
+│   ├── report_writer_en.md  # ★ Locked English HTML template (same structure)
 │   ├── report_validator.md # HTML structure / data checklist
 │   ├── financial_data_collector.md
 │   ├── macro_scanner.md
 │   └── news_researcher.md
-└── references/
-    ├── prediction_factors.md   # Macro model: φ, β, formulas
-    ├── porter_framework.md     # Porter Five Forces writing guide
-    ├── financial_metrics.md    # Metric definitions
-    └── report_style_guide_cn.md
+├── references/
+│   ├── prediction_factors.md   # Macro model: φ, β, formulas
+│   ├── porter_framework.md     # Porter Five Forces writing guide
+│   ├── financial_metrics.md    # Metric definitions
+│   ├── report_style_guide_cn.md
+│   └── report_style_guide_en.md
+└── workspace/                  # Example run outputs (`{Company}_{Date}/`, HTML + JSON)
 ```
 
-> **Do not** change the HTML/CSS/JS skeleton inside `agents/report_writer_cn.md`. Dynamic content is injected **only** via placeholders; see the rules at the top of that file.
+> **Do not** change the HTML/CSS/JS skeleton inside `agents/report_writer_cn.md` or `agents/report_writer_en.md`. Dynamic content is injected **only** via placeholders; see the rules at the top of each file.
 
 ---
 
@@ -49,7 +56,7 @@ Equity-Research-Skill/
    cd Equity-Research-Skill
    ```
 2. Add this repo to your AI session **context** (folder upload, `@` workspace, or open the project locally).
-3. Instruct the model to **follow `SKILL.md` strictly** and, in Phase 5, to generate HTML using the **locked template** in **`agents/report_writer_cn.md`**.
+3. Instruct the model to **follow `SKILL.md` strictly** and, in Phase 5, to generate HTML using the **locked template** in **`agents/report_writer_cn.md`** or **`agents/report_writer_en.md`** (match the report language chosen in Phase 1).
 4. Provide a **company name** and/or **filing PDFs**. Suggested output folder: `workspace/{Company}_{Date}/`.
 
 ### Cursor

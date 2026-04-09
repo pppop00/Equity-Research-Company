@@ -1,215 +1,216 @@
 ---
 name: equity-research
 description: >
-  Full-stack equity research report generator. Trigger this skill whenever the user wants to analyze a company, generate an equity research report, do fundamental financial analysis, or produce investment research on a stock. Works with just a company name (web search mode) or uploaded SEC filings (10-K / 10-Q PDFs). Outputs one professional interactive Chinese HTML report with embedded Sankey revenue flow diagrams, a macro-factor prediction waterfall, and Porter Five Forces analysis.
+  Full-stack equity research report generator. Trigger when the user wants to analyze a company, generate an equity research report, fundamental analysis, or stock investment research. Works with a company name (web search) or uploaded filings (10-K / 10-Q PDFs, HK/A-share reports). After the user chooses report language (English or Chinese), outputs one professional interactive HTML report (Sankey revenue flow, macro waterfall, Porter Five Forces).
 
-  TRIGGER on any of: "equity research", "research report", "analyze [company]", "financial analysis of [company]", "做研报", "研究报告", "分析[公司]", user uploads a 10-K or 10-Q and asks for analysis beyond just the revenue flow diagram.
+  TRIGGER on: "equity research", "research report", "analyze [company]", "financial analysis of [company]", "做研报", "研究报告", "分析[公司]", English/Chinese equivalents, or user uploads a 10-K/10-Q and wants full research (not only a revenue-flow diagram).
 ---
 
 # Equity Research Skill
 
 Generate a professional equity research report for any public company. You are the orchestrator — you coordinate data collection, analysis, and report writing, either via parallel subagents (Claude Code) or sequentially (Claude.ai).
 
-## Step 0: Parse Input & Setup Workspace
+---
 
-**Identify the input mode:**
+## Step 0A: Report language — **mandatory gate (before any Phase 1 work)**
 
-- **Mode A** — Company name only → Web Search mode
-- **Mode B** — Company name + 10-K PDF → File-based mode (last year actual, current year predicted via web)
-- **Mode C** — Company name + 10-K + 10-Q PDF → Full File mode (richest data)
+**Do not start Phase 1** (no agents, no `workspace/` writes, no JSON generation) until `report_language` is resolved to exactly one of: **`en`** | **`zh`**.
 
-**Create a workspace directory** for this run:
+### When language is already explicit
+
+Treat any of the following as explicit (map and proceed **without** asking):
+
+| Maps to `report_language = en` | Maps to `report_language = zh` |
+|--------------------------------|----------------------------------|
+| `English`, `EN`, `英文`, `英语`, `in English`, `English report`, `英文研报`, `generate English` | `Chinese`, `ZH`, `中文`, `简体`, `Chinese report`, `中文研报`, `生成中文` |
+
+If the user states both or contradictory cues, ask one short clarification before Phase 1.
+
+### When language is **not** explicit
+
+Reply **only** with this prompt and **stop** until the user answers:
+
+> **What language should the final HTML report use — English or Chinese (中文)?**  
+> Reply with **English** or **Chinese**.
+
+After the user answers, map **English** → `en`, **Chinese** / **中文** → `zh`. If the reply is ambiguous, ask again (still **do not** run Phase 1).
+
+### Persist for the whole run
+
+- Store `report_language` for all subsequent phases.
+- Every agent task prompt (Phase 1+) **must** include:  
+  `Report language: en` **or** `Report language: zh`  
+  When `en`: **all narrative text in intermediate JSON and the final HTML must be English** (numbers and tickers as usual).  
+  When `zh`: use Chinese for narrative as today; final HTML from `report_writer_cn.md`.
+
+---
+
+## Step 0B: Parse input & setup workspace
+
+**Input mode:**
+
+- **Mode A** — Company name only → Web Search mode  
+- **Mode B** — Company name + 10-K PDF → File-based mode  
+- **Mode C** — Company name + 10-K + 10-Q PDF → Full File mode  
+
+**Only after Step 0A is satisfied**, create:
+
 ```
 workspace/{Company}_{Date}/
 ```
-All intermediate JSON files go here. All final output files also go here.
+
+All intermediate JSON files and the final HTML go here.
 
 **Detect environment:**
-- If subagents are available (Claude Code): use parallel agent spawning as described below
-- If no subagents (Claude.ai): execute each phase sequentially in the same conversation
+
+- Claude Code: parallel subagents as below  
+- Claude.ai: same phases sequentially  
 
 ---
 
-## Phase 1 + 2 (Macro) + 3 (News): Parallel Data Collection
+## Phase 1 + 2 (Macro) + 3 (News): Parallel data collection
 
-In Claude Code, spawn these three agents simultaneously. In Claude.ai, run them sequentially.
+Spawn or run Agents 1–3. **Each task prompt must include `Report language: {en|zh}`.**
 
 ### Agent 1 — Financial Data Collector
+
 **File:** `agents/financial_data_collector.md`
-**Task prompt to pass:**
+
 ```
+Report language: {en|zh}
 Company: {company_name}
-Uploaded files: {list of uploaded PDFs, or "none"}
+Uploaded files: {PDFs or "none"}
 Output path: workspace/{Company}_{Date}/financial_data.json
-Follow instructions in agents/financial_data_collector.md
+Follow agents/financial_data_collector.md
 ```
 
 ### Agent 2 — Macro Factor Scanner
+
 **File:** `agents/macro_scanner.md`
-**Task prompt to pass:**
+
 ```
+Report language: {en|zh}
 Company: {company_name}
-Sector hint: {infer from company or ask user}
-Reference: references/prediction_factors.md (load this file for the β table)
+Sector hint: {infer or ask user}
+Reference: references/prediction_factors.md
 Output path: workspace/{Company}_{Date}/macro_factors.json
-Follow instructions in agents/macro_scanner.md
+Follow agents/macro_scanner.md
 ```
 
 ### Agent 3 — News & Industry Researcher
+
 **File:** `agents/news_researcher.md`
-**Task prompt to pass:**
+
 ```
+Report language: {en|zh}
 Company: {company_name}
 Sector: {same as Agent 2}
 Output path: workspace/{Company}_{Date}/news_intel.json
-Follow instructions in agents/news_researcher.md
+Follow agents/news_researcher.md
 ```
 
-**Wait for all three agents to complete before proceeding.**
+**Wait for all three to finish.**
 
 ---
 
-## Phase 2: Financial Analysis (Orchestrator runs this inline)
+## Phase 2: Financial analysis (orchestrator, inline)
 
-Read `workspace/{Company}_{Date}/financial_data.json` and compute the metrics defined in `references/financial_metrics.md`:
+Read `financial_data.json`; compute metrics per `references/financial_metrics.md`.  
+**If `report_language=en`:** all free-text fields in `financial_analysis.json` must be **English**.  
+**If `zh`:** Chinese prose as before.
 
-- Profitability: Gross Margin, Operating Margin, Net Margin, ROE, ROA
-- Growth: Revenue YoY%, Net Income YoY%, EPS Growth
-- Cash Flow: Operating CF, Free Cash Flow, FCF Margin
-- Leverage: Debt/Equity, Interest Coverage
-- Valuation: P/E, EV/EBITDA (if market data available from web)
-
-For each of Net Income, Net Margin, and FCF:
-- If current year > last year → trend = "↑ Increasing", provide growth driver analysis
-- If current year < last year → trend = "↓ Decreasing", provide risk factor analysis
-
-Save results to `workspace/{Company}_{Date}/financial_analysis.json`.
+Save `workspace/{Company}_{Date}/financial_analysis.json`.
 
 ---
 
-## Phase 2.5: Revenue Prediction (Macro Factor Model)
+## Phase 2.5: Revenue prediction (macro factor model)
 
-Read `references/prediction_factors.md` for the full formula, β table, and φ value.
+Same formula as `references/prediction_factors.md`.  
+**If `en`:** use English for factor display names in `prediction_waterfall.json` where they are meant for the HTML table; numeric fields unchanged.
 
-**Formula:**
-```
-Predicted_Revenue_Growth =
-    Baseline_Growth
-  + Σ (Factor_Change% × β_sector × φ)
-  + Company_Specific_Adjustment
-```
-
-**Baseline Growth:**
-- If 10-Q available: annualize YTD revenue (`YTD / quarters_reported × 4`), compute YoY vs last year
-- Otherwise: use analyst consensus from web search
-
-**Company_Specific_Adjustment:** Sum the `revenue_impact_pct` values from `news_intel.json` `company_events` array.
-
-Build the waterfall data:
-```json
-{
-  "baseline_growth_pct": 4.2,
-  "macro_adjustments": [
-    {"factor": "Fed Funds Rate", "adjustment_pct": 6.4},
-    ...
-  ],
-  "company_specific_adjustment_pct": 1.2,
-  "predicted_revenue_growth_pct": 11.8,
-  "phi": 0.5,
-  "confidence": "medium"
-}
-```
-
-Save to `workspace/{Company}_{Date}/prediction_waterfall.json`.
+Save `prediction_waterfall.json`.
 
 ---
 
-## Phase 3: Porter Five Forces Analysis
+## Phase 3: Porter Five Forces
 
-Read the Porter framework from `references/porter_framework.md`.
+Use `references/porter_framework.md`. Three perspectives (~300 words each).  
+**If `en`:** `porter_analysis.json` body text **English**. **If `zh`:** Chinese.
 
-Using `financial_data.json` + `news_intel.json`, write three analytical perspectives (~300 words each):
-
-1. **Company-Level:** The specific company's position within each of the five forces
-2. **Industry-Level:** The industry's overall five-force dynamics
-3. **Forward-Looking:** How the five forces are likely to evolve over the next 2-3 years
-
-For each perspective, cover all five forces: Supplier Power, Buyer Power, Threat of New Entrants, Threat of Substitutes, Competitive Rivalry.
-
-Save to `workspace/{Company}_{Date}/porter_analysis.json`.
+Save `porter_analysis.json`.
 
 ---
 
-## Phase 4: Sankey Data Preparation
+## Phase 4: Sankey data preparation
 
-Prepare two Sankey datasets from the financial data:
-
-**Last Year (Actual):** From `financial_data.json` income statement — revenue → COGS → gross profit → OpEx breakdown → operating income → tax/other → net income
-
-**Current Year (Predicted):** Scale last year's figures by `(1 + predicted_revenue_growth_pct/100)`. Apply proportional scaling to each line item unless news events suggest structural changes (e.g., new cost-cutting measures → lower OpEx ratio).
-
-These Sankey datasets feed directly into the HTML report templates. No separate files needed — embed them as JS variables in the HTML.
+Build actual and forecast Sankey JS objects from `financial_data.json` and predicted growth.  
+**If `en`:** Sankey node `name` strings **English** (Revenue, Cost of revenue, …). **If `zh`:** Chinese labels as in the Chinese template examples.
 
 ---
 
-## Phase 5: Report Generation (Chinese Only)
+## Phase 5: Report generation (language branch)
 
-### Agent 4B — Chinese HTML Report
-**File:** `agents/report_writer_cn.md`
-**Inputs:** all JSON files from workspace + sankey datasets prepared in Phase 4
-**Output:** `workspace/{Company}_{Date}/{Company}_Research_CN.html`
+### If `report_language = zh`
 
-**CRITICAL:** Agent 4B must use the locked HTML template in `agents/report_writer_cn.md` verbatim. It fills `{{PLACEHOLDER}}` markers only. It must NOT design its own CSS, invent new class names, or alter the HTML structure.
+**File:** `agents/report_writer_cn.md`  
+**Style:** `references/report_style_guide_cn.md`  
+**Output:** `workspace/{Company}_{Date}/{Company}_Research_CN.html`  
 
-**Wait for Agent 4B to complete before proceeding to Phase 6.**
+Fill **only** `{{PLACEHOLDER}}` markers; do not alter the locked HTML/CSS/JS skeleton.
+
+### If `report_language = en`
+
+**File:** `agents/report_writer_en.md`  
+**Style:** `references/report_style_guide_en.md`  
+**Output:** `workspace/{Company}_{Date}/{Company}_Research_EN.html`  
+
+- Header: **English legal name** in the first name line; **ticker only** on the second line (see `report_writer_en.md` rules).  
+- Use `{{RATING_EN}}`, `{{CONFIDENCE_EN}}` per the English template.  
+- Same structural rules as CN: placeholders only, no new classes/ids.
+
+**Wait for Phase 5 to complete before Phase 6.**
 
 ---
 
-## Phase 6: Report Validation
+## Phase 6: Report validation
 
-### Agent 5 — HTML Validator
 **File:** `agents/report_validator.md`
+
 **Inputs:**
-- `workspace/{Company}_{Date}/{Company}_Research_CN.html`
-- `workspace/{Company}_{Date}/financial_data.json`
-- `workspace/{Company}_{Date}/prediction_waterfall.json`
 
-**Behavior:**
-- Runs all 8 validation checks defined in `agents/report_validator.md`
-- If any CRITICAL errors → fixes the HTML and re-validates until 0 CRITICAL remain
-- If only WARNINGs → passes but notes them in the final output
+- HTML: `*_Research_CN.html` **or** `*_Research_EN.html` (whichever Phase 5 produced)  
+- `financial_data.json`  
+- `prediction_waterfall.json`  
 
-**Wait for Agent 5 to complete before presenting final output.**
+Run all checks; fix CRITICAL issues until zero remain.
 
 ---
 
-## Final Output
+## Final output
 
-Present the output file to the user:
-- `{Company}_Research_CN.html` — Full interactive Chinese report
+Deliver the generated file:
 
-Tell the user:
-- Which data mode was used (web search / file-based / full file)
-- The predicted revenue growth figure and key drivers
-- Any data confidence caveats (e.g., "Web search mode — some line items estimated")
-- The φ (friction factor) used and that they can adjust β values in `references/prediction_factors.md`
-- Validation result summary (CRITICAL count / WARNING count)
+- `{Company}_Research_CN.html` if `zh`  
+- `{Company}_Research_EN.html` if `en`  
+
+Summarize: data mode, predicted revenue growth and drivers, data confidence caveats, φ and β reference path, validation CRITICAL/WARNING counts.
 
 ---
 
-## Data Confidence Labels
+## Data confidence labels
 
-Always label data source clearly in outputs:
-- `"data_source": "10-K upload"` → High confidence
-- `"data_source": "web search"` → Medium confidence, mark estimates with `~`
-- If numbers couldn't be found → use `null` and note "Data unavailable"
+- `"data_source": "10-K upload"` → high confidence  
+- `"data_source": "web search"` → medium; mark estimates with `~`  
+- Missing numbers → `null`, note "Data unavailable" **in the report language**
 
 ---
 
-## Reference Files
+## Reference files
 
-Load these only when needed for the relevant phase:
-- `references/prediction_factors.md` — β table, φ value, full formula (load in Phase 2.5)
-- `references/porter_framework.md` — Five forces scoring guide (load in Phase 3)
-- `references/financial_metrics.md` — Metric calculation formulas (load in Phase 2)
-- `references/report_style_guide_cn.md` — CN report style (Agent 4B loads this)
+| File | When |
+|------|------|
+| `references/prediction_factors.md` | Phase 2.5 |
+| `references/porter_framework.md` | Phase 3 |
+| `references/financial_metrics.md` | Phase 2 |
+| `references/report_style_guide_cn.md` | Phase 5 if `zh` |
+| `references/report_style_guide_en.md` | Phase 5 if `en` |

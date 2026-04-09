@@ -1,0 +1,38 @@
+{
+  "company": "Steerpoint Capital",
+  "sector_used_for_beta": "Real Estate（经平台费收入特征调整）",
+  "baseline_growth_pct": 10.0,
+  "baseline_note": "基准增速假设 2026 年在经历 2025 年多项收购与再投资后，平台费收入进入兑现期，但增速较 2025 年的高基数阶段回归。",
+  "macro_adjustments": [
+    {
+      "factor": "Fed Funds Rate",
+      "adjustment_pct": 3.795
+    },
+    {
+      "factor": "GDP Growth",
+      "adjustment_pct": 4.091
+    },
+    {
+      "factor": "PCE Inflation",
+      "adjustment_pct": 0.357
+    },
+    {
+      "factor": "USD Index (DXY)",
+      "adjustment_pct": -0.012
+    },
+    {
+      "factor": "WTI Crude Oil",
+      "adjustment_pct": 0.924
+    },
+    {
+      "factor": "Consumer Confidence",
+      "adjustment_pct": 0.197
+    }
+  ],
+  "total_macro_adjustment_pct": 9.352,
+  "company_specific_adjustment_pct": 1.6,
+  "predicted_revenue_growth_pct": 20.95,
+  "phi": 0.5,
+  "confidence": "low",
+  "formula_note": "10.0 + 9.352 + 1.6 = 20.952；由于缺乏真实平台报表，该预测更适合作为业务扩张情景，而非精确点估计。"
+}

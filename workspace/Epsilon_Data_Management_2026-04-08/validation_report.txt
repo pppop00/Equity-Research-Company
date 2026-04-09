@@ -1,0 +1,42 @@
+=== HTML 报告验证报告 ===
+文件：Epsilon_Data_Management_Research_CN.html
+验证时间：2026-04-08
+
+[PASS]
+
+--- 1. Section 完整性 ---
+[PASS] 6个section均存在（section-summary / financials / prediction / sankey / porter / appendix）✓
+
+--- 2. KPI 卡片 ---
+[PASS] 4张卡片，方向 class（up/down）与 kpi-change 一致 ✓
+[PASS] 营业收入 KPI「24亿欧元」与 financial_data.json income_statement 2025E.revenue 2400（百万欧元）一致 ✓
+[PASS] EBITDA 5.20亿欧元 与 ebitda_proxy 520（M EUR）一致 ✓
+
+--- 3. CSS 变量 ---
+[PASS] :root 与 [data-theme="dark"] 中必须变量齐备 ✓
+
+--- 4. 图表容器与数据 ---
+[PASS] Waterfall：首项 type=baseline 8.0；阶梯 8.0+3.8+0.5=12.3 与末项 result 一致 ✓
+[PASS] Sankey（2025E）：1080+1320=2400；300+400+188+432=1320；130+302=432 ✓
+[PASS] Sankey（情景）：1213+1482=2695；337+449+211+485=1482；146+339=485 ✓
+[PASS] Radar：porterScores 三组各 5 个整数，范围 3–4（在 1–5 内）✓
+
+--- 5. 波特五力 ---
+[PASS] 三个 tab-panel 各含 5 个 li 与 score-dot，文案长度 >100 汉字 ✓
+
+--- 6. 页面结构 ---
+[PASS] lang=zh-CN、CDN、toggleTheme/switchTab/redrawAllCharts、DOMContentLoaded 均存在 ✓
+[PASS] rating-badge 使用 neutral class ✓
+
+--- 7. 占位符残留 ---
+[PASS] 未检测到「{{」「}}」残留 ✓
+
+--- 8. 非上市与 proxy 披露 ---
+[PASS] 摘要与附录明确 LLC 无单体审计财报、数字为情景估计 ✓
+
+=== 总结 ===
+CRITICAL 错误：0
+WARNING  警告：0
+状态：✅ 通过
+
+附注：因子表中 PCE 行「宏观变化 +8.40%」为与 adjustment -0.42（β=-0.1, φ=0.5）对齐的模型输入口径；与 JSON 内 current/historical 点的代数百分比可能不完全等同，以情景分解一致性为先。

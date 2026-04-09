@@ -1,0 +1,91 @@
+{
+  "company": "Epsilon Data Management LLC",
+  "legal_entity": "Epsilon Data Management LLC（美国德州 Irving 等为主要办公与注册地表述之一）",
+  "parent_group": "Publicis Groupe SA（阳狮集团，EPA: PUB）",
+  "business_model": "First-party 数据与身份（CORE ID、CDP/PeopleCloud）、忠诚度与零售媒介、数字营销技术栈；收入模式以营销服务与数据/平台能力绑定的项目费、许可费与媒介相关为主。",
+  "currency": "EUR",
+  "fx_note": "Publicis 集团合并报表以欧元列报；对外报道中亦常以美元量纲描述美国主体规模，本研报凡处 proxy 收入统一为欧元百万（M EUR）便于与集团口径对齐。",
+  "data_confidence": "低（子公司未单独披露经审计单体 P&L；以下数字为情景/分析师 proxy，不等同于法定单体报表）",
+  "proxy_assumptions": "基准情景：以收购前后行业公开口径与 Connected Media（原 Publicis 分部名之一）约 €8.7bn 级别净收入规模为锚，估算 Epsilon 相关能力在集团内的“贡献量级”约 €2.0–2.6bn；本文件采用中值 €2400M（2025E）与 €2200M（2024E）用于 Sankey 仅作教学演示；Connected Media 内部亦含非 Epsilon 纯数据业务。",
+  "income_statement": {
+    "unit": "M EUR",
+    "period": "FY（12 月底）",
+    "note": "情景 proxy，非审计单体报表",
+    "2025E": {
+      "revenue": 2400,
+      "revenue_yoy_pct": 9.1,
+      "gross_profit": 1320,
+      "operating_income": 432,
+      "net_income": 302,
+      "ebitda_proxy": 520
+    },
+    "2024E": {
+      "revenue": 2200,
+      "revenue_yoy_pct": 8.5,
+      "gross_profit": 1210,
+      "operating_income": 396,
+      "net_income": 277,
+      "ebitda_proxy": 476
+    },
+    "2023E": {
+      "revenue": 2028,
+      "revenue_yoy_pct": 8.0,
+      "gross_profit": 1115,
+      "operating_income": 365,
+      "net_income": 255,
+      "ebitda_proxy": 440
+    },
+    "cost_components_2025E_proxy": {
+      "cogs": 1080,
+      "rd_engineering": 300,
+      "sales_marketing": 400,
+      "g_a": 188,
+      "interest": 12,
+      "tax": 118
+    }
+  },
+  "publicis_group_context": {
+    "FY2025_net_revenue_m_eur": 14547,
+    "FY2024_net_revenue_m_eur": 13965,
+    "organic_growth_pct_FY2025": 5.6,
+    "connected_media_share_of_net_revenue_pct": 60,
+    "connected_media_net_revenue_m_eur_FY2025": 8728,
+    "note": "Connected Media 分部为集团披露口径；其中包含 Epsilon 相关能力，也包含媒介购买与代理服务，不可直接视为 Epsilon 单体收入。"
+  },
+  "historical_transaction_context": {
+    "acquisition_year": 2019,
+    "reported_epsilon_net_revenue_pre_close_usd_bn": 1.9,
+    "transaction_value_usd_bn": 4.4,
+    "note": "仅作历史背景；不宜外推为当前收入。"
+  },
+  "segment_breakdown_proxy_2025E": {
+    "identity_cdp_data_platform": 0.38,
+    "loyalty_crm": 0.22,
+    "retail_media_offsite": 0.18,
+    "email_activation_media": 0.15,
+    "services_implementation": 0.07
+  },
+  "geographic_revenue_proxy_2025E": {
+    "north_america": 0.78,
+    "emea": 0.15,
+    "apac_other": 0.07
+  },
+  "kpi_proxy": {
+    "clients_global": "约 1000+ 品牌客户（集团/官网口径，可能随定义变化）",
+    "first_party_id_graph": "数十亿级营销身份触点（集团材料表述；需与合规与同意机制一并理解）",
+    "partnerships": "Microsoft、LiveRamp 等（用于身份解析、云与零售生态）"
+  },
+  "balance_sheet": {
+    "standalone": "无公开经审计单体资产负债表；集团层面合并披露不拆分至 LLC。",
+    "goodwill_intangible_parent_impact": "2019 年大型并购在集团层面形成显著商誉与无形资产；需关注减值测试叙事。"
+  },
+  "cash_flow": {
+    "standalone": "不披露单体现金流；proxy FCF 与 capex 略。"
+  },
+  "data_source": "Publicis Groupe 年度 URD/业绩材料、行业新闻与历史并购公告；情景估计由研报模板内置方法论生成。",
+  "audit_notes": [
+    "本主体为非上市子公司，收入/利润为情景 proxy，非替代法定审计。",
+    "若需投资决策，应以 Publicis Groupe（PUB）合并报表与估值为准。",
+    "监管（隐私、同意、cookie deprecation）与平台政策变化对数据业务的敏感度高于一般 SaaS。"
+  ]
+}

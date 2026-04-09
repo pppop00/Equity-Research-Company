@@ -1,0 +1,41 @@
+=== HTML 报告验证报告 ===
+文件：Microsoft_Research_CN.html
+验证时间：2026-04-08
+
+[PASS]
+
+--- 1. Section 完整性 ---
+[PASS] 6 个 section id 齐备 ✓
+
+--- 2. KPI 卡片 ---
+[PASS] 4 张卡片，含 up/down class 与 kpi-change 配色 ✓
+[PASS] 营业收入「2817亿美元」↔ financial_data.json revenue 281,724（百万美元）→ 2817.24 亿美元，偏差 <0.1% ✓
+
+--- 3. CSS 变量 ---
+[PASS] 锁定模板 CSS 块完整 ✓
+
+--- 4. 图表 ---
+[PASS] Waterfall：baseline / macro / company / result；末项 type=result；累计 16.35+4.443+0.3=21.093 ✓
+[PASS] Sankey：FY2025 / FY2026 节点与链接守恒（百万美元口径）✓
+[PASS] Radar：porterScores 三组各 5 个整数 2–4 ✓
+
+--- 5. 波特五力 ---
+[PASS] 各 tab 5 个 li，score-dot 与 JS 分数一致 ✓
+[PASS] porter-text 长度 >100 字 ✓
+
+--- 6. 页面结构 ---
+[PASS] CDN、toggleTheme、switchTab、redrawAllCharts、DOMContentLoaded ✓
+[PASS] rating-badge.overweight ✓
+
+--- 7. 占位符 ---
+[PASS] 无「{{」「}}」残留 ✓
+
+--- 8. 数字格式 ---
+[PASS] 抽查无 NaN/undefined；百分比与同比前缀规范 ✓
+
+=== 总结 ===
+CRITICAL：0
+WARNING：0
+状态：✅ 通过
+
+备注：收入预测为「一致预期 + 宏观因子 + 公司事件」叠加情景，可能与卖方模型存在重叠；读者应 mainly 将其用于敏感性而非精确财务预报。

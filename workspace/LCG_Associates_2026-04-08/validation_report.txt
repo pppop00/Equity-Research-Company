@@ -1,0 +1,42 @@
+=== HTML 报告验证报告 ===
+文件：LCG_Associates_Research_CN.html
+验证时间：2026-04-08
+
+[PASS]
+
+--- 1. Section 完整性 ---
+[PASS] 6个section均存在（section-summary / financials / prediction / sankey / porter / appendix）✓
+
+--- 2. KPI 卡片 ---
+[PASS] 4张卡片，方向class（up/down）与 kpi-change 一致 ✓
+[PASS] 营业收入 KPI「2230万美元」与 financial_data.json revenue 22.3（百万美元）一致，偏差 0% ✓
+
+--- 3. CSS 变量 ---
+[PASS] :root 与 [data-theme="dark"] 中必须变量齐备 ✓
+[PASS] 未发现引用未定义 var(--*) 的可疑片段 ✓
+
+--- 4. 图表容器与数据 ---
+[PASS] Waterfall：非空数组；首项 type=baseline；末项 type=result；中间阶梯与 5.5+6.269+0.5≈12.269 一致 ✓
+[PASS] Sankey：实际/预测均 ≥3 节点、≥2 链接；数值为正；索引有效 ✓
+[PASS] Radar：porterScores 三组各 5 个整数分，范围 2–4（在 1–5 内）✓
+
+--- 5. 波特五力 ---
+[PASS] 三个 tab-panel 各含 5 个 li 与 score-dot，文案长度 >100 汉字 ✓
+[WARNING] score-dot 样式类（s2/s3/s4）与「威胁分数越高颜色越警戒」视觉一致，但与数值本身对应关系已人工核对 ✓
+
+--- 6. 页面结构 ---
+[PASS] lang=zh-CN、CDN、header 结构、toggleTheme/switchTab/redrawAllCharts、DOMContentLoaded 均存在 ✓
+[PASS] rating-badge 使用 neutral class ✓
+
+--- 7. 占位符残留 ---
+[PASS] 未检测到「{{」「}}」残留 ✓
+
+--- 8. 数字格式 ---
+[PASS] 抽查：2230万美元、+8.3%、8.5%、12.269%、NaN/undefined 未见 ✓
+
+=== 总结 ===
+CRITICAL 错误：0
+WARNING  警告：1（定性说明，不影响结构）
+状态：✅ 通过（含非阻塞警告）
+
+附注：标的为非上市公司，financial_data.json 标记 data_confidence=low；任何二级市场「评级」均应理解为不适用，仅作模板填充。

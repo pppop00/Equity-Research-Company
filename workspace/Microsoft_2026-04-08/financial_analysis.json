@@ -1,0 +1,72 @@
+{
+  "profitability": {
+    "gross_margin_current": 68.8,
+    "gross_margin_prior": 69.8,
+    "operating_margin_current": 45.6,
+    "operating_margin_prior": 44.6,
+    "net_margin_current": 36.2,
+    "net_margin_prior": 35.9,
+    "roe_current": 29.6,
+    "roe_prior": 31.1,
+    "roa_current": 16.5,
+    "roa_prior": 14.4,
+    "ebitda_current": 147500,
+    "ebitda_margin_current": 52.4,
+    "ebitda_note": "EBITDA 以营业利润约 1285 亿美元 + 折旧摊销约 190 亿美元近似，用于交叉验证边际；非公司直接披露单一行项目。"
+  },
+  "growth": {
+    "revenue_growth_yoy_pct": 14.9,
+    "net_income_growth_yoy_pct": 15.5,
+    "eps_growth_yoy_pct": 15.6,
+    "gross_profit_growth_yoy_pct": 13.4
+  },
+  "cash_flow": {
+    "free_cash_flow": 71611,
+    "free_cash_flow_prior": 74071,
+    "fcf_margin_pct": 25.4,
+    "fcf_conversion_pct": 70.3,
+    "capex_intensity_pct": 22.9
+  },
+  "leverage": {
+    "debt_equity_ratio": 0.232,
+    "net_debt": -49625,
+    "net_debt_ebitda": -0.34,
+    "interest_coverage_ratio": 53.9
+  },
+  "valuation": {
+    "stock_price": 385,
+    "pe_ratio_ttm": 28.2,
+    "pe_ratio_forward": 22.4,
+    "market_cap": 2862,
+    "market_cap_unit": "billions USD",
+    "ev": null,
+    "ev_ebitda": null,
+    "note": "Forward P/E 使用一致预期 EPS 约 17.2 美元；市值 = 股价 × 约 74.33 亿股（近似）"
+  },
+  "balance_sheet_ratios": {
+    "asset_liability_ratio_pct": 44.5,
+    "asset_liability_note": "资产负债率 = (总资产 − 股东权益) / 总资产"
+  },
+  "trends": {
+    "net_income": {
+      "label": "↑ Increasing",
+      "class": "positive",
+      "analysis": "FY2025 归母净利润约 1,018 亿美元，同比约 +15.5%，由 Microsoft Cloud 增长、生产力套件提价与量增共同推动；需留意 FY26 起 OpenAI 相关投资收益对 GAAP 盈利的波动性。"
+    },
+    "net_margin": {
+      "label": "↑ Increasing",
+      "class": "positive",
+      "analysis": "净利率约 36.2%，同比小幅扩张，反映高毛利云与软件服务占比继续上升；但 AI 基础设施折旧与能源成本可能在未来数年施压毛利率。"
+    },
+    "fcf": {
+      "label": "↓ Decreasing",
+      "class": "negative",
+      "analysis": "自由现金流约 716 亿美元，同比约 -3.3%，主要因 property & equipment 相关资本开支显著上升至约 646 亿美元以扩建数据中心与算力；属战略投资期现象。"
+    }
+  },
+  "unit": "millions USD（估值行除外）",
+  "notes": [
+    "FY2024 自由现金流 = 经营现金流 118,548 − 资本支出 44,477（约 740.7 亿美元）。",
+    "利息保障倍数 = 营业利润 / 利息费用（FY2025 利息费用约 24 亿美元）。"
+  ]
+}

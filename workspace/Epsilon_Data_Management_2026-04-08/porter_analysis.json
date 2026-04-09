@@ -1,0 +1,28 @@
+{
+  "company": "Epsilon Data Management LLC",
+  "industry": "营销技术与第一方数据服务（MarTech / AdTech 交集；忠诚度与零售媒介）",
+  "forces": {
+    "supplier_power": {
+      "level": "中高",
+      "analysis": "云基础设施、身份解析网络、媒介库存（尤其零售网络）与高端数据科学人才构成关键投入；大规模客户在 RFP 中倾向于多源比价，供应商在标准 API 化后议价力集中于“稀缺库存与独家数据段”。"
+    },
+    "buyer_power": {
+      "level": "高",
+      "analysis": "广告主与大型零售商客户集中、合同金额大、切换成本高但谈判能力强；对测效、透明度与审计要求持续提升，使服务商需持续证明增量 ROI。"
+    },
+    "competitive_rivalry": {
+      "level": "高",
+      "analysis": "4A 控股集团（WPP、Omnicom、IPG 等）与大量独立 MarTech 玩家在 CRM、CDP、忠诚度、零售媒介等子赛道重叠；差异化来自端到端交付与第一方数据的深度整合。"
+    },
+    "threat_of_substitution": {
+      "level": "中高",
+      "analysis": "品牌方可选择自建 CDP、直接采购云厂商营销套件、或把预算转向平台内闭环（Meta/Google/零售商 first-party）；Epsilon 的替代威胁来自“内制化 + 生态捆绑”而非单一产品。"
+    },
+    "threat_of_new_entrants": {
+      "level": "中",
+      "analysis": "模块级工具较多、进入门槛相对低；但达到跨国合规、企业级 SLA 与大型零售网络整合需要资本与信任壁垒，头部玩家仍有规模优势。"
+    }
+  },
+  "overall_attractiveness": "行业天花板受宏观广告周期与平台政策双向牵引；具备第一方数据、零售网络与云联盟的深度整合者仍可获取超额回报，但利润池波动高于传统 B2B SaaS。",
+  "strategic_implications": "Epsilon 需强化“可审计测效 + 合规默认设计 + 生态中立性”组合，以降低买方议价与替代威胁；集团层面则需避免把数据栈仅仅当作媒介购买的附庸，以免利润率被 pass-through 结构稀释。"
+}

@@ -1,0 +1,69 @@
+{
+  "company": "Steerpoint Capital",
+  "sector": "房地产",
+  "data_freshness": "2026-04-08",
+  "company_events": [
+    {
+      "type": "acquisition",
+      "description": "2025 年 9 月，Steerpoint 与 SteelWave 收购 The Shoppes at Carlsbad，交易金额 7,150 万美元，为双方 JV 平台的第二笔交易，强化其南加州区域购物中心布局。",
+      "revenue_impact_pct": 0.8,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "PR Newswire，2025-09-23。"
+    },
+    {
+      "type": "reinvestment",
+      "description": "2025 年 9 月，Antelope Valley Mall 启动以 Round1 和重塑餐饮娱乐动线为核心的再投资，反映公司不仅收购资产，也推动运营改造与租户结构升级。",
+      "revenue_impact_pct": 0.5,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "PR Newswire/Muck Rack 摘要，2025-09-03。"
+    },
+    {
+      "type": "strategic partnership",
+      "description": "2025 年 8 月，Mershops 收购 Weberstown Mall，公告称该笔 5,000 万美元以上交易由战略合作方 Steerpoint Capital 主导，显示其 deal sourcing 与执行角色继续外溢。",
+      "revenue_impact_pct": 0.4,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "Recordnet / PR 分发摘要，2025-08-05。"
+    },
+    {
+      "type": "entitlement risk",
+      "description": "Simi Valley Town Center 与 North County Mall 等项目存在住宅/混合用途再开发设想，若审批推进顺利将扩展价值创造空间；反之，地方政治与分区审批将延长变现周期。",
+      "revenue_impact_pct": 0.2,
+      "impact_direction": "positive",
+      "confidence": "low",
+      "source": "地方媒体 What Now Los Angeles、KGTV 等 2025 年报道。"
+    },
+    {
+      "type": "portfolio risk",
+      "description": "公司目前公开组合高度集中在区域购物中心与少量办公资产，若消费走弱或办公市场继续承压，租赁速度与再定位回报可能低于承销假设。",
+      "revenue_impact_pct": -0.3,
+      "impact_direction": "negative",
+      "confidence": "medium",
+      "source": "官网投资组合页；公开项目新闻整理。"
+    }
+  ],
+  "company_specific_adjustment_pct": 1.6,
+  "industry_dynamics": {
+    "supplier_power": "中等偏强。对 Steerpoint 而言，核心供应商并非原材料，而是资本合作方、总包/开发顾问、租赁经纪及地方审批生态。融资成本和施工资源仍受利率与地缘扰动影响。",
+    "buyer_power": "中高。下游既包括零售租户也包括 JV 资本伙伴。优质娱乐、餐饮和折扣零售租户在空置率较高的区域购物中心拥有较强议价能力；机构资本则更关注进入成本、退出路径与执行纪律。",
+    "new_entrants": "中低。进入区域购物中心重定位赛道需要关系网络、复杂交易处理经验以及对地方政府和再开发的执行能力，门槛高于普通收租型业主。",
+    "substitutes": "高。电子商务、开放式生活中心、社区商业和 mixed-use 更新方案均在持续分流传统封闭式 mall 的流量与租金定价权。",
+    "rivalry": "高。该赛道聚集了 opportunistic fund、家族办公室、地方开发商和具备破产/特殊机会经验的玩家，低基差资产一旦挂牌仍会吸引竞争性出价。"
+  },
+  "forward_looking": {
+    "supplier_power": "预计上升。若 2026 年建筑成本、保险与融资仍高，项目改造和持有成本将继续推高供应端议价。",
+    "buyer_power": "维持中高。优质租户将继续要求更灵活的租约结构，而资本方也会要求 sponsor 提供更强的执行证明。",
+    "new_entrants": "维持中低。虽然 distressed retail 资产仍多，但真正具备再开发与 community engagement 经验的新玩家不多。",
+    "substitutes": "继续偏高。购物中心若不能引入娱乐、住宅、医疗和日常消费功能，替代压力会进一步抬升。",
+    "rivalry": "维持高位。随着利率见顶后的交易活动回升，优质低基差资产竞争会更激烈，区分度将更多来自运营与 entitlement 能力。"
+  },
+  "key_analyst_views": [
+    "非上市公司：无主流卖方目标价或投资评级。",
+    "公开信息普遍将其定义为 boutique commercial real estate investment and advisory firm，投资主线是低基差区域购物中心的再定位与混合用途潜力挖掘。"
+  ],
+  "notes": [
+    "未检索到公司层面的重大诉讼或监管处罚公开披露，但私募地产平台的法律风险通常更多体现在项目层 SPV。"
+  ]
+}

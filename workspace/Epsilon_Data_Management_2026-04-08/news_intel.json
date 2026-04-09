@@ -1,0 +1,50 @@
+{
+  "company": "Epsilon Data Management LLC",
+  "parent": "Publicis Groupe",
+  "news_items": [
+    {
+      "category": "战略与生态",
+      "headline": "阳狮集团以数十亿美元级对价收购 Epsilon（2019）——奠定“数据+创意+媒介”一体化叙事",
+      "sentiment": "中性偏多（长期协同，短期整合与商誉负担）",
+      "impact": "确立集团在美国数据与忠诚度赛道的话语权，后续并购与联盟（云、身份、零售）均围绕该栈展开。"
+    },
+    {
+      "category": "技术合作",
+      "headline": "与 Microsoft 等云与数据伙伴加深联盟（Azure/Marketing 生态相关披露）",
+      "sentiment": "偏多",
+      "impact": "企业级 CDP/分析与身份产品在大型客户渗透时可降低交付摩擦；亦增加对生态定价与排他条款的依赖。"
+    },
+    {
+      "category": "身份与测效",
+      "headline": "LiveRamp 等身份网络合作与零售媒介扩张（行业通稿与集团材料）",
+      "sentiment": "偏多",
+      "impact": "在 cookie 受限环境中维持可投放、可测量的 pipe；但价值链利润可能部分让渡给身份/媒介基础设施方。"
+    },
+    {
+      "category": "监管与隐私",
+      "headline": "全球隐私立法与同意机制升级（美国州法、GDPR 执法倾向）",
+      "sentiment": "偏空",
+      "impact": "合规成本与法律风险上升；产品需持续投资于 consent governance 与数据最小化。"
+    },
+    {
+      "category": "集团业绩",
+      "headline": "Publicis FY2025  organic growth（约 +5.6%）与 Connected Media ~60% 收入占比",
+      "sentiment": "偏多",
+      "impact": "集团层面韧性验证；但分部口径不等于 Epsilon 单体增速，解读需保留安全边际。"
+    },
+    {
+      "category": "竞争格局",
+      "headline": "WPP/Omnicom/IPG 及垂直忠诚度玩家竞争；大型科技公司自营营销云",
+      "sentiment": "中性",
+      "impact": "差异化来自第一方数据深度、零售网络与交付速度，而非单一功能模块。"
+    },
+    {
+      "category": "AI",
+      "headline": "生成式 AI 进入受众细分、创意与报告自动化",
+      "sentiment": "偏多（效率）/ 风险（版权、品牌安全）",
+      "impact": "可能提升人均产出与客户迭代频率；亦要求新增模型治理与内容合规流程。"
+    }
+  ],
+  "overall_sentiment": "中性偏多",
+  "narrative_summary": "新闻流围绕“身份解析 + 零售媒介 + 云联盟”能力栈展开；最大波动源是监管与测效标准变化，而非季度毛利率的小幅beat/miss（因单体不披露）。"
+}

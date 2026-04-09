@@ -1,0 +1,21 @@
+{
+  "company": "Meta Platforms, Inc.",
+  "sector": "Communication Services",
+  "sector_cn": "通信服务",
+  "phi": 0.5,
+  "beta_source": "default_table",
+  "data_freshness": "2026-04-08",
+  "macro_environment_cn": {
+    "summary": "2026 年宏观场景仍呈「软着陆+高利率绝对水平」组合。美元温和走弱利于海外广告收入折算；消费者情绪边际改善利好品牌投放意愿，但利率下行节奏若慢于预期，对高估值科技股风险偏好的支撑有限。",
+    "fed": "联邦基金利率仍在限制性区间，市场定价偏鸽但通胀路径存在反复。",
+    "consumer": "消费者信心修复有利于可 discretionary 型数字广告预算，但需观察就业走弱对中小企业的传导。"
+  },
+  "factors_snapshot": [
+    {"name": "联邦基金利率", "factor_change_pct_approx": -6.21, "beta": 0.2},
+    {"name": "美国实际GDP增速", "factor_change_pct_approx": 4.35, "beta": 1.0},
+    {"name": "核心PCE通胀", "factor_change_pct_approx": 8.4, "beta": -0.1},
+    {"name": "美元指数DXY", "factor_change_pct_approx": -1.92, "beta": -0.2},
+    {"name": "WTI原油", "factor_change_pct_approx": -10.87, "beta": 0.0},
+    {"name": "消费者信心指数", "factor_change_pct_approx": 3.09, "beta": 0.8}
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "company": "Meta Platforms, Inc.",
+  "executive_summary": "Meta 在 FY2025 实现营收约 2,010 亿美元（同比约 +22%），净利润约 605 亿美元（同比约 -3%）：盈利增速滞后于收入主要受有效税率上升（含一次性税会因素）及费用强度走高影响。营业利润率约 41%，依然处于大型平台中的高位区间，但较 FY2024 略有压缩。经营现金流充沛，惟 FY2026 指引的资本开支持续大幅上行，自由现金流波动将成为估值辩论焦点。",
+  "profitability": {
+    "gross_margin_pct": 82.0,
+    "gross_margin_prior_pct": 81.7,
+    "operating_margin_pct": 41.4,
+    "operating_margin_prior_pct": 42.2,
+    "net_margin_pct": 30.1,
+    "net_margin_prior_pct": 37.9,
+    "roe_pct": 27.8,
+    "roa_pct": 16.5
+  },
+  "growth": {
+    "revenue_yoy_pct": 22.2,
+    "net_income_yoy_pct": -3.0,
+    "eps_yoy_pct": -1.6
+  },
+  "cash_flow": {
+    "ocf_bn": 115.8,
+    "fcf_bn": 43.6,
+    "fcf_margin_pct": 21.7,
+    "fcf_yoy_pct": -16.3
+  },
+  "leverage": {
+    "debt_to_equity": 0.27,
+    "interest_coverage": "N/A（利息费用净额多为净利息收入）"
+  },
+  "trend_narratives": {
+    "net_income": "↓ 净利润同比下滑主要反映税率与费用节奏；剔除一次性税项后核心营业利润仍增长，需跟踪 2026 年税率指引 13%–16% 区间的实现路径。",
+    "net_margin": "↓ 净利率回落与税项及 AI/Capex 相关折旧前瞻有关；若广告收入韧性持续，中期有望随收入规模摊薄固定成本。",
+    "fcf": "↓ 自由现金流同比下降反映 Capex 大增而经营利润仍扩张；2026 年指引资本开支区间上沿若兑现，FCF 或继续承压，但管理层层指引营业利润绝对额高于 2025。"
+  },
+  "investment_thesis_short": "核心论点在于：Family of Apps 广告货币化效率能否在 AI 工具与 Reels 场景下延续，以及市场对「超级算力投入换长期回报」的耐心；监管与平台政策风险需持续计入估值折价或溢价。"
+}

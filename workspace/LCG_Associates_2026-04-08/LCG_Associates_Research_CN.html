@@ -1,39 +1,9 @@
-# Agent 4B: 中文 HTML 研报生成器（锁定模板版）
-
-你是一位顶级券商的资深权益研究分析师。你的任务是将研究数据填入下方**精确的 HTML 模板骨架**中，生成专业的交互式中文研报。
-
-## ⚠️ 核心规则（必须严格遵守）
-
-1. **不得修改模板结构**：CSS、class 名称、section ID、HTML 层级——全部照抄，不得增删任何 class 或 id。
-2. **只替换 `{{PLACEHOLDER}}` 标记**：所有动态内容（文字、数字、JS 数据变量）只在标注的占位符位置填入。
-3. **不得引入新的 CSS 规则**：如需针对特定内容调整样式，只能用 `style=""` 内联属性，且仅限于颜色 (`color`) 和字重 (`font-weight`)。
-4. **图表容器尺寸固定**：所有 `<div id="chart-*">` 容器的 `width` 和 `height` 必须与模板中一致，不得更改。
-5. **输出单一 `.html` 文件**：完全自包含，文件名 `{公司英文缩写}_Research_CN.html`。
-
-## 输入文件（从 workspace 目录读取）
-
-- `financial_data.json`
-- `financial_analysis.json`
-- `macro_factors.json`
-- `news_intel.json`
-- `prediction_waterfall.json`
-- `porter_analysis.json`
-
-同时加载：`references/report_style_guide_cn.md`（写作风格）
-
-**语言：** 仅当编排器传入 **`Report language: zh`** 时使用本文件；英文报告请使用 `agents/report_writer_en.md`。
-
----
-
-## 完整 HTML 模板（逐字输出，仅替换 {{PLACEHOLDER}}）
-
-```html
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{COMPANY_NAME_CN}}（{{TICKER}}）— 权益研究报告 | {{REPORT_DATE}}</title>
+<title>LCG Associates（LCG投资咨询）（非上市）— 权益研究报告 | 2026年4月8日</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
@@ -445,160 +415,189 @@ body {
 </head>
 <body>
 
-<!-- ========== HEADER ========== -->
 <div class="report-header">
   <div class="header-main">
     <div class="header-left">
-      <div class="company-exchange-badge">{{EXCHANGE}} · {{SECTOR}}</div>
-      <div class="company-name-cn">{{COMPANY_NAME_CN}}</div>
-      <div class="company-name-en">{{COMPANY_NAME_EN}} · {{TICKER}}</div>
+      <div class="company-exchange-badge">非上市 · 机构投资咨询 / 专业服务</div>
+      <div class="company-name-cn">LCG Associates（LCG投资咨询）</div>
+      <div class="company-name-en">LCG Associates, Inc. · 非上市</div>
     </div>
     <div class="header-right">
       <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 切换主题</button>
-      <!-- rating-badge class must be one of: overweight / neutral / underweight -->
-      <div class="rating-badge {{RATING_CLASS}}">{{RATING_CN}}</div>
+      <div class="rating-badge neutral">中性（无公开股权）</div>
     </div>
   </div>
   <div class="header-meta">
-    <span>{{REPORT_DATE}}</span>
-    <span>数据来源：{{DATA_SOURCE}}</span>
+    <span>2026年4月8日</span>
+    <span>数据来源：公开市场检索 + 行业结构估计（低置信度）</span>
     <span>由 Equity Research Skill 生成</span>
   </div>
 </div>
-<!-- ========== END HEADER ========== -->
 
 <div class="container">
 
-  <!-- ===== SECTION 1: 投资摘要 ===== -->
   <div class="section" id="section-summary">
     <div class="section-title">一、投资摘要</div>
 
-    <!-- 3段公司介绍，每段约80-120字 -->
-    <p class="summary-para">{{SUMMARY_PARA_1}}</p>
-    <p class="summary-para">{{SUMMARY_PARA_2}}</p>
-    <p class="summary-para">{{SUMMARY_PARA_3}}</p>
+    <p class="summary-para">用户所称的「LCG associate」与公开资料中的 LCG Associates, Inc. 高度一致：该公司为成立于1973年、总部设于美国乔治亚州亚特兰大的全国性投资咨询公司，法律实体为员工全资持有，收入几乎全部来自向机构与私人财富客户提供的受托型顾问服务，而非自有资金管理或经纪佣金。</p>
+    <p class="summary-para">公司在官网披露中被引用为连续多年获得 Crisil Coalition Greenwich「美国中型投资咨询机构综合最佳」评价的客户满意度结果；同时其事实清单显示约110家客户、合计约1,070亿美元AUA/AUM（截至2026-01前后的客户申报区间）。上述信息表明其在细分领域具备声誉与客户黏性，但并不等同于经审计的表内资产管理规模。</p>
+    <p class="summary-para">本报告采用网络检索模式：第三方平台对年度收入的估计分布在约1,900万–2,230万美元区间，本模型取约2,230万美元作为CY2025营收近似，并据典型轻资产咨询业的成本结构拆分利润表。预测模块将 Industrials 行业β用作B2B专业服务的近似；在非上市、无一致预期前提下，整体置信度标注为「低」。</p>
 
     <div class="two-col">
       <div class="highlights-box">
         <h4>核心亮点</h4>
         <ul class="bullet-list">
-          <!-- 填入 3-5 条，每条 <li>{{内容}}</li> -->
-          {{HIGHLIGHTS_LI}}
+          <li>100%员工持股与「仅向客户收费」的商业模式，冲突结构相对清晰，利于机构治理与采购合规。</li>
+          <li>客群以大型免税机构与企业退休计划为主，长约属性与顾问替换成本共同支撑收入韧性（近似营收同比中个位数增长假设）。</li>
+          <li>轻资产模型下经营现金流与自由现金流转化较好，资本开支占比有限。</li>
+          <li>第三方机构客户满意度评选中屡次上榜，有利于品牌在RFP过程中的可信背书。</li>
         </ul>
       </div>
       <div class="risks-box">
         <h4>主要风险</h4>
         <ul class="bullet-list">
-          <!-- 填入 3-5 条，每条 <li>{{内容}}</li> -->
-          {{RISKS_LI}}
+          <li>非上市主体，公开财务颗粒度显著低于SEC发行人，本文估计误差可能较大。</li>
+          <li>大客户集中度与顾问服务采购周期可导致收入波动性被低估。</li>
+          <li>人才争夺与薪酬通胀若快于费率提升，将挤压营业利润与净利率（本模型已观察到净利率温和承压方向）。</li>
+          <li>OCIO、内部团队与自动化工具对传统顾问模块形成替代，中长期行业竞争强度偏高。</li>
         </ul>
       </div>
     </div>
 
     <div class="thesis-box">
-      <strong>投资逻辑：</strong>{{INVESTMENT_THESIS}}
+      <strong>投资逻辑：</strong>本报告对象为非上市企业，不适配二级市场「增持/减持」框架；从商业尽调视角，LCG的核心价值在于独立受托品牌、机构客户深度关系与全职能研究交付能力。若宏观维持温和增长且机构外包顾问需求稳定，模型给出约+12.3%的营收增速情景，但高度依赖估计基数与β近似，不宜直接外推为投资结论。
     </div>
   </div>
-  <!-- ===== END SECTION 1 ===== -->
 
-  <!-- ===== SECTION 2: 财务概览 ===== -->
   <div class="section" id="section-financials">
     <div class="section-title">二、财务概览</div>
 
-    <!-- KPI Grid: 必须恰好 4 张卡片，顺序固定 -->
     <div class="kpi-grid">
 
-      <!-- Card 1: 营业收入 -->
-      <div class="kpi-card {{KPI1_DIRECTION}}">
+      <div class="kpi-card up">
         <div class="kpi-label">营业收入</div>
-        <div class="kpi-value">{{KPI1_VALUE}}</div>
-        <div class="kpi-change {{KPI1_DIRECTION}}">{{KPI1_CHANGE}}</div>
-        <div class="kpi-sub">{{KPI1_YEAR}}财年</div>
+        <div class="kpi-value">2230万美元</div>
+        <div class="kpi-change up">同比约 +8.3%</div>
+        <div class="kpi-sub">CY2025（估计）</div>
       </div>
 
-      <!-- Card 2: 归母净利润 -->
-      <div class="kpi-card {{KPI2_DIRECTION}}">
+      <div class="kpi-card up">
         <div class="kpi-label">归母净利润</div>
-        <div class="kpi-value">{{KPI2_VALUE}}</div>
-        <div class="kpi-change {{KPI2_DIRECTION}}">{{KPI2_CHANGE}}</div>
-        <div class="kpi-sub">{{KPI2_YEAR}}财年</div>
+        <div class="kpi-value">190万美元</div>
+        <div class="kpi-change up">同比约 +5.6%</div>
+        <div class="kpi-sub">CY2025（估计）</div>
       </div>
 
-      <!-- Card 3: 自由现金流 -->
-      <div class="kpi-card {{KPI3_DIRECTION}}">
+      <div class="kpi-card up">
         <div class="kpi-label">自由现金流（FCF）</div>
-        <div class="kpi-value">{{KPI3_VALUE}}</div>
-        <div class="kpi-change {{KPI3_DIRECTION}}">{{KPI3_CHANGE}}</div>
-        <div class="kpi-sub">{{KPI3_YEAR}}财年</div>
+        <div class="kpi-value">265万美元</div>
+        <div class="kpi-change up">同比约 +8.2%</div>
+        <div class="kpi-sub">CY2025（估计）</div>
       </div>
 
-      <!-- Card 4: 净利率 -->
-      <div class="kpi-card {{KPI4_DIRECTION}}">
+      <div class="kpi-card down">
         <div class="kpi-label">净利率</div>
-        <div class="kpi-value">{{KPI4_VALUE}}</div>
-        <div class="kpi-change {{KPI4_DIRECTION}}">{{KPI4_CHANGE}}</div>
-        <div class="kpi-sub">vs 上年 {{KPI4_PREV_VALUE}}</div>
+        <div class="kpi-value">8.5%</div>
+        <div class="kpi-change down">同比约 -20 bps</div>
+        <div class="kpi-sub">vs 上年 8.7%（估计）</div>
       </div>
 
     </div>
-    <!-- END KPI Grid -->
 
-    <!-- 指标明细表 -->
     <table class="metrics-table">
       <thead>
         <tr>
           <th>指标</th>
-          <th>{{METRICS_YEAR_CUR}}（当年）</th>
-          <th>{{METRICS_YEAR_PREV}}（上年）</th>
+          <th>CY2025（当年）</th>
+          <th>CY2024（上年）</th>
           <th>同比变动</th>
         </tr>
       </thead>
       <tbody>
-        <!-- 每行格式：
-          <tr>
-            <td>指标名称</td>
-            <td>当年值</td>
-            <td>上年值</td>
-            <td class="metric-up 或 metric-down">±变动</td>
-          </tr>
-          必须包含以下行（按此顺序）：
-          毛利率 / 营业利润率 / 净利率 / ROE / ROA / 资产负债率 / 利息保障倍数 / 每股收益（EPS）/ 自由现金流利润率
-        -->
-        {{METRICS_ROWS}}
+        <tr>
+          <td>毛利率</td>
+          <td>70.0%</td>
+          <td>70.0%</td>
+          <td class="metric-up">持平</td>
+        </tr>
+        <tr>
+          <td>营业利润率</td>
+          <td>10.8%</td>
+          <td>10.8%</td>
+          <td class="metric-up">持平</td>
+        </tr>
+        <tr>
+          <td>净利率</td>
+          <td>8.5%</td>
+          <td>8.7%</td>
+          <td class="metric-down">-20 bps</td>
+        </tr>
+        <tr>
+          <td>ROE</td>
+          <td>21.6%</td>
+          <td>20.5%</td>
+          <td class="metric-up">+1.1 ppt</td>
+        </tr>
+        <tr>
+          <td>ROA</td>
+          <td>11.5%</td>
+          <td>10.9%</td>
+          <td class="metric-up">+0.6 ppt</td>
+        </tr>
+        <tr>
+          <td>资产负债率</td>
+          <td>46.7%</td>
+          <td>47.1%</td>
+          <td class="metric-up">-0.4 ppt</td>
+        </tr>
+        <tr>
+          <td>利息保障倍数</td>
+          <td>48.2x</td>
+          <td>44.4x</td>
+          <td class="metric-up">上升</td>
+        </tr>
+        <tr>
+          <td>每股收益（EPS）</td>
+          <td>$1.90</td>
+          <td>$1.80</td>
+          <td class="metric-up">+5.6%</td>
+        </tr>
+        <tr>
+          <td>自由现金流利润率</td>
+          <td>11.9%</td>
+          <td>11.9%</td>
+          <td class="metric-up">大致持平</td>
+        </tr>
       </tbody>
     </table>
 
-    <!-- 趋势分析：固定 3 张 trend-card，顺序固定 -->
     <div class="trend-cards">
-      <div class="trend-card {{TREND1_DIRECTION}}">
+      <div class="trend-card up">
         <div class="trend-card-label">归母净利润趋势</div>
-        <div class="trend-card-text">{{TREND1_TEXT}}</div>
+        <div class="trend-card-text">在估计口径下，净利润温和抬升，主要反映顾问费用体量扩大；若未来披露实际报表显示一次性税项或利润分配策略差异，趋势判断需相应修正。</div>
       </div>
-      <div class="trend-card {{TREND2_DIRECTION}}">
+      <div class="trend-card down">
         <div class="trend-card-label">净利率趋势</div>
-        <div class="trend-card-text">{{TREND2_TEXT}}</div>
+        <div class="trend-card-text">净利率小幅下行方向多与人力及合规成本斜率相关；若公司通过费率指数化或交付自动化稀释人力强度，存在改善可能，但当前公开信息不足以量化。</div>
       </div>
-      <div class="trend-card {{TREND3_DIRECTION}}">
+      <div class="trend-card up">
         <div class="trend-card-label">自由现金流趋势</div>
-        <div class="trend-card-text">{{TREND3_TEXT}}</div>
+        <div class="trend-card-text">资本开支维持低位使自由现金流随盈利同步改善；员工持股结构下，现金回报政策将影响留存比例与再投资节奏。</div>
       </div>
     </div>
   </div>
-  <!-- ===== END SECTION 2 ===== -->
 
-  <!-- ===== SECTION 3: 收入预测 ===== -->
   <div class="section" id="section-prediction">
     <div class="section-title">三、收入预测（宏观因子模型）</div>
 
     <div class="waterfall-meta">
-      φ（市场磨损因子）= {{PHI_VALUE}} &nbsp;|&nbsp; 置信度：{{CONFIDENCE_CN}} &nbsp;|&nbsp; 模型：宏观因子模型 v1.0 &nbsp;|&nbsp; 预测财年：{{PRED_FISCAL_YEAR}}
+      φ（市场磨损因子）= 0.5 &nbsp;|&nbsp; 置信度：低 &nbsp;|&nbsp; 模型：宏观因子模型 v1.0 &nbsp;|&nbsp; 预测财年：CY2026（示意）
     </div>
 
     <div class="waterfall-wrap">
       <svg id="chart-waterfall"></svg>
     </div>
 
-    <!-- 因子明细表 -->
     <table class="factor-table">
       <thead>
         <tr>
@@ -611,24 +610,26 @@ body {
         </tr>
       </thead>
       <tbody>
-        <!-- 格式：<tr><td>因子名</td><td>宏观变化</td><td>β</td><td>φ</td><td>调整幅度</td><td class="metric-up/down">正/负向</td></tr> -->
-        {{FACTOR_ROWS}}
+        <tr><td>Fed Funds Rate</td><td>+6.21</td><td>0.4</td><td>0.5</td><td>+1.24</td><td class="metric-up">正向</td></tr>
+        <tr><td>GDP Growth</td><td>+4.35</td><td>1.3</td><td>0.5</td><td>+2.83</td><td class="metric-up">正向</td></tr>
+        <tr><td>PCE Inflation</td><td>+8.00</td><td>-0.2</td><td>0.5</td><td>-0.80</td><td class="metric-down">负向</td></tr>
+        <tr><td>USD Index (DXY)</td><td>-1.92</td><td>-0.3</td><td>0.5</td><td>+0.29</td><td class="metric-up">正向</td></tr>
+        <tr><td>WTI Crude Oil</td><td>-10.87</td><td>-0.3</td><td>0.5</td><td>+1.63</td><td class="metric-up">正向</td></tr>
+        <tr><td>Consumer Confidence</td><td>+3.09</td><td>0.7</td><td>0.5</td><td>+1.08</td><td class="metric-up">正向</td></tr>
       </tbody>
     </table>
 
     <div class="disclaimer-box" style="margin-top:16px;">
-      预测数据为概率性估计，仅供参考，不构成投资建议。本报告中的收入预测基于宏观因子量化模型，使用行业敏感度系数（β）及市场磨损因子（φ = {{PHI_VALUE}}），结合公开宏观经济预测数据及公司特定情报生成。实际结果可能与预测存在重大差异。
+      预测数据为概率性估计，仅供参考，不构成投资建议。本报告中的收入预测基于宏观因子量化模型，使用行业敏感度系数（β）及市场磨损因子（φ = 0.5），结合公开宏观经济预测数据及公司特定情报生成。实际结果可能与预测存在重大差异。
     </div>
   </div>
-  <!-- ===== END SECTION 3 ===== -->
 
-  <!-- ===== SECTION 4: 收入流向分析 ===== -->
   <div class="section" id="section-sankey">
     <div class="section-title">四、收入流向分析（Sankey 桑基图）</div>
 
     <div class="tab-bar" id="sankey-tabs">
-      <div class="tab active" onclick="switchTab('sankey','actual',this)">{{SANKEY_YEAR_ACTUAL}} 实际</div>
-      <div class="tab"        onclick="switchTab('sankey','forecast',this)">{{SANKEY_YEAR_FORECAST}} 预测</div>
+      <div class="tab active" onclick="switchTab('sankey','actual',this)">2025 实际</div>
+      <div class="tab"        onclick="switchTab('sankey','forecast',this)">2026 预测</div>
     </div>
 
     <div class="tab-panel active" id="sankey-panel-actual">
@@ -642,11 +643,9 @@ body {
       </div>
     </div>
 
-    <p class="sankey-note">{{SANKEY_ANALYSIS_TEXT}}</p>
+    <p class="sankey-note">上图展示在估计利润表结构下，咨询费收入如何经由直接成本、销售与管理性费用及税费路径沉淀为净利润：公司成本结构以人力与专业服务为主，因而「管理费用」占比较高属合理现象。2026预测页基于约+12.3%的营收增速，对其他列科目采用同比等比例放大，用于压力测试情景展示；若未来出现显著自动化或外包结构变化，比例应重新校准。</p>
   </div>
-  <!-- ===== END SECTION 4 ===== -->
 
-  <!-- ===== SECTION 5: 波特五力分析 ===== -->
   <div class="section" id="section-porter">
     <div class="section-title">五、波特五力分析</div>
 
@@ -656,7 +655,6 @@ body {
       <div class="tab"        onclick="switchTab('porter','forward',this)">前景展望</div>
     </div>
 
-    <!-- Tab: 公司层面 -->
     <div class="tab-panel active" id="porter-panel-company">
       <div class="porter-wrap">
         <div>
@@ -664,16 +662,17 @@ body {
         </div>
         <div>
           <ul class="porter-scores" id="scores-company">
-            <!-- 5 行，顺序固定：供应商议价能力 / 买方议价能力 / 新进入者威胁 / 替代品威胁 / 行业竞争强度
-              格式：<li><span class="score-dot s{{分数}}">{{分数}}</span>{{力名称}}</li> -->
-            {{PORTER_COMPANY_SCORES}}
+            <li><span class="score-dot s2">2</span>供应商议价能力</li>
+            <li><span class="score-dot s3">3</span>买方议价能力</li>
+            <li><span class="score-dot s2">2</span>新进入者威胁</li>
+            <li><span class="score-dot s3">3</span>替代品威胁</li>
+            <li><span class="score-dot s4">4</span>行业竞争强度</li>
           </ul>
-          <div class="porter-text">{{PORTER_COMPANY_TEXT}}</div>
+          <div class="porter-text">LCG Associates 作为成立于1973年、总部亚特兰大并布局达拉斯的100%员工持股投资顾问，收入来源几乎全部为咨询费，且公开强调不收取管理人或经纪商的finder fee，冲突披露相对清晰。供应商维度，公司对高端人力与合规系统的依赖使关键Talent具备议价能力，但团队「资深、低流失」叙事有助于稳定交付质量。买方维度，客户集中于大型机构（养老金、基金会、企业与家族办公室），单笔合同价值高、关系周期长，亦意味着个别大客户议价与招标（RFP）事件对收入节奏有影响；事实清单披露约110家客户、逾千亿美元AUA，显示客单价与信任度较高但集中度需关注。新进入者方面，全国性品牌与受托研究能力构成壁垒，小型精品仍可在细分领域分流需求。替代品威胁来自内部投资团队、OCIO及自动化配置工具的渗透，尤其在标准化报告与监控环节。行业竞争强度较高，需与全国性大型顾问及同类中型精品同台竞标；Coalition Greenwich 等第三方评比中的 recognition 有助于差异化。整体看，公司定位偏「高质量中型精品」，护城河主要来自关系深度与独立受托形象，而非规模经济。</div>
         </div>
       </div>
     </div>
 
-    <!-- Tab: 行业层面 -->
     <div class="tab-panel" id="porter-panel-industry">
       <div class="porter-wrap">
         <div>
@@ -681,14 +680,17 @@ body {
         </div>
         <div>
           <ul class="porter-scores" id="scores-industry">
-            {{PORTER_INDUSTRY_SCORES}}
+            <li><span class="score-dot s3">3</span>供应商议价能力</li>
+            <li><span class="score-dot s3">3</span>买方议价能力</li>
+            <li><span class="score-dot s3">3</span>新进入者威胁</li>
+            <li><span class="score-dot s3">3</span>替代品威胁</li>
+            <li><span class="score-dot s4">4</span>行业竞争强度</li>
           </ul>
-          <div class="porter-text">{{PORTER_INDUSTRY_TEXT}}</div>
+          <div class="porter-text">美国机构投资咨询业呈现「头部规模化+长尾精品并存」结构：大型顾问具备更广数据库与全球经理覆盖，中型机构则以响应速度、定制化与高级别的合伙人参与度见长。上游「供应商」包含人才市场、数据供应商与合规科技厂商，近年薪酬与订阅费用上升抬高成本曲线。下游买方（资产所有者）议价能力总体偏高，但决策周期长、转换成本高，使实际价格竞争以项目制与成果导向费用呈现。新进入者需跨越牌照、受托义务、品牌信任与审计追踪等多重门槛，完全复制头部仍有难度，但在细分市场仍可出现挑战者。替代品维度，OCIO模式下外部顾问边界被重新定义；技术工具弱化部分低附加值分析报告需求。行业内竞争强度维持在高位：在机构费率承压与AUA增长不确定的环境下，顾问公司对存量客户深耕与交叉销售能力至关重要；监管披露与ESG整合也增加了服务复杂度与固定成本。</div>
         </div>
       </div>
     </div>
 
-    <!-- Tab: 前景展望 -->
     <div class="tab-panel" id="porter-panel-forward">
       <div class="porter-wrap">
         <div>
@@ -696,17 +698,19 @@ body {
         </div>
         <div>
           <ul class="porter-scores" id="scores-forward">
-            {{PORTER_FORWARD_SCORES}}
+            <li><span class="score-dot s3">3</span>供应商议价能力</li>
+            <li><span class="score-dot s4">4</span>买方议价能力</li>
+            <li><span class="score-dot s3">3</span>新进入者威胁</li>
+            <li><span class="score-dot s4">4</span>替代品威胁</li>
+            <li><span class="score-dot s4">4</span>行业竞争强度</li>
           </ul>
-          <div class="porter-text">{{PORTER_FORWARD_TEXT}}</div>
+          <div class="porter-text">未来2–3年，宏观利率与资本市场波动将继续影响机构客户的资助率与再平衡频率，从而对顾问的「项目强度」与加时需求产生周期性影响；若通胀与地缘冲击抬升股票市场波动，监控与压力测试类需求或反而上升。人才侧，跨资产类别（私募信贷、实物资产、风险预算）的专家竞争加剧，预计薪酬与招聘摩擦将温和抬高供应商议价。买方侧，费用透明化与外包边界审视（自建 vs OCIO vs 传统顾问）可能略强化机构客户的谈判地位。技术替代方面，生成式人工智能或压缩部分低阶研究与文案工作，但对高触达受托建议与客户治理仍难完全替代。竞争层面，并购整合与跨平台分销可能拉大头部与腰部差距；中型精品需以独立性与冲突管理作为差异化卖点，并在私市与负债驱动策略等高增长需求上建立标签。LCG 若持续在第三方客户满意度评比中保持前列，并控制关键人风险，则更有可能在行业洗牌中守住份额。</div>
         </div>
       </div>
     </div>
 
   </div>
-  <!-- ===== END SECTION 5 ===== -->
 
-  <!-- ===== SECTION 6: 附录 ===== -->
   <div class="section" id="section-appendix">
     <div class="section-title">附录</div>
 
@@ -714,7 +718,10 @@ body {
     <table class="appendix-table">
       <thead><tr><th>来源类型</th><th>具体来源</th><th>数据日期</th><th>置信度</th></tr></thead>
       <tbody>
-        {{APPENDIX_SOURCE_ROWS}}
+        <tr><td>公司官方</td><td>lcgassociates.com（简介、文化页、事实清单PDF）</td><td>截至2026-01</td><td>中高</td></tr>
+        <tr><td>行业第三方</td><td>Coalition Greenwich / Crisil 新闻稿与评选 methodology 描述</td><td>2024–2026</td><td>中</td></tr>
+        <tr><td>商业数据库</td><td>Growjo、Datanyze、CaseBasix 等营收/雇员估计（互有差异）</td><td>2026-04</td><td>低</td></tr>
+        <tr><td>宏观一致预期</td><td>FOMC SEP（2026-03）、IMF WEO/Article IV 对美国增速描述</td><td>2026-03至04</td><td>中</td></tr>
       </tbody>
     </table>
 
@@ -722,31 +729,24 @@ body {
     <div class="methodology-box">
       <strong>预测公式：</strong><br>
       预测营收增长率 = 基准增长率 + Σ（宏观因子变化% × β<sub>sector</sub> × φ）+ 公司特定调整项<br><br>
-      <strong>参数：</strong>φ = {{PHI_VALUE}}（市场磨损因子）| 置信度：{{CONFIDENCE_CN}}<br><br>
-      {{METHODOLOGY_DETAIL}}
+      <strong>参数：</strong>φ = 0.5（市场磨损因子）| 置信度：低<br><br>
+      本报告将公司映射至 GICS 体系中<strong> Industrials </strong>的默认β向量，以近似B2B专业服务对利率、增长、通胀与情绪的敏感度；非上市公司缺乏可验证的因子暴露回归结果，若需更高精度应在获得私募报表后以历史营收对宏观因子做回归并重估β。公司特定调整项合计约+0.5个百分点，主要来自第三方评选背书与客户AUA规模的定性映射。
     </div>
 
     <div class="disclaimer-box">
       <strong>免责声明：</strong>本报告由 Equity Research Skill 自动生成，仅供参考，不构成任何投资建议或要约。报告中的预测数据基于量化模型及公开信息，存在重大不确定性，实际结果可能与预测存在重大差异。投资者在做出任何投资决策前应自行进行独立研究，并充分了解相关风险。本报告的作者及生成工具不对任何基于本报告的投资损失承担责任。
     </div>
   </div>
-  <!-- ===== END SECTION 6 ===== -->
 
-</div><!-- end .container -->
+</div>
 
 <script>
-/* ============================================================
-   LOCKED JAVASCRIPT — COPY VERBATIM, ONLY REPLACE DATA VARIABLES
-   ============================================================ */
-
-// ---------- Theme Toggle ----------
 function toggleTheme() {
   const html = document.documentElement;
   html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
   redrawAllCharts();
 }
 
-// ---------- Tab Switcher ----------
 function switchTab(group, panelId, clickedTab) {
   document.querySelectorAll('#' + group + '-tabs .tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('[id^="' + group + '-panel-"]').forEach(p => p.classList.remove('active'));
@@ -754,62 +754,49 @@ function switchTab(group, panelId, clickedTab) {
   document.getElementById(group + '-panel-' + panelId).classList.add('active');
 }
 
-// ---------- Theme Colors Helper ----------
 function themeColor(lightVal, darkVal) {
   return document.documentElement.dataset.theme === 'dark' ? darkVal : lightVal;
 }
 
-// ============================================================
-// DATA VARIABLES — REPLACE ONLY THE VALUES BELOW THIS LINE
-// ============================================================
+const waterfallData = [
+  { label: "基准增长", start: 0, end: 5.5, value: 5.5, type: "baseline" },
+  { label: "宏观调整", start: 5.5, end: 11.769, value: 6.269, type: "positive" },
+  { label: "公司特定", start: 11.769, end: 12.269, value: 0.5, type: "positive" },
+  { label: "预测结果", start: 0, end: 12.269, value: 12.269, type: "result" }
+];
 
-// --- Waterfall Data ---
-// Each bar: { label, start, end, value, type }
-// type: "baseline" | "positive" | "negative" | "result"
-const waterfallData = {{WATERFALL_JS_DATA}};
-// Example:
-// [
-//   { label: "基准增长", start: 0,   end: 4.2,  value: 4.2,  type: "baseline"  },
-//   { label: "利率环境", start: 4.2, end: 7.8,  value: 3.6,  type: "positive"  },
-//   { label: "关税风险", start: 7.8, end: 6.1,  value: -1.7, type: "negative"  },
-//   { label: "公司特定", start: 6.1, end: 8.4,  value: 2.3,  type: "positive"  },
-//   { label: "预测结果", start: 0,   end: 8.4,  value: 8.4,  type: "result"    }
-// ]
-
-// --- Sankey Actual Data ---
-const sankeyActualData = {{SANKEY_ACTUAL_JS_DATA}};
-// Example:
-// {
-//   nodes: [
-//     {name:"营业收入"},{name:"营业成本"},{name:"毛利润"},
-//     {name:"销售费用"},{name:"管理费用"},{name:"研发费用"},
-//     {name:"营业利润"},{name:"税及其他"},{name:"净利润"}
-//   ],
-//   links: [
-//     {source:0,target:1,value:250.5},{source:0,target:2,value:480.3},
-//     {source:2,target:3,value:85.1},{source:2,target:4,value:62.4},
-//     {source:2,target:5,value:45.0},{source:2,target:6,value:287.8},
-//     {source:6,target:7,value:52.3},{source:6,target:8,value:235.5}
-//   ]
-// }
-
-// --- Sankey Forecast Data ---
-const sankeyForecastData = {{SANKEY_FORECAST_JS_DATA}};
-// Same structure as sankeyActualData
-
-// --- Porter Radar Data ---
-// Score order must be: [供应商议价能力, 买方议价能力, 新进入者威胁, 替代品威胁, 行业竞争强度]
-const porterScores = {
-  company:  {{PORTER_COMPANY_SCORES_ARRAY}},   // e.g. [3, 2, 4, 3, 4]
-  industry: {{PORTER_INDUSTRY_SCORES_ARRAY}},
-  forward:  {{PORTER_FORWARD_SCORES_ARRAY}}
+const sankeyActualData = {
+  nodes: [
+    {name:"营业收入"},{name:"营业成本"},{name:"毛利润"},
+    {name:"销售费用"},{name:"管理费用"},{name:"研发费用"},
+    {name:"营业利润"},{name:"税及其他"},{name:"净利润"}
+  ],
+  links: [
+    {source:0,target:1,value:6.69},{source:0,target:2,value:15.61},
+    {source:2,target:3,value:2.5},{source:2,target:4,value:10.5},{source:2,target:5,value:0.2},{source:2,target:6,value:2.41},
+    {source:6,target:7,value:0.51},{source:6,target:8,value:1.90}
+  ]
 };
 
-// ============================================================
-// CHART RENDERING — DO NOT MODIFY BELOW THIS LINE
-// ============================================================
+const sankeyForecastData = {
+  nodes: [
+    {name:"营业收入"},{name:"营业成本"},{name:"毛利润"},
+    {name:"销售费用"},{name:"管理费用"},{name:"研发费用"},
+    {name:"营业利润"},{name:"税及其他"},{name:"净利润"}
+  ],
+  links: [
+    {source:0,target:1,value:7.51},{source:0,target:2,value:17.53},
+    {source:2,target:3,value:2.81},{source:2,target:4,value:11.79},{source:2,target:5,value:0.23},{source:2,target:6,value:2.70},
+    {source:6,target:7,value:0.52},{source:6,target:8,value:2.18}
+  ]
+};
 
-// --- Waterfall Chart (D3) ---
+const porterScores = {
+  company:  [2, 3, 2, 3, 4],
+  industry: [3, 3, 3, 3, 4],
+  forward:  [3, 4, 3, 4, 4]
+};
+
 function drawWaterfall() {
   const el = document.getElementById('chart-waterfall');
   if (!el || !waterfallData.length) return;
@@ -845,19 +832,16 @@ function drawWaterfall() {
   const x = d3.scaleBand().domain(waterfallData.map(d => d.label)).range([0, innerW]).padding(0.35);
   const y = d3.scaleLinear().domain(yDomain).range([innerH, 0]);
 
-  // Grid
   g.append('g').attr('class', 'grid')
     .call(d3.axisLeft(y).tickSize(-innerW).tickFormat(''))
     .selectAll('line').attr('stroke', gridColor).attr('stroke-dasharray', '3,3');
   g.select('.grid .domain').remove();
 
-  // Zero line
   g.append('line')
     .attr('x1', 0).attr('x2', innerW)
     .attr('y1', y(0)).attr('y2', y(0))
     .attr('stroke', gridColor).attr('stroke-width', 1.5);
 
-  // Axes
   g.append('g').attr('transform', `translate(0,${innerH})`).call(d3.axisBottom(x))
     .selectAll('text').attr('fill', textColor).attr('font-size', 11)
     .attr('transform', 'rotate(-25)').attr('text-anchor', 'end');
@@ -866,7 +850,6 @@ function drawWaterfall() {
   g.selectAll('.domain').attr('stroke', gridColor);
   g.selectAll('.tick line').attr('stroke', gridColor);
 
-  // Y-axis label
   svg.append('text')
     .attr('transform', `rotate(-90)`)
     .attr('x', -(H / 2)).attr('y', 16)
@@ -874,7 +857,6 @@ function drawWaterfall() {
     .attr('fill', textColor).attr('font-size', 11)
     .text('增长率 (%)');
 
-  // Bars
   const tooltip = d3.select('body').select('#wf-tooltip').empty()
     ? d3.select('body').append('div').attr('id','wf-tooltip')
         .style('position','fixed').style('background','rgba(10,33,64,0.9)')
@@ -902,7 +884,6 @@ function drawWaterfall() {
       })
       .on('mouseout', () => tooltip.style('opacity', 0));
 
-    // Value label
     g.append('text')
       .attr('x', x(d.label) + x.bandwidth() / 2)
       .attr('y', barY - 4)
@@ -913,7 +894,6 @@ function drawWaterfall() {
   });
 }
 
-// --- Sankey Chart (D3) ---
 function drawSankey(containerId, data, colorScheme) {
   const el = document.getElementById(containerId);
   if (!el || !data || !data.nodes || !data.links) return;
@@ -943,7 +923,6 @@ function drawSankey(containerId, data, colorScheme) {
     .domain(graph.nodes.map(d => d.name))
     .range(colorScheme);
 
-  // Links
   svg.append('g').attr('fill', 'none')
     .selectAll('path')
     .data(graph.links).join('path')
@@ -954,7 +933,6 @@ function drawSankey(containerId, data, colorScheme) {
     .on('mouseover', function() { d3.select(this).attr('opacity', 0.75); })
     .on('mouseout',  function() { d3.select(this).attr('opacity', 0.45); });
 
-  // Nodes
   svg.append('g')
     .selectAll('rect')
     .data(graph.nodes).join('rect')
@@ -964,7 +942,6 @@ function drawSankey(containerId, data, colorScheme) {
     .attr('fill', d => color(d.name))
     .attr('rx', 2);
 
-  // Labels
   svg.append('g').style('font-size', '12px')
     .selectAll('text')
     .data(graph.nodes).join('text')
@@ -974,7 +951,7 @@ function drawSankey(containerId, data, colorScheme) {
     .attr('text-anchor', d => d.x0 < W / 2 ? 'start' : 'end')
     .attr('fill', textColor)
     .text(d => {
-      const val = d.value >= 1000 ? (d.value / 1000).toFixed(1) + 'bn' : d.value.toFixed(0) + 'm';
+      const val = d.value >= 1000 ? (d.value / 1000).toFixed(1) + 'bn' : d.value.toFixed(2) + 'm';
       return d.name + ' ' + val;
     });
 }
@@ -982,7 +959,6 @@ function drawSankey(containerId, data, colorScheme) {
 const SANKEY_COLORS_ACTUAL   = ['#2980b9','#c0392b','#1a8f5a','#d68910','#8e44ad','#16a085','#2c3e50','#e74c3c','#27ae60'];
 const SANKEY_COLORS_FORECAST = ['#3498db','#e74c3c','#2ecc71','#f39c12','#9b59b6','#1abc9c','#34495e','#c0392b','#27ae60'];
 
-// --- Radar Chart (Chart.js) ---
 let radarCharts = {};
 function drawRadar(canvasId, scores, label) {
   if (radarCharts[canvasId]) { radarCharts[canvasId].destroy(); }
@@ -1033,7 +1009,6 @@ function redrawAllCharts() {
   drawRadar('chart-radar-forward',  porterScores.forward,  '前景展望');
 }
 
-// Init on load
 document.addEventListener('DOMContentLoaded', () => {
   redrawAllCharts();
 });
@@ -1046,43 +1021,3 @@ window.addEventListener('resize', () => {
 
 </body>
 </html>
-```
-
----
-
-## 填充规则一览
-
-| 占位符 | 类型 | 说明 |
-|--------|------|------|
-| `{{COMPANY_NAME_CN}}` | 文字 | 页眉主标题用**简洁英文公司名**即可（如 **Meta Platforms**、Microsoft Corporation）。勿使用「英文名（中文副标题）」括注形式。正文仍可配合中文叙述需要写「又称……」等。 |
-| `{{COMPANY_NAME_EN}}` | 文字 | 公司英文全称 |
-| `{{TICKER}}` | 文字 | 股票代码，例如 PLAB |
-| `{{EXCHANGE}}` | 文字 | 交易所，例如 NASDAQ |
-| `{{SECTOR}}` | 文字 | 行业，例如 半导体 |
-| `{{REPORT_DATE}}` | 文字 | 报告日期，例如 2026年4月8日 |
-| `{{DATA_SOURCE}}` | 文字 | 数据来源描述 |
-| `{{RATING_CLASS}}` | class | `overweight` / `neutral` / `underweight` |
-| `{{RATING_CN}}` | 文字 | 增持 / 中性 / 减持 |
-| `{{KPI1_DIRECTION}}` 等 | class | `up` / `down` / `neutral-kpi` |
-| `{{KPI1_VALUE}}` | 文字 | 带单位数值，例如 "39.1亿美元" |
-| `{{KPI1_CHANGE}}` | 文字 | 同比变化，例如 "同比 +7.2%" |
-| `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>` |
-| `{{WATERFALL_JS_DATA}}` | JS Array | 见模板注释中的格式示例 |
-| `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
-| `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | 同上 |
-| `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
-| `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>` 含 score-dot |
-| `{{PORTER_COMPANY_TEXT}}` | HTML | 约300字波特五力分析正文 |
-| `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行 |
-| `{{APPENDIX_SOURCE_ROWS}}` | HTML | 数据来源表行 |
-| `{{PHI_VALUE}}` | 文字 | 通常为 0.5 |
-| `{{CONFIDENCE_CN}}` | 文字 | 高 / 中等 / 低 |
-| `{{METHODOLOGY_DETAIL}}` | 文字 | 具体β系数说明 |
-
-## 写作规范
-
-严格遵守 `references/report_style_guide_cn.md` 中的文风、数字格式和术语。核心要求：
-- 结论前置，有数字支撑
-- 归母净利润/自由现金流用中文惯用表达
-- 美股金额以"亿美元"为单位（大于100亿用"X,XXX亿美元"或"X.X万亿美元"）
-- 禁止口语化和感叹号

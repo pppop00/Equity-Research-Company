@@ -1,0 +1,69 @@
+{
+  "company": "Tesla, Inc.",
+  "sector": "Consumer Discretionary",
+  "data_freshness": "2026-04-08",
+  "company_events": [
+    {
+      "type": "software adoption",
+      "description": "截至 FY2025 年末，Tesla 官方披露 Active FSD Subscriptions 为 1.1 million，同比由 0.8 million 增长 38%；该指标同时包含一次性买断与月订阅，并排除 free trials。",
+      "revenue_impact_pct": 0.8,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "Tesla Q4/FY2025 Update，2026-01-28。"
+    },
+    {
+      "type": "pricing / monetization",
+      "description": "Tesla 支持页面当前显示 FSD (Supervised) 月订阅价为 99 美元；Reuters 于 2026-01-14 报道 Musk 表示 2 月 14 日后将仅保留订阅模式，此举有助于强化软件收入的经常性特征。",
+      "revenue_impact_pct": 0.4,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "Tesla Support；Reuters，2026-01-14。"
+    },
+    {
+      "type": "autonomy platform",
+      "description": "Tesla 在 2025 年 6 月推出 Robotaxi 服务，并在 2026 年 1 月开始在 Austin 移除安全员，说明公司正试图把 FSD 从消费者软件包扩展为 fleet-based 业务模型。",
+      "revenue_impact_pct": 0.5,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "Tesla 2025 Form 10-K；Q4/FY2025 Update。"
+    },
+    {
+      "type": "delivery miss",
+      "description": "2026-04-02 披露的 Q1 2026 交付量为 358,023 辆，而产量为 408,386 辆，单季产销缺口逾 5 万辆，显示整车业务短期需求承压。",
+      "revenue_impact_pct": -2.0,
+      "impact_direction": "negative",
+      "confidence": "high",
+      "source": "Tesla Q1 2026 Production, Deliveries & Deployments，2026-04-02。"
+    },
+    {
+      "type": "policy headwind",
+      "description": "Reuters 报道美国 EV 税收抵免取消后，行业需求在 2026 年初转弱，Tesla 同时面临 BYD 等中国品牌竞争与欧洲份额压力。",
+      "revenue_impact_pct": -0.7,
+      "impact_direction": "negative",
+      "confidence": "medium",
+      "source": "Reuters，2026-01-02、2026-04-01、2026-04-02。"
+    }
+  ],
+  "company_specific_adjustment_pct": -1.0,
+  "industry_dynamics": {
+    "supplier_power": "中等。电池原材料、AI 算力、关键芯片与制造设备仍具一定议价力，但 Tesla 通过垂直整合、自研与规模采购降低了单一供应商掣肘。",
+    "buyer_power": "中高。消费者对价格、续航、补能、品牌和残值高度敏感；在补贴退坡后，终端用户的价格弹性显著上升。",
+    "new_entrants": "中高。传统车企、中文车企和新势力都在推出竞争产品，虽然规模门槛高，但成熟供应链使新增车型进入市场的速度加快。",
+    "substitutes": "中等。混动、燃油车以及越来越成熟的高级辅助驾驶方案都在分流纯电与 FSD 的需求。",
+    "rivalry": "高。全球 EV 行业竞争已从“渗透率红利”转向“价格、产品更新和软件体验”的综合竞争。"
+  },
+  "forward_looking": {
+    "supplier_power": "预计上升。若 Tesla 在 2026 年大幅扩张 AI 数据中心与机器人产线，算力和高端设备需求会抬升上游议价。",
+    "buyer_power": "维持中高。FSD 订阅化虽提升 ARPU 潜力，但也让消费者更容易根据体验按月停开。",
+    "new_entrants": "维持中高。中国品牌在欧洲和新兴市场的推进，叠加传统 OEM 的软件升级，会持续压缩 Tesla 的差异化空间。",
+    "substitutes": "上升。若竞争对手 ADAS 体验接近 FSD Supervised，Tesla 软件溢价可能被部分削弱。",
+    "rivalry": "维持高位。2026 年的行业主线将是销量承压下的价格战与 AI 叙事并行。"
+  },
+  "key_analyst_views": [
+    "Tesla 的汽车基本面在 FY2025 明显承压，但市场仍对 Robotaxi、FSD 与 Optimus 赋予高期权价值。",
+    "截至 2026-04-08，Q1 2026 财报尚未发布，市场短期焦点集中在交付疲弱是否会继续侵蚀盈利。"
+  ],
+  "notes": [
+    "关于 FSD 订阅数量，Tesla 已在 FY2025 Update 中给出明确定义与数值，但未拆分月订阅与一次性买断的具体占比。"
+  ]
+}

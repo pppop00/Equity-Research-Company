@@ -1,0 +1,68 @@
+{
+  "profitability": {
+    "gross_margin_current": 70.0,
+    "gross_margin_prior": 70.0,
+    "operating_margin_current": 10.8,
+    "operating_margin_prior": 10.8,
+    "net_margin_current": 8.52,
+    "net_margin_prior": 8.74,
+    "roe_current": 21.6,
+    "roa_current": 11.5,
+    "ebitda_current": 2.55,
+    "ebitda_margin_current": 11.4,
+    "ebitda_note": "D&A 按约 0.14M 估算（轻资产+少量资本化软件）"
+  },
+  "growth": {
+    "revenue_growth_yoy_pct": 8.25,
+    "net_income_growth_yoy_pct": 5.56,
+    "eps_growth_yoy_pct": 5.56,
+    "gross_profit_growth_yoy_pct": 8.25
+  },
+  "cash_flow": {
+    "free_cash_flow": 2.65,
+    "free_cash_flow_prior": 2.45,
+    "fcf_margin_pct": 11.88,
+    "fcf_conversion_pct": 139.5,
+    "capex_intensity_pct": 2.02
+  },
+  "leverage": {
+    "debt_equity_ratio": 0.239,
+    "net_debt": -2.1,
+    "net_debt_ebitda": -0.82,
+    "interest_coverage_ratio": 48.2
+  },
+  "valuation": {
+    "stock_price": null,
+    "pe_ratio": null,
+    "market_cap": null,
+    "ev": null,
+    "ev_ebitda": null,
+    "note": "非上市企业，无公开股价及一致预期"
+  },
+  "balance_sheet_ratios": {
+    "asset_liability_ratio_pct": 46.7,
+    "asset_liability_note": "资产负债率 = 总负债 / 总资产 = 7.7 / 16.5"
+  },
+  "trends": {
+    "net_income": {
+      "label": "↑ Increasing",
+      "class": "positive",
+      "analysis": "在模拟口径下，归母净利润由约180万美元升至约190万美元，同比约+5.6%，与第三方披露的营收中个位数增长区间一致；驱动力主要来自机构咨询与退休计划相关费用的稳健需求，而非一次性收益。"
+    },
+    "net_margin": {
+      "label": "↓ Decreasing",
+      "class": "negative",
+      "analysis": "净利率从约8.7%略降至约8.5%，反映人才与合规科技等运营成本上升速度略快于收入；因数据为估计值，幅度需以管理层实际报表为准。"
+    },
+    "fcf": {
+      "label": "↑ Increasing",
+      "class": "positive",
+      "analysis": "经营现金流在轻资产模式下维持稳健，资本开支有限，使自由现金流从约245万美元升至约265万美元，现金创造力支持员工持股结构下的分红或再投资。"
+    }
+  },
+  "unit": "millions USD",
+  "notes": [
+    "EPS 按假设完全稀释100万股模拟，仅用于同比展示；实际股权结构未公开。",
+    "利息费用极低，利息保障倍数在估计口径下显著偏高。"
+  ]
+}

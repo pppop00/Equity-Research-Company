@@ -1,0 +1,29 @@
+{
+  "company": "Meta Platforms, Inc.",
+  "sector": "通信服务",
+  "data_freshness": "2026-04-08",
+  "company_events": [
+    {
+      "type": "guidance",
+      "description": "管理层指引 2026 财季资本开支约 1,150–1,350 亿美元，显著高于 2025 年水平，AI 基础设施与 Meta Superintelligence Labs 投入将拖累短期自由现金流表现。",
+      "revenue_impact_pct": -0.35
+    },
+    {
+      "type": "growth",
+      "description": "广告展示量与广告均价双升，Family of Apps 变现效率改善，Q1 2026 收入指引区间强于部分市场预期。",
+      "revenue_impact_pct": 0.55
+    },
+    {
+      "type": "regulatory",
+      "description": "欧盟等地区在隐私、未成年人保护与「个性化广告」产品形态上持续合规成本；长期为结构性费率与产品改造支出。",
+      "revenue_impact_pct": -0.25
+    },
+    {
+      "type": "ai_product",
+      "description": "生成式 AI 融入广告创意与投放，有望提升广告主 ROI 与平台 ARPU，但短期折旧与算力刚性成本上升。",
+      "revenue_impact_pct": 0.45
+    }
+  ],
+  "narrative_summary": "主线仍是「广告周期 + AI Capex 陡峭化 + 监管合规」三重叙事：收入端受益于展示量/价格与 Reels 等产品渗透；成本端则面临折旧、电力与人才竞争。Reality Labs 亏损绝对额仍高但管理层指引 2026 年为亏损峰值年之一，有助于稳定分部预期差。",
+  "overall_sentiment": "中性偏乐观"
+}

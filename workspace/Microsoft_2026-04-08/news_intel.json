@@ -1,0 +1,53 @@
+{
+  "company": "Microsoft Corporation",
+  "sector": "Technology",
+  "data_freshness": "2026-04-08",
+  "company_events": [
+    {
+      "type": "demand / backlog",
+      "description": "FY2026 Q2 商业剩余履约义务（RPO）约 6,250 亿美元，同比约 +110%，显示多年期云与 AI 合同能见度抬升。",
+      "revenue_impact_pct": 0.5,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "Microsoft FY26 Q2 earnings release（2026-01-28）"
+    },
+    {
+      "type": "growth normalization / sentiment",
+      "description": "Azure 与其他云服务收入增速指引与结果仍高，但市场担忧增速「略低于最乐观 whisper」可能引发估值倍数波动，对短期订单节奏存在情绪冲击。",
+      "revenue_impact_pct": -0.2,
+      "impact_direction": "negative",
+      "confidence": "medium",
+      "source": "CNBC、Perplexity Finance 等对 FY26 Q2 后股价反应的综述"
+    },
+    {
+      "type": "investment / accounting",
+      "description": "GAAP 净利含 OpenAI 相关权益法/投资价值变动（季度间波动大）；对营收无直接增量，但影响 EPS 与市场对「质量盈利」的判断。",
+      "revenue_impact_pct": 0,
+      "impact_direction": "neutral",
+      "confidence": "high",
+      "source": "公司财报脚注与新闻稿 Non-GAAP 调节说明"
+    }
+  ],
+  "company_specific_adjustment_pct": 0.3,
+  "industry_dynamics": {
+    "supplier_power": "中等偏强。先进算力芯片（如 GPU）、电力与数据中心本地要素供应集中，云巨头资本开支竞赛强化上游议价。",
+    "buyer_power": "中低。企业客户对 M365/Azure 粘性高、迁移成本高，但大型客户议价与多年合同折扣仍显著。",
+    "new_entrants": "中低。基础云与操作系统生态壁垒极高，新进入者难以复制全球分销与合规认证组合；细分 SaaS 仍碎片化。",
+    "substitutes": "中等。开源模型栈、多云与「自建算力」构成替代路径；在应用层 Copilot 竞品增多。",
+    "rivalry": "高。与 AWS、Google Cloud 及横向软件平台的角力持续，AI capex 军备竞赛抬高行业固定成本。"
+  },
+  "forward_looking": {
+    "supplier_power": "预计上升：AI 训练/推理需求争夺先进产能与能源接入。",
+    "buyer_power": "略升：宏观环境下企业 IT 预算更审慎，审查 ROIC 与云成本优化项目。",
+    "new_entrants": "基本持平：底座仍垄断，应用层创新者继续涌现。",
+    "substitutes": "上升：开源与企业自建推理栈降低部分工作负载的供应商锁定。",
+    "rivalry": "维持高位：模型能力差距收敛推升产品迭代与价格/性能竞争。"
+  },
+  "key_analyst_views": [
+    "MarketWatch / 卖方汇编：一致预期「买入」，目标价区间约 530–730 美元，均值约 590–595 美元（2026年3月引用）。",
+    "卖方普遍将 MSFT 视为 AI 货币化与云份额的核心受益者，但对 capex 折旧曲线与 Azure 斜率敏感。"
+  ],
+  "notes": [
+    "监管（反垄断、数据主权）与地缘政策可能改变区域市场增速，本报告未单独量化入模型。"
+  ]
+}

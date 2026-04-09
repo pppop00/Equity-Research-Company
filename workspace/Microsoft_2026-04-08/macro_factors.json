@@ -1,0 +1,80 @@
+{
+  "company": "Microsoft Corporation",
+  "sector": "Technology",
+  "phi": 0.5,
+  "beta_source": "default",
+  "data_freshness": "2026-04-08",
+  "factors": [
+    {
+      "name": "Fed Funds Rate",
+      "current_value": 3.625,
+      "forecast_value": 3.4,
+      "factor_change_pct": 6.21,
+      "beta": 0.3,
+      "phi": 0.5,
+      "adjustment_pct": 0.932,
+      "unit": "percent level",
+      "source": "FOMC SEP Mar 2026; 当前目标区间 3.50–3.75%"
+    },
+    {
+      "name": "GDP Growth",
+      "current_value": 2.3,
+      "forecast_value": 2.4,
+      "factor_change_pct": 4.348,
+      "beta": 1.2,
+      "phi": 0.5,
+      "adjustment_pct": 2.609,
+      "unit": "percent YoY",
+      "source": "FOMC / IMF 对美国 2026 增速约 2.4% 的一致预期区"
+    },
+    {
+      "name": "PCE Inflation",
+      "current_value": 2.5,
+      "forecast_value": 2.7,
+      "factor_change_pct": 8.0,
+      "beta": -0.2,
+      "phi": 0.5,
+      "adjustment_pct": -0.8,
+      "unit": "percent YoY",
+      "source": "FOMC 2026 年 PCE 预测上修至约 2.7%"
+    },
+    {
+      "name": "USD Index (DXY)",
+      "current_value": 104,
+      "forecast_value": 102,
+      "factor_change_pct": -1.923,
+      "beta": -0.4,
+      "phi": 0.5,
+      "adjustment_pct": 0.385,
+      "unit": "index level",
+      "source": "美元指数边际走弱情景假设"
+    },
+    {
+      "name": "WTI Crude Oil",
+      "current_value": 92,
+      "forecast_value": 82,
+      "factor_change_pct": -10.87,
+      "beta": -0.1,
+      "phi": 0.5,
+      "adjustment_pct": 0.544,
+      "unit": "USD/bbl",
+      "source": "能源价格路径情景（2026 年温和回落）"
+    },
+    {
+      "name": "Consumer Confidence",
+      "current_value": 97,
+      "forecast_value": 100,
+      "factor_change_pct": 3.093,
+      "beta": 0.5,
+      "phi": 0.5,
+      "adjustment_pct": 0.773,
+      "unit": "index level",
+      "source": "消费者信心温和修复假设"
+    }
+  ],
+  "total_macro_adjustment_pct": 4.443,
+  "notes": [
+    "β 取自 references/prediction_factors.md 的 Technology 行。",
+    "利率因子变化率口径与 skill 示例一致：(当前政策利率中点−年终预测中点)/|当前|×100。"
+  ]
+}

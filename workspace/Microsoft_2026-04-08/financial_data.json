@@ -1,0 +1,95 @@
+{
+  "company": "Microsoft Corporation",
+  "ticker": "MSFT",
+  "sector": "Technology",
+  "sub_industry": "Systems Software / Cloud & AI Platforms",
+  "fiscal_year": "FY2025",
+  "fiscal_year_end": "2025-06-30",
+  "prior_fiscal_year": "FY2024",
+  "currency": "USD",
+  "data_source": "web search (10-K FY2025, earnings releases)",
+  "data_confidence": "high",
+  "income_statement": {
+    "current_year": {
+      "label": "FY2025",
+      "revenue": 281724,
+      "cogs": 87831,
+      "gross_profit": 193893,
+      "rd_expense": 32488,
+      "sm_expense": 25654,
+      "ga_expense": 7223,
+      "total_opex": 65365,
+      "operating_income": 128528,
+      "interest_expense": 2385,
+      "pretax_income": 123627,
+      "income_tax": 21795,
+      "net_income": 101832,
+      "diluted_eps": 13.64,
+      "diluted_shares": 7466
+    },
+    "prior_year": {
+      "label": "FY2024",
+      "revenue": 245122,
+      "cogs": 74114,
+      "gross_profit": 171008,
+      "rd_expense": 29510,
+      "sm_expense": 24456,
+      "ga_expense": 7609,
+      "total_opex": 61575,
+      "operating_income": 109433,
+      "interest_expense": 2935,
+      "pretax_income": 107787,
+      "income_tax": 19651,
+      "net_income": 88136,
+      "diluted_eps": 11.8,
+      "diluted_shares": 7469
+    },
+    "unit": "millions USD"
+  },
+  "balance_sheet": {
+    "label": "2025-06-30",
+    "cash_and_equivalents": 30242,
+    "short_term_investments": 64323,
+    "total_assets": 619003,
+    "total_debt": 79800,
+    "total_equity": 343479,
+    "shares_outstanding": 7433,
+    "unit": "millions USD"
+  },
+  "cash_flow": {
+    "label": "FY2025",
+    "operating_cash_flow": 136162,
+    "capex": -64551,
+    "free_cash_flow": 71611,
+    "unit": "millions USD"
+  },
+  "segment_data": [
+    {"name": "Productivity and Business Processes", "revenue": 88054, "pct_of_total": 31.3},
+    {"name": "Intelligent Cloud", "revenue": 107138, "pct_of_total": 38.0},
+    {"name": "More Personal Computing", "revenue": 86532, "pct_of_total": 30.7}
+  ],
+  "recent_quarter": {
+    "period": "FY2026 Q2 截至 2025-12-31（2026-01-28 披露）",
+    "revenue": 81273,
+    "revenue_yoy_pct": 16.7,
+    "microsoft_cloud_revenue": 51500,
+    "microsoft_cloud_yoy_pct": 26,
+    "commercial_rpo_billions": 625,
+    "rpo_yoy_pct": 110,
+    "eps_diluted_gaap": 5.16,
+    "eps_diluted_adjusted": 4.14,
+    "note": "GAAP 净利受 OpenAI 相关投资收益影响；管理层强调以非 GAAP EPS 观察经营趋势。"
+  },
+  "stock_data": {
+    "price_ref_usd": 385,
+    "ref_note": "2026年3–4月间多来源现价区间约 374–405 美元，取中间值用于估值示例",
+    "forward_eps_consensus": 17.2,
+    "fy2026_revenue_consensus_billions": 327.8
+  },
+  "notes": [
+    "FY2025 营收、毛利、营业利润、净利润来自公司年报/新闻稿与 10-K 口径（June 30, 2025）。",
+    "管理费用为「营业费用合计 − 研发 − 销售与市场」推算，以与报表合计一致。",
+    "资本开支采用现金流量表中 property and equipment 增量口径（FY2025 显著高于 FY2024，以扩容 AI/云基础设施）。",
+    "FY2026 Q2 及 RPO 数据来自 FY26 Q2 earnings release。"
+  ]
+}

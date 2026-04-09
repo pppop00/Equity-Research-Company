@@ -1,0 +1,37 @@
+{
+  "company": "Tesla, Inc.",
+  "baseline_growth_pct": 9.83,
+  "baseline_note": "基准增速采用 Tesla IR 2026 年收入一致预期 104,148 百万美元，相对 FY2025 实际 94,827 百万美元隐含同比约 +9.83%。",
+  "macro_adjustments": [
+    {
+      "factor": "Fed Funds Rate",
+      "adjustment_pct": 1.208
+    },
+    {
+      "factor": "GDP Growth",
+      "adjustment_pct": 4.091
+    },
+    {
+      "factor": "PCE Inflation",
+      "adjustment_pct": 0.446
+    },
+    {
+      "factor": "USD Index (DXY)",
+      "adjustment_pct": 0.036
+    },
+    {
+      "factor": "WTI Crude Oil",
+      "adjustment_pct": 0.616
+    },
+    {
+      "factor": "Consumer Confidence",
+      "adjustment_pct": 0.393
+    }
+  ],
+  "total_macro_adjustment_pct": 6.79,
+  "company_specific_adjustment_pct": -1.0,
+  "predicted_revenue_growth_pct": 15.62,
+  "phi": 0.5,
+  "confidence": "medium",
+  "formula_note": "9.83 + 6.79 - 1.00 = 15.62；由于一致预期本身已部分吸收宏观因素，结果更适合作为乐观情景上沿。"
+}

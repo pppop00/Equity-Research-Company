@@ -1,0 +1,21 @@
+{
+  "company": "Meta Platforms, Inc.",
+  "sector_beta_row": "Communication Services",
+  "phi": 0.5,
+  "baseline_revenue_growth_pct": 14.0,
+  "baseline_note": "卖方与业绩会隐含：在 2025 年约 +22% 高基数后，2026 年收入增速或向 mid-teens 回落但仍高于成熟平台历史均值；此处取 14% 作为基准情景。",
+  "macro_adjustments": [
+    {"factor": "联邦基金利率", "macro_change_pct": 6.21, "beta": 0.2, "phi": 0.5, "adjustment_pct": 0.62},
+    {"factor": "美国实际GDP增速", "macro_change_pct": 4.35, "beta": 1.0, "phi": 0.5, "adjustment_pct": 2.17},
+    {"factor": "核心PCE通胀", "macro_change_pct": 8.4, "beta": -0.1, "phi": 0.5, "adjustment_pct": -0.42},
+    {"factor": "美元指数DXY", "macro_change_pct": -1.92, "beta": -0.2, "phi": 0.5, "adjustment_pct": 0.19},
+    {"factor": "WTI原油价格", "macro_change_pct": -10.87, "beta": 0.0, "phi": 0.5, "adjustment_pct": 0.0},
+    {"factor": "消费者信心指数", "macro_change_pct": 3.09, "beta": 0.8, "phi": 0.5, "adjustment_pct": 1.24}
+  ],
+  "macro_subtotal_pct": 3.8,
+  "company_specific_adjustment_pct": 0.4,
+  "company_specific_note": "新闻情报中四项事件净影响约 +0.4pct（四舍五入）。",
+  "predicted_revenue_growth_pct": 18.2,
+  "confidence": "medium",
+  "predicted_fiscal_year_label": "FY2026E"
+}
