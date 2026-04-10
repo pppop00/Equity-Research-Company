@@ -126,6 +126,20 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 
 ---
 
+### ✅ 9. 分地区 / 分业务列举与 `segment_data` 格式对称（占比不得半途而废）
+
+**适用：** `financial_data.json` 中存在非空 `segment_data`，且 HTML 正文里有一段**连续分项列举**这些业务线或地区的收入/净营收（常见：`class="trend-card-text"`、章节小标题下的首段、脚注前的分项句；英文如 “by region:”, “segment revenue:”）。
+
+**检查规则：**
+
+1. **混用格式 → 须修复：** 若该列举中**至少一项**带有占总额的百分比（中文如 `（约 10.5%）`、`（10%）`；英文如 `(~10.5%)`、`(≈10% of total)`、`(x% of net revenue)`），则**同一句/同一段列举内**、且在 `segment_data` 中有对应数字的**每一项**，都必须带有**同类**占比表述。禁止出现「前三项带（约 x%）、后几项只写绝对额」这类不对称写法。
+2. **数值对齐 JSON：** 文中的占比应与 `segment_data[].pct_of_total` 一致；若某条 JSON 缺 `pct_of_total`，应用 `revenue` 与总收入（如 `income_statement.current_year.revenue` 或与各 `segment_data.revenue` 之和）自行核算后再写入，并在列举中补全，或**整段**改为仅列绝对额（全段都不写占比）。
+3. **仅金额、无占比：** 若对 `segment_data` 对应列举**全程**不写任何占比，仅列金额与名称 → PASS。
+
+**失败条件：** 违反规则 1 或 2 → **WARNING**（视为交付前必改项：修正 HTML 叙述使其与 `financial_data.json` 对称一致；必要时同步 `financial_analysis.json` 等中间产出）。
+
+---
+
 ## 输出格式
 
 输出结构化校验报告，格式如下：
@@ -164,6 +178,10 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 --- 8. 数字格式 ---
 [PASS] 抽查5个数字，无NaN/undefined，格式规范 ✓
 
+--- 9. 分地区/分业务列举与 segment_data ---
+[PASS] 无 segment_data，或列举格式对称 ✓
+（或）[WARNING] 列举中部分分项带占比、部分不带 → 须补全或与 JSON 对齐后再交付
+
 === 总结 ===
 CRITICAL 错误：0
 WARNING  警告：1
@@ -173,7 +191,7 @@ WARNING  警告：1
 ## 处理逻辑
 
 - 若有 **CRITICAL** 错误：输出报告后，**立即修复 HTML 文件**，修复后重新运行验证直到0个CRITICAL为止。
-- 若只有 **WARNING**：输出报告，提示 orchestrator 人工核查，不阻止流程。
+- 若只有 **WARNING**：输出报告，提示 orchestrator 人工核查。若 WARNING 含 **第 9 项（分地区/分业务格式对称）**，须在最终交付用户前修正 HTML（及与之绑定的 JSON 叙述），勿留「部分有占比、部分无」的半成品句。
 - 若全部 PASS：输出报告，告知 orchestrator 报告质检通过。
 
 ## 修复优先级
@@ -184,3 +202,4 @@ WARNING  警告：1
 3. 图表数据格式错误 → 修正 JS 数据变量
 4. KPI 卡片数量/class 错误 → 修正 HTML
 5. score-dot 与数组不符 → 同步修正 HTML 和 JS
+6. 第 9 项：不对称的分项占比叙述 → 按 `segment_data` 补全括号内占比或整段改为仅金额

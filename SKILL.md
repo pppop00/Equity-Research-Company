@@ -233,7 +233,8 @@ Then fill **only** placeholders and save as `{Company}_Research_EN.html`.
 - `financial_data.json`  
 - `prediction_waterfall.json`  
 
-Run all checks; fix CRITICAL issues until zero remain.
+Run all checks; fix CRITICAL issues until zero remain.  
+Treat **checklist item 9** in `agents/report_validator.md` (segment/region list must use percentages consistently with `segment_data`, or use amounts only for all items) as a **pre-delivery** fix: do not ship HTML with mixed formats.
 
 ---
 
