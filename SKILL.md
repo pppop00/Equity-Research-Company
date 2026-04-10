@@ -95,6 +95,26 @@ Pass **`Report calendar year: {Y_cal}`** (and **`Report date: {YYYY-MM-DD}`** if
 
 ---
 
+## Step 0D: Primary operating geography — **for macro factor model (mandatory before Agent 2)**
+
+The Phase 2.5 macro table and Section III must use **macro indicators from the region where the company earns most of its revenue** (or the region that drives the investment thesis), not a blind default to US series.
+
+1. **Set `primary_operating_geography`** to one of: **`US`** | **`Greater_China`** | **`Eurozone`** | **`Japan`** | **`UK`** | **`Emerging_Asia_ex_China`** | **`Global_other`** (use only when revenue is genuinely split; see `references/prediction_factors.md`).
+
+2. **How to decide (in order):**  
+   - User explicitly states the main market (e.g. “主业在中国”).  
+   - **Uploaded filings:** take the **largest** revenue share from geographic / segment disclosure (MD&A).  
+   - Else **one quick web search** (or listing context): e.g. HKEX / 沪深 main listing + “revenue by region” / “largest market”.  
+   - If still unclear: default **`US`** for a **US-incorporated, US-market-centric** name; for **known China/HK-heavy** names (e.g. major HK-listed CN internet), prefer **`Greater_China`**.
+
+3. **Pass into Agent 2** every time:  
+   `Primary operating geography: {value}`  
+   Agent 2 loads **the same β row** from `references/prediction_factors.md` but swaps **which country’s series** fill the six factor **slots** (policy rate, GDP, CPI-type inflation, FX, oil, consumer confidence) — see regional mapping in that file. **Display names** in `macro_factors.json` → `factors[].name` (and thus the HTML factor table) must match the chosen geography (e.g. **中国消费者信心** vs **US Consumer Confidence**).
+
+4. **After `financial_data.json` exists** (post–Phase 1): if **geographic revenue** clearly contradicts Step 0D, adjust the **macro narrative and `macro_factors.json` geography fields** in Phase 2 / 2.5 so Section III is consistent with Section II (or add a one-line note explaining HQ vs revenue mix).
+
+---
+
 ## Phase 1 + 2 (Macro) + 3 (News): Parallel data collection
 
 Spawn or run Agents 1–3. **Each task prompt must include `Report language: {en|zh}`.**
@@ -120,6 +140,7 @@ Follow agents/financial_data_collector.md
 ```
 Report language: {en|zh}
 Company: {company_name}
+Primary operating geography: {US|Greater_China|Eurozone|Japan|UK|Emerging_Asia_ex_China|Global_other}
 Sector hint: {infer or ask user}
 Reference: references/prediction_factors.md
 Output path: workspace/{Company}_{Date}/macro_factors.json
@@ -146,7 +167,7 @@ Follow agents/news_researcher.md
 
 Read `financial_data.json`; compute metrics per `references/financial_metrics.md`.  
 **Fiscal year labels (“当年 / 上年”, KPI 财年, `METRICS_YEAR_CUR` / `METRICS_YEAR_PREV`):** Must match **`income_statement.current_year`** and **`prior_year`** as fixed by **Step 0C** (latest **published** full-year pair; default target **`FY(Y_cal − 1)`** vs **`FY(Y_cal − 2)`** when that annual exists). **YoY / 同比** is always those two **consecutive** full fiscal years in the JSON. If only interim (e.g. 9M) exists for the newest year, either keep the table on the last two **full** fiscal years with a **`notes[]`** lag explanation per Step 0C, or add a clearly labeled “最近中期 vs 上年同期” block — do not mix without stating it.
-**Geographic revenue (Section II, fourth trend-card):** Write **`geographic_revenue.analysis`** for **`{{GEO_REVENUE_TEXT}}`** only — regional net revenue amounts, share of total, and growth/concentration **from filings / `financial_data.json`**. **Do not** discuss FX, currency translation, hedging, or DXY in this block (those belong in Section III / macro narrative). See `references/financial_metrics.md`.  
+**Geographic revenue (Section II, fourth trend-card):** Fill **`geographic_revenue.analysis`** → **`{{GEO_REVENUE_TEXT}}`** from filings / `financial_data.json` (regional amounts, shares, growth, concentration as disclosed). Rules: **`references/financial_metrics.md`** (Geographic revenue mix) — keep the **card text factual**; do not add meta-lines like “this card does not discuss FX.”  
 **Evidence gate for narrative claims:** Any valuation statement in summary / thesis / appendix (e.g. “估值处于历史低位”, target price, upside/downside, cheap/expensive vs history/peers) must be backed by non-null fields in `financial_analysis.json` → `valuation` or by explicitly cited market-data sources in the appendix. If valuation fields are unavailable, remove the valuation claim instead of hand-waving it. Likewise, do not present a live-market conclusion as fact when the underlying market-data fields are `null`.
 **HTML narrative (no Markdown):** All strings that fill `{{SUMMARY_PARA_*}}`, `{{TREND*_TEXT}}`, `{{GEO_REVENUE_TEXT}}`, thesis, Sankey note, etc. must be **plain text** — do **not** use `**` / `*` / backticks; the template does not run a Markdown processor. See `references/report_style_guide_cn.md` or `report_style_guide_en.md` and `agents/report_writer_*.md`.  
 **If `report_language=en`:** all free-text fields in `financial_analysis.json` must be **English**.  
@@ -159,6 +180,7 @@ Save `workspace/{Company}_{Date}/financial_analysis.json`.
 ## Phase 2.5: Revenue prediction (macro factor model)
 
 Same formula as `references/prediction_factors.md`.  
+**Macro geography:** Copy factor **labels and ordering** from `macro_factors.json` (which must already follow **Step 0D** + `agents/macro_scanner.md`). Do not reintroduce US-only names if `primary_operating_geography` is **`Greater_China`** or another non-US region.  
 **Forecast horizon label:** Set **`predicted_fiscal_year_label`** to **`FY(latest_actual + 1)E`** where **`latest_actual`** is the fiscal year in `financial_data.json` → **`income_statement.current_year`** (e.g. FY2025 actual → **FY2026E**). This must match the Sankey **forecast** tab (Step 0C §4). Only use a later year (e.g. FY2027E) if you deliberately extend the horizon and keep **Sankey + waterfall + appendix** consistent.  
 **If `en`:** use English for factor display names in `prediction_waterfall.json` where they are meant for the HTML table; numeric fields unchanged.
 

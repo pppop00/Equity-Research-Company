@@ -1,0 +1,22 @@
+{
+  "company": "Alibaba",
+  "primary_operating_geography": "Greater_China",
+  "sector_beta_row": "Consumer Discretionary",
+  "phi": 0.5,
+  "baseline_revenue_growth_pct": 9.0,
+  "baseline_note": "FY2025 营收同比 +6%；在淘天变现改善、云与 AI 产品高增、国际商业扩张下，FY2026E 基准情景假设回升至约 9%。财年截止 3 月 31 日；FY2026E 指对截止 2026-03-31 财年的收入预测。",
+  "macro_adjustments": [
+    {"factor": "1年期LPR", "macro_change_pct": -3.23, "beta": 0.5, "phi": 0.5, "adjustment_pct": -0.81},
+    {"factor": "中国实际GDP增速", "macro_change_pct": 2.0, "beta": 1.5, "phi": 0.5, "adjustment_pct": 1.5},
+    {"factor": "中国CPI同比", "macro_change_pct": 8.0, "beta": -0.5, "phi": 0.5, "adjustment_pct": -2.0},
+    {"factor": "美元兑人民币中间价", "macro_change_pct": -1.11, "beta": -0.3, "phi": 0.5, "adjustment_pct": 0.17},
+    {"factor": "布伦特原油价格", "macro_change_pct": -5.0, "beta": -0.2, "phi": 0.5, "adjustment_pct": 0.5},
+    {"factor": "中国消费者信心指数", "macro_change_pct": 4.55, "beta": 1.2, "phi": 0.5, "adjustment_pct": 2.73}
+  ],
+  "macro_subtotal_pct": 2.09,
+  "company_specific_adjustment_pct": 0.5,
+  "company_specific_note": "综合淘天投入期、国际商业减亏、云 AI 需求与股东回报（回购分红）对增长的净影响示意。",
+  "predicted_revenue_growth_pct": 11.59,
+  "confidence": "medium",
+  "predicted_fiscal_year_label": "FY2026E"
+}

@@ -1,0 +1,75 @@
+{
+  "company": "阿里巴巴",
+  "company_en": "Alibaba Group Holding Limited",
+  "ticker": "9988",
+  "sector": "Consumer Discretionary",
+  "sub_industry": "互联网零售、云计算与数字商业平台",
+  "fiscal_year": "FY2025",
+  "fiscal_year_end": "2025-03-31",
+  "prior_fiscal_year": "FY2024",
+  "currency": "CNY",
+  "data_source": "Alibaba Group FY2025 results announcement (Form 20-F / press release, May 2025), RMB 百万；合并报表。",
+  "data_confidence": "high",
+  "income_statement": {
+    "current_year": {
+      "revenue": 996347,
+      "cogs": 598285,
+      "gross_profit": 398062,
+      "rd_expense": 57151,
+      "sm_expense": 144021,
+      "ga_expense": 44239,
+      "total_opex": 245411,
+      "operating_income": 140905,
+      "interest_expense": 9596,
+      "pretax_income": 138000,
+      "income_tax": 0,
+      "net_income": 129470,
+      "diluted_eps": 6.7,
+      "diluted_shares": 19318
+    },
+    "prior_year": {
+      "revenue": 941168,
+      "cogs": 586323,
+      "gross_profit": 354845,
+      "rd_expense": 52256,
+      "sm_expense": 115141,
+      "ga_expense": 41985,
+      "total_opex": 209382,
+      "operating_income": 113350,
+      "interest_expense": 7947,
+      "pretax_income": 111000,
+      "income_tax": 0,
+      "net_income": 79741,
+      "diluted_eps": 3.91,
+      "diluted_shares": 20394
+    },
+    "unit": "百万人民币；研发费用为 Product development expenses；销售与市场、一般及行政费用为年报「Costs and expenses」功能分类；营业利润为 Income from operations；归母净利润采用 Net income attributable to ordinary shareholders。",
+    "notes_on_mapping": "无形资产摊销与商誉减值（合计约 125 亿元）在桑基图中并入「其他经营净损益」以连接至营业利润；利息与所得税等科目在「税及其他」与归母净利之间轧差示意。"
+  },
+  "balance_sheet": {
+    "cash_and_equivalents": 300000,
+    "short_term_investments": 297132,
+    "total_assets": 1804227,
+    "total_debt": 714121,
+    "total_equity": 1078393,
+    "shares_outstanding": 19318,
+    "unit": "百万人民币；现金与短期投资为示意合并；总负债为 Total liabilities（2025-03-31）。"
+  },
+  "cash_flow": {
+    "operating_cash_flow": 163509,
+    "capex": -89639,
+    "free_cash_flow": 73870,
+    "unit": "百万人民币；自由现金流为年报披露非 GAAP FCF；资本开支 = 经营性现金流 − FCF。"
+  },
+  "segment_data": [
+    {"name": "淘宝天猫集团", "revenue": 449827, "pct_of_total": 45.1},
+    {"name": "国际数字商业", "revenue": 132300, "pct_of_total": 13.3},
+    {"name": "云智能集团", "revenue": 118028, "pct_of_total": 11.8},
+    {"name": "菜鸟、本地生活、数字媒体及其他", "revenue": 296192, "pct_of_total": 29.7}
+  ],
+  "notes": [
+    "财年截止 3 月 31 日；FY2025 相对 FY2024 营收同比 +6%。",
+    "分部收入为对外披露分部表加总后与合并收入存在内部抵消差异；第四项为合并收入减去前三项后的余项（含菜鸟、本地生活、数字媒体与 All others 等），占比按合并营收计算。",
+    "Non-GAAP 净利润与 IFRS/GAAP 归母净利差异较大，KPI 以归母净利（普通股股东）为主。"
+  ]
+}

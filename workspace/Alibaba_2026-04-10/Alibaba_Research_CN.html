@@ -1,52 +1,9 @@
-# Agent 4B: 中文 HTML 研报生成器（锁定模板版）
-
-你是一位顶级券商的资深权益研究分析师。你的任务是将研究数据填入下方**精确的 HTML 模板骨架**中，生成专业的交互式中文研报。
-
-## ⚠️ 核心规则（必须严格遵守）
-
-1. **不得修改模板结构**：CSS、class 名称、section ID、HTML 层级——全部照抄，不得增删任何 class 或 id。
-2. **只替换 `{{PLACEHOLDER}}` 标记**：所有动态内容（文字、数字、JS 数据变量）只在标注的占位符位置填入。
-3. **不得引入新的 CSS 规则**：如需针对特定内容调整样式，只能用 `style=""` 内联属性，且仅限于颜色 (`color`) 和字重 (`font-weight`)。
-4. **图表容器尺寸固定**：所有 `<div id="chart-*">` 容器的 `width` 和 `height` 必须与模板中一致，不得更改。
-5. **输出单一 `.html` 文件**：完全自包含，文件名 `{公司英文缩写}_Research_CN.html`。
-
-## 可审计生成流程（推荐，唯一结构来源）
-
-**不得**从 `workspace/` 下其他公司的成品 HTML 复制骨架再改字。锁定结构**仅**允许来自本文件「完整 HTML 模板」一节中唯一的 HTML 语言围栏（由 `scripts/extract_report_template.py` 抽取，保证与磁盘上的 `.md` 逐字一致）。
-
-1. **抽取锁定模板**（与本仓库 `agents/report_writer_cn.md` 逐字一致）：
-   ```bash
-   python3 scripts/extract_report_template.py --lang cn --sha256 -o workspace/{Company}_{Date}/_locked_cn_skeleton.html
-   ```
-2. 在抽取出的文件（或等价地在本文件模板视图中）**仅**替换 `{{PLACEHOLDER}}`，保存为 `{Company}_Research_CN.html`。
-3. 可选：将 `--sha256` 输出记入运行日志，便于复现与同版本比对；`_locked_cn_skeleton.html` 可在交付前删除或随 run 归档以供审计。
-
-补充说明：生成完成后，**仅在已确认**某条注释是**独立单行**、**不承担**多行 `<!-- …` 的 `-->` 闭合时，才可删除其中带 `{{...}}` 的示例性注释，以免校验器报占位符残留。**若无法百分百确认，则不要删该行**——保留注释，或把注释改成不含 `{{`/`}}` 的说明文字；误删唯一闭合 `-->` 会导致第五节及附录 DOM 被整段注释吞掉。
-
-## 输入文件（从 workspace 目录读取）
-
-- `financial_data.json`
-- `financial_analysis.json`
-- `macro_factors.json` — **第三节宏观因子表**的行名（如「中国消费者信心指数」vs「美国消费者信心」）、地域说明与数值均以本文件为准；`{{FACTOR_ROWS}}` 从此处与 `prediction_waterfall.json` **照抄**，勿在 HTML 里另起一套指标名或改地域。
-- `news_intel.json`
-- `prediction_waterfall.json`
-- `porter_analysis.json`
-
-同时加载：`references/report_style_guide_cn.md`（写作风格）
-
-**语言：** 仅当编排器传入 **`Report language: zh`** 时使用本文件；英文报告请使用 `agents/report_writer_en.md`。
-
----
-
-## 完整 HTML 模板（逐字输出，仅替换 {{PLACEHOLDER}}）
-
-```html
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{COMPANY_NAME_CN}}（{{TICKER}}）— 权益研究报告 | {{REPORT_DATE}}</title>
+<title>阿里巴巴（9988）— 权益研究报告 | 2026年4月10日</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
@@ -463,19 +420,19 @@ body {
 <div class="report-header">
   <div class="header-main">
     <div class="header-left">
-      <div class="company-exchange-badge">{{EXCHANGE}} · {{SECTOR}}</div>
-      <div class="company-name-cn">{{COMPANY_NAME_CN}}</div>
-      <div class="company-name-en">{{COMPANY_NAME_EN}} · {{TICKER}}</div>
+      <div class="company-exchange-badge">港交所 · 非必需消费 / 数字商业与云</div>
+      <div class="company-name-cn">阿里巴巴</div>
+      <div class="company-name-en">Alibaba Group Holding Limited · 9988</div>
     </div>
     <div class="header-right">
       <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 切换主题</button>
       <!-- rating-badge class must be one of: overweight / neutral / underweight -->
-      <div class="rating-badge {{RATING_CLASS}}">{{RATING_CN}}</div>
+      <div class="rating-badge neutral">中性</div>
     </div>
   </div>
   <div class="header-meta">
-    <span>{{REPORT_DATE}}</span>
-    <span>数据来源：{{DATA_SOURCE}}</span>
+    <span>2026年4月10日</span>
+    <span>数据来源：港交所业绩公告、公司年报及公开新闻整理</span>
     <span>由 Equity Research Skill 生成</span>
   </div>
 </div>
@@ -488,29 +445,36 @@ body {
     <div class="section-title">一、投资摘要</div>
 
     <!-- 3段公司介绍，每段约80-120字 -->
-    <p class="summary-para">{{SUMMARY_PARA_1}}</p>
-    <p class="summary-para">{{SUMMARY_PARA_2}}</p>
-    <p class="summary-para">{{SUMMARY_PARA_3}}</p>
+    <p class="summary-para">阿里巴巴集团是中国与全球领先的数字商业与云计算基础设施平台之一，核心护城河为淘天、菜鸟、本地生活与云智能的协同网络。FY2025（截至 2025-03-31）营收约 100 亿元，同比约 +6%；归母净利润（普通股股东）约 13 亿元，同比约 +6 成，含投资收益与公允价值变动影响。</p>
+    <p class="summary-para">盈利能力改善：毛利率约 40%，营业利润率约 14%；云与 AI 相关收入连续多季高增，国际数字商业收入同比约 +29%。同时，云基础设施资本开支显著上升，FY2025 自由现金流约 739 亿元，同比约 −53%，是本报告对利润与现金流跟踪的核心矛盾。</p>
+    <p class="summary-para">本报告财务表采用 FY2025 对 FY2024（完整年报已发布；财年截止 3 月 31 日）。收入预测财年与 Sankey 预测 tab 对齐为 FY2026E（下一完整财年截止 2026-03-31 的收入预测）。第三节宏观因子表采用「大中华」主营业地序列（LPR、中国 GDP/CPI、美元兑人民币、布伦特油价、中国消费者信心等），Consumer Discretionary 行业 β、φ=0.5，示意营收增速约 +11.59%，非卖方一致预期。</p>
 
     <div class="two-col">
       <div class="highlights-box">
         <h4>核心亮点</h4>
         <ul class="bullet-list">
-          <!-- 填入 3-5 条，每条 <li>{{内容}}</li> -->
-          {{HIGHLIGHTS_LI}}
+          <!-- highlights/risks li -->
+          <li>FY2025 云智能收入同比 +11%，AI 相关产品收入连续多季高速增长</li>
+<li>淘宝天猫客户管理与变现效率改善，国际数字商业收入同比 +29%</li>
+<li>全年回购与分红提升股东回报，流通股净减少</li>
+<li>淘天、菜鸟、本地生活与云形成协同网络，规模与数据壁垒仍显著</li>
         </ul>
       </div>
       <div class="risks-box">
         <h4>主要风险</h4>
         <ul class="bullet-list">
-          <!-- 填入 3-5 条，每条 <li>{{内容}}</li> -->
-          {{RISKS_LI}}
+          <!-- highlights/risks li -->
+          <li>云与 AI Capex 上升压制自由现金流与短期利润率</li>
+<li>国内电商与公有云竞争加剧，价格战与营销投入侵蚀利润</li>
+<li>国际业务扩张与合规成本不确定</li>
+<li>投资收益与市场波动影响归母净利波动</li>
+<li>宏观因子模型为示意，国内传导与政策节奏可能与表内弹性不一致</li>
         </ul>
       </div>
     </div>
 
     <div class="thesis-box">
-      <strong>投资逻辑：</strong>{{INVESTMENT_THESIS}}
+      <strong>投资逻辑：</strong>阿里巴巴正处于「主业盈利修复 + 云 AI 再投资 + 股东回报」三条线的交叉期；中长期价值取决于云与 AI 收入能否覆盖算力折旧与资本开支，以及国际商业能否在减亏前提下扩大规模。在估值与南向资金偏好下，本报告采用中性评级，侧重跟踪 Capex、云增速与淘天利润率三条线的边际变化。
     </div>
   </div>
   <!-- ===== END SECTION 1 ===== -->
@@ -523,35 +487,35 @@ body {
     <div class="kpi-grid">
 
       <!-- Card 1: 营业收入 -->
-      <div class="kpi-card {{KPI1_DIRECTION}}">
+      <div class="kpi-card up">
         <div class="kpi-label">营业收入</div>
-        <div class="kpi-value">{{KPI1_VALUE}}</div>
-        <div class="kpi-change {{KPI1_DIRECTION}}">{{KPI1_CHANGE}}</div>
-        <div class="kpi-sub">{{KPI1_YEAR}}财年</div>
+        <div class="kpi-value">100亿元</div>
+        <div class="kpi-change up">同比约 +6%</div>
+        <div class="kpi-sub">2025财年</div>
       </div>
 
       <!-- Card 2: 归母净利润 -->
-      <div class="kpi-card {{KPI2_DIRECTION}}">
+      <div class="kpi-card up">
         <div class="kpi-label">归母净利润</div>
-        <div class="kpi-value">{{KPI2_VALUE}}</div>
-        <div class="kpi-change {{KPI2_DIRECTION}}">{{KPI2_CHANGE}}</div>
-        <div class="kpi-sub">{{KPI2_YEAR}}财年</div>
+        <div class="kpi-value">13亿元</div>
+        <div class="kpi-change up">归母净利同比大幅改善（含投资损益）</div>
+        <div class="kpi-sub">2025财年</div>
       </div>
 
       <!-- Card 3: 自由现金流 -->
-      <div class="kpi-card {{KPI3_DIRECTION}}">
+      <div class="kpi-card down">
         <div class="kpi-label">自由现金流（FCF）</div>
-        <div class="kpi-value">{{KPI3_VALUE}}</div>
-        <div class="kpi-change {{KPI3_DIRECTION}}">{{KPI3_CHANGE}}</div>
-        <div class="kpi-sub">{{KPI3_YEAR}}财年</div>
+        <div class="kpi-value">7亿元</div>
+        <div class="kpi-change down">自由现金流同比约 −53%</div>
+        <div class="kpi-sub">2025财年</div>
       </div>
 
       <!-- Card 4: 净利率 -->
-      <div class="kpi-card {{KPI4_DIRECTION}}">
+      <div class="kpi-card up">
         <div class="kpi-label">净利率</div>
-        <div class="kpi-value">{{KPI4_VALUE}}</div>
-        <div class="kpi-change {{KPI4_DIRECTION}}">{{KPI4_CHANGE}}</div>
-        <div class="kpi-sub">vs 上年 {{KPI4_PREV_VALUE}}</div>
+        <div class="kpi-value">13.0%</div>
+        <div class="kpi-change up">归母净利率同比明显扩张</div>
+        <div class="kpi-sub">vs 上年 8.5%</div>
       </div>
 
     </div>
@@ -562,8 +526,8 @@ body {
       <thead>
         <tr>
           <th>指标</th>
-          <th>{{METRICS_YEAR_CUR}}（当年）</th>
-          <th>{{METRICS_YEAR_PREV}}（上年）</th>
+          <th>FY2025（当年）</th>
+          <th>FY2024（上年）</th>
           <th>同比变动</th>
         </tr>
       </thead>
@@ -578,27 +542,35 @@ body {
           必须包含以下行（按此顺序）：
           毛利率 / 营业利润率 / 净利率 / ROE / ROA / 资产负债率 / 利息保障倍数 / 每股收益（EPS）/ 自由现金流利润率
         -->
-        {{METRICS_ROWS}}
+        <tr><td>毛利率</td><td>39.9%</td><td>37.7%</td><td class="metric-up">+2.2 pct</td></tr>
+<tr><td>营业利润率</td><td>14.1%</td><td>12.0%</td><td class="metric-up">+2.1 pct</td></tr>
+<tr><td>净利率（归母）</td><td>13.0%</td><td>8.5%</td><td class="metric-up">+4.5 pct</td></tr>
+<tr><td>ROE（归属权益口径近似）</td><td>12.0%</td><td>—</td><td>—</td></tr>
+<tr><td>ROA</td><td>7.2%</td><td>—</td><td>—</td></tr>
+<tr><td>资产负债率</td><td>40.2%</td><td>—</td><td>合并报表负债/资产</td></tr>
+<tr><td>利息保障倍数</td><td>14.7×</td><td>—</td><td>营业利润/利息费用</td></tr>
+<tr><td>每股收益（稀释）</td><td>6.7 元</td><td>3.91 元</td><td class="metric-up">约 +71.4%</td></tr>
+<tr><td>自由现金流利润率</td><td>7.4%</td><td>—</td><td>年报披露 FCF</td></tr>
       </tbody>
     </table>
 
     <!-- 趋势分析：固定 4 张 trend-card；四张左边框均为绿色（up/down/trend-geo 仅作可选语义类，不再改颜色） -->
     <div class="trend-cards">
-      <div class="trend-card {{TREND1_DIRECTION}}">
+      <div class="trend-card up">
         <div class="trend-card-label">归母净利润趋势</div>
-        <div class="trend-card-text">{{TREND1_TEXT}}</div>
+        <div class="trend-card-text">FY2025 归母净利润（普通股股东）约 1295 亿元，同比约 +62%，受投资收益公允价值变动及经营利润改善共同影响；剔除投资损益后的 Non-GAAP 净利约 1581 亿元、同比大致持平，反映主业盈利提质与加大电商与云投入并存。</div>
       </div>
-      <div class="trend-card {{TREND2_DIRECTION}}">
+      <div class="trend-card up">
         <div class="trend-card-label">净利率趋势</div>
-        <div class="trend-card-text">{{TREND2_TEXT}}</div>
+        <div class="trend-card-text">FY2025 归母净利率约 13.0%，较 FY2024 的约 8.5% 明显回升；毛利率约 40% 随低毛利直采业务收缩与变现效率提升而改善。</div>
       </div>
-      <div class="trend-card {{TREND3_DIRECTION}}">
+      <div class="trend-card down">
         <div class="trend-card-label">自由现金流趋势</div>
-        <div class="trend-card-text">{{TREND3_TEXT}}</div>
+        <div class="trend-card-text">年报披露自由现金流约 739 亿元，同比约 −53%，主要因云与 AI 基础设施资本开支显著上升，部分被调整后 EBITDA 改善抵消；后续需跟踪 Capex 强度与云收入增速的匹配。</div>
       </div>
       <div class="trend-card trend-geo">
         <div class="trend-card-label">地区收入结构</div>
-        <div class="trend-card-text">{{GEO_REVENUE_TEXT}}</div>
+        <div class="trend-card-text">公司未在简明表中按国别单列全部收入；业务结构以中国国内电商与本地生活为核心，国际数字商业（跨境零售与批发）占比约 13%，云与菜鸟具跨境交付属性。</div>
       </div>
     </div>
   </div>
@@ -609,7 +581,7 @@ body {
     <div class="section-title">三、收入预测（宏观因子模型）</div>
 
     <div class="waterfall-meta">
-      φ（市场磨损因子）= {{PHI_VALUE}} &nbsp;|&nbsp; 置信度：{{CONFIDENCE_CN}} &nbsp;|&nbsp; 模型：宏观因子模型 v1.0 &nbsp;|&nbsp; 预测财年：{{PRED_FISCAL_YEAR}}
+      φ（市场磨损因子）= 0.5 &nbsp;|&nbsp; 置信度：中等 &nbsp;|&nbsp; 模型：宏观因子模型 v1.0 &nbsp;|&nbsp; 预测财年：FY2026E
     </div>
 
     <div class="waterfall-wrap">
@@ -630,12 +602,12 @@ body {
       </thead>
       <tbody>
         <!-- 格式：<tr><td>因子名</td><td>宏观变化</td><td>β</td><td>φ</td><td>调整幅度</td><td class="metric-up/down">正/负向</td></tr> -->
-        {{FACTOR_ROWS}}
+        <tr><td>1年期LPR</td><td>-3.23</td><td>0.5</td><td>0.5</td><td>-0.81</td><td class="metric-down">负向</td></tr><tr><td>中国实际GDP增速</td><td>+2.00</td><td>1.5</td><td>0.5</td><td>+1.50</td><td class="metric-up">正向</td></tr><tr><td>中国CPI同比</td><td>+8.00</td><td>-0.5</td><td>0.5</td><td>-2.00</td><td class="metric-down">负向</td></tr><tr><td>美元兑人民币中间价</td><td>-1.11</td><td>-0.3</td><td>0.5</td><td>+0.17</td><td class="metric-up">正向</td></tr><tr><td>布伦特原油价格</td><td>-5.00</td><td>-0.2</td><td>0.5</td><td>+0.50</td><td class="metric-up">正向</td></tr><tr><td>中国消费者信心指数</td><td>+4.55</td><td>1.2</td><td>0.5</td><td>+2.73</td><td class="metric-up">正向</td></tr>
       </tbody>
     </table>
 
     <div class="disclaimer-box" style="margin-top:16px;">
-      预测数据为概率性估计，仅供参考，不构成投资建议。本报告中的收入预测基于宏观因子量化模型，使用行业敏感度系数（β）及市场磨损因子（φ = {{PHI_VALUE}}），结合公开宏观经济预测数据及公司特定情报生成。实际结果可能与预测存在重大差异。
+      预测数据为概率性估计，仅供参考，不构成投资建议。本报告中的收入预测基于宏观因子量化模型，使用行业敏感度系数（β）及市场磨损因子（φ = 0.5），结合公开宏观经济预测数据及公司特定情报生成。实际结果可能与预测存在重大差异。
     </div>
   </div>
   <!-- ===== END SECTION 3 ===== -->
@@ -645,8 +617,8 @@ body {
     <div class="section-title">四、收入流向分析（Sankey 桑基图）</div>
 
     <div class="tab-bar" id="sankey-tabs">
-      <div class="tab active" onclick="switchTab('sankey','actual',this)">{{SANKEY_YEAR_ACTUAL}} 实际</div>
-      <div class="tab"        onclick="switchTab('sankey','forecast',this)">{{SANKEY_YEAR_FORECAST}} 预测</div>
+      <div class="tab active" onclick="switchTab('sankey','actual',this)">FY2025 实际</div>
+      <div class="tab"        onclick="switchTab('sankey','forecast',this)">FY2026E（+11.6%） 预测</div>
     </div>
 
     <div class="tab-panel active" id="sankey-panel-actual">
@@ -660,7 +632,7 @@ body {
       </div>
     </div>
 
-    <p class="sankey-note">{{SANKEY_ANALYSIS_TEXT}}</p>
+    <p class="sankey-note">桑基图「实际」基于 FY2025 合并利润表示意拆分（百万人民币），研发费用、销售与市场、管理费用及无形资产摊销与商誉减值等并入「其他经营净损益」以轧差至营业利润；「税及其他」连接归母净利润。「预测」为 FY2026E，按模型营收增速约 +11.6% 同比缩放结构；非精确指引。</p>
   </div>
   <!-- ===== END SECTION 4 ===== -->
 
@@ -683,9 +655,9 @@ body {
         <div>
           <ul class="porter-scores" id="scores-company">
             <!-- 5 个 li：供应商议价能力、买方议价能力、新进入者威胁、替代品威胁、行业竞争强度；占位符见下方填充规则，勿删本行注释或引入未闭合的 HTML 注释 -->
-            {{PORTER_COMPANY_SCORES}}
+            <li><span class="score-dot s3">3</span><span class="score-label">供应商议价能力</span></li><li><span class="score-dot s4">4</span><span class="score-label">买方议价能力</span></li><li><span class="score-dot s4">4</span><span class="score-label">新进入者威胁</span></li><li><span class="score-dot s4">4</span><span class="score-label">替代品威胁</span></li><li><span class="score-dot s4">4</span><span class="score-label">行业竞争强度</span></li>
           </ul>
-          <div class="porter-text">{{PORTER_COMPANY_TEXT}}</div>
+          <div class="porter-text">阿里巴巴在淘天、菜鸟、本地生活与云之间形成协同网络：用户与商家数据在体系内流转，规模与算法强化广告与物流效率。国际商业与跨境基础设施扩展了增量空间，但多线作战也拉高销售与市场费用。对上游云资源与下游商户两侧，平台仍具较强规则制定权，护城河来自履约、支付与数据闭环，而非单一应用。</div>
         </div>
       </div>
     </div>
@@ -698,9 +670,9 @@ body {
         </div>
         <div>
           <ul class="porter-scores" id="scores-industry">
-            {{PORTER_INDUSTRY_SCORES}}
+            <li><span class="score-dot s4">4</span><span class="score-label">供应商议价能力</span></li><li><span class="score-dot s4">4</span><span class="score-label">买方议价能力</span></li><li><span class="score-dot s3">3</span><span class="score-label">新进入者威胁</span></li><li><span class="score-dot s4">4</span><span class="score-label">替代品威胁</span></li><li><span class="score-dot s5">5</span><span class="score-label">行业竞争强度</span></li>
           </ul>
-          <div class="porter-text">{{PORTER_INDUSTRY_TEXT}}</div>
+          <div class="porter-text">中国数字零售与本地服务进入「效率与体验」竞争阶段，短视频与直播电商重塑流量分发；公有云市场头部集中，价格战与 AI 投入并行。监管对平台经济常态化后，竞争焦点转向技术、供应链与合规成本。国际市场上 Shein、Temu 等与中国平台在跨境场景交织，盈利与份额难以兼得。</div>
         </div>
       </div>
     </div>
@@ -713,9 +685,9 @@ body {
         </div>
         <div>
           <ul class="porter-scores" id="scores-forward">
-            {{PORTER_FORWARD_SCORES}}
+            <li><span class="score-dot s3">3</span><span class="score-label">供应商议价能力</span></li><li><span class="score-dot s4">4</span><span class="score-label">买方议价能力</span></li><li><span class="score-dot s4">4</span><span class="score-label">新进入者威胁</span></li><li><span class="score-dot s4">4</span><span class="score-label">替代品威胁</span></li><li><span class="score-dot s4">4</span><span class="score-label">行业竞争强度</span></li>
           </ul>
-          <div class="porter-text">{{PORTER_FORWARD_TEXT}}</div>
+          <div class="porter-text">未来 2–3 年胜负手在三点：其一，AI 能否持续转化为广告转化率和云 ARPU；其二，国际商业能否在减亏前提下扩大规模；其三，股东回报与再投资之间的平衡。若云 Capex 回报周期长于预期，利润率与 FCF 仍将波动；反之则有望复制微软式「云+企业软件」估值逻辑的中国变体。</div>
         </div>
       </div>
     </div>
@@ -731,7 +703,9 @@ body {
     <table class="appendix-table">
       <thead><tr><th>来源类型</th><th>具体来源</th><th>数据日期</th><th>置信度</th></tr></thead>
       <tbody>
-        {{APPENDIX_SOURCE_ROWS}}
+        <tr><td>法定披露</td><td>港交所 9988 / Alibaba Group FY2025 业绩公告与 Form 20-F</td><td>2025-05</td><td>高</td></tr>
+<tr><td>媒体报道</td><td>PR Newswire、财经媒体对 FY2025 业绩的整理</td><td>2025-05</td><td>中</td></tr>
+<tr><td>β 与模型</td><td>references/prediction_factors.md（Consumer Discretionary + 大中华）</td><td>内置</td><td>中</td></tr>
       </tbody>
     </table>
 
@@ -739,8 +713,8 @@ body {
     <div class="methodology-box">
       <strong>预测公式：</strong><br>
       预测营收增长率 = 基准增长率 + Σ（宏观因子变化% × β<sub>sector</sub> × φ）+ 公司特定调整项<br><br>
-      <strong>参数：</strong>φ = {{PHI_VALUE}}（市场磨损因子）| 置信度：{{CONFIDENCE_CN}}<br><br>
-      {{METHODOLOGY_DETAIL}}
+      <strong>参数：</strong>φ = 0.5（市场磨损因子）| 置信度：中等<br><br>
+      本报告采用 Consumer Discretionary 默认 β。基准增速 9.0%；宏观合计 +2.09 pct；公司特定 +0.50 pct；得 FY2026E 情景约 +11.59%。
     </div>
 
     <div class="disclaimer-box">
@@ -783,7 +757,7 @@ function themeColor(lightVal, darkVal) {
 // --- Waterfall Data ---
 // Each bar: { label, start, end, value, type }
 // type: "baseline" | "positive" | "negative" | "result"
-const waterfallData = {{WATERFALL_JS_DATA}};
+const waterfallData = [{"label": "基准增长", "start": 0, "end": 9.0, "value": 9.0, "type": "baseline"}, {"label": "宏观调整", "start": 9.0, "end": 11.09, "value": 2.09, "type": "positive"}, {"label": "公司特定", "start": 11.09, "end": 11.59, "value": 0.5, "type": "positive"}, {"label": "预测结果", "start": 0, "end": 11.59, "value": 11.59, "type": "result"}];
 // Example:
 // [
 //   { label: "基准增长", start: 0,   end: 4.2,  value: 4.2,  type: "baseline"  },
@@ -794,7 +768,7 @@ const waterfallData = {{WATERFALL_JS_DATA}};
 // ]
 
 // --- Sankey Actual Data ---
-const sankeyActualData = {{SANKEY_ACTUAL_JS_DATA}};
+const sankeyActualData = {"nodes": [{"name": "营业收入"}, {"name": "营业成本"}, {"name": "毛利润"}, {"name": "研发费用"}, {"name": "销售与市场费用"}, {"name": "管理费用"}, {"name": "其他经营净损益"}, {"name": "营业利润"}, {"name": "税及其他"}, {"name": "归母净利润"}], "links": [{"source": 0, "target": 1, "value": 598285}, {"source": 0, "target": 2, "value": 398062}, {"source": 2, "target": 3, "value": 57151}, {"source": 2, "target": 4, "value": 144021}, {"source": 2, "target": 5, "value": 44239}, {"source": 2, "target": 6, "value": 11746}, {"source": 2, "target": 7, "value": 140905}, {"source": 7, "target": 8, "value": 11435}, {"source": 7, "target": 9, "value": 129470}]};
 // Example:
 // {
 //   nodes: [
@@ -811,15 +785,15 @@ const sankeyActualData = {{SANKEY_ACTUAL_JS_DATA}};
 // }
 
 // --- Sankey Forecast Data ---
-const sankeyForecastData = {{SANKEY_FORECAST_JS_DATA}};
+const sankeyForecastData = {"nodes": [{"name": "营业收入"}, {"name": "营业成本"}, {"name": "毛利润"}, {"name": "研发费用"}, {"name": "销售与市场费用"}, {"name": "管理费用"}, {"name": "其他经营净损益"}, {"name": "营业利润"}, {"name": "税及其他"}, {"name": "归母净利润"}], "links": [{"source": 0, "target": 1, "value": 667626}, {"source": 0, "target": 2, "value": 444198}, {"source": 2, "target": 3, "value": 63775}, {"source": 2, "target": 4, "value": 160713}, {"source": 2, "target": 5, "value": 49366}, {"source": 2, "target": 6, "value": 13107}, {"source": 2, "target": 7, "value": 157236}, {"source": 7, "target": 8, "value": 12760}, {"source": 7, "target": 9, "value": 144476}]};
 // Same structure as sankeyActualData
 
 // --- Porter Radar Data ---
 // Score order must be: [供应商议价能力, 买方议价能力, 新进入者威胁, 替代品威胁, 行业竞争强度]
 const porterScores = {
-  company:  {{PORTER_COMPANY_SCORES_ARRAY}},   // e.g. [3, 2, 4, 3, 4]
-  industry: {{PORTER_INDUSTRY_SCORES_ARRAY}},
-  forward:  {{PORTER_FORWARD_SCORES_ARRAY}}
+  company:  [3, 4, 4, 4, 4],   // e.g. [3, 2, 4, 3, 4]
+  industry: [4, 4, 3, 4, 5],
+  forward:  [3, 4, 4, 4, 4]
 };
 
 // ============================================================
@@ -1063,51 +1037,3 @@ window.addEventListener('resize', () => {
 
 </body>
 </html>
-```
-
----
-
-## 填充规则一览
-
-| 占位符 | 类型 | 说明 |
-|--------|------|------|
-| `{{COMPANY_NAME_CN}}` | 文字 | 页眉主标题用**简洁英文公司名**即可（如 **Meta Platforms**、Microsoft Corporation）。勿使用「英文名（中文副标题）」括注形式。正文仍可配合中文叙述需要写「又称……」等。 |
-| `{{COMPANY_NAME_EN}}` | 文字 | 公司英文全称 |
-| `{{TICKER}}` | 文字 | 股票代码，例如 PLAB |
-| `{{EXCHANGE}}` | 文字 | 交易所，例如 NASDAQ |
-| `{{SECTOR}}` | 文字 | 行业，例如 半导体 |
-| `{{REPORT_DATE}}` | 文字 | 报告日期，例如 2026年4月8日 |
-| `{{DATA_SOURCE}}` | 文字 | 数据来源描述 |
-| `{{RATING_CLASS}}` | class | `overweight` / `neutral` / `underweight` |
-| `{{RATING_CN}}` | 文字 | 增持 / 中性 / 减持 |
-| `{{KPI1_DIRECTION}}` 等 | class | `up` / `down` / `neutral-kpi` |
-| `{{KPI1_VALUE}}` | 文字 | 带单位数值，例如 "39.1亿美元" |
-| `{{KPI1_CHANGE}}` | 文字 | 同比变化，例如 "同比 +7.2%" |
-| `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>` |
-| `{{SUMMARY_PARA_1}}` 等 | 文字 | 纯中文/英文叙述；**禁止** `**` 等 Markdown（见上文写作规范） |
-| `{{TREND1_TEXT}}` 等 | 文字 | 同上；语义类由 `{{TREND*_DIRECTION}}` 控制（`up` / `down`），四张卡左边框均为绿色 |
-| `{{GEO_REVENUE_TEXT}}` | 文字 | 2–4 句：仅写地区收入——最新披露期各区域（或主要国家）净营收金额、占比、有机/同比增速（如有）、集中度变化（见 `references/financial_metrics.md` 地区收入结构） |
-| `{{WATERFALL_JS_DATA}}` | JS Array | 见模板注释中的格式示例 |
-| `{{SANKEY_YEAR_ACTUAL}}` | 文字 | 与 `financial_data.json` 中「当年」完整财年一致（最新已发布年报，如 FY2025）；参见 `SKILL.md` Step 0C |
-| `{{SANKEY_YEAR_FORECAST}}` | 文字 | 下一完整财年预测标签，与 `prediction_waterfall.json` 的 `predicted_fiscal_year_label` 一致（默认 FY{当年+1}E，如 FY2026E） |
-| `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
-| `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | 同上；由「当年」P&L 按预测营收增速缩放 |
-| `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
-| `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>`，**必须使用 `score-dot s{N}` class**（N=分数四舍五入至整数1-5），示例：`<li><span class="score-dot s2">2</span><span class="score-label">供应商议价能力</span> 2/5 低</li>`。CSS 只定义了 `.score-dot`，不存在 `score-badge`，不得使用其他 class。5力顺序固定：供应商议价能力、买方议价能力、新进入者威胁、替代品威胁、行业竞争强度。 |
-| `{{PORTER_COMPANY_TEXT}}` | HTML | 约300字波特五力分析正文 |
-| `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行 |
-| `{{APPENDIX_SOURCE_ROWS}}` | HTML | 数据来源表行 |
-| `{{PHI_VALUE}}` | 文字 | 通常为 0.5 |
-| `{{CONFIDENCE_CN}}` | 文字 | 高 / 中等 / 低 |
-| `{{METHODOLOGY_DETAIL}}` | 文字 | 具体β系数说明 |
-
-## 写作规范
-
-严格遵守 `references/report_style_guide_cn.md` 中的文风、数字格式和术语。核心要求：
-- 结论前置，有数字支撑
-- 归母净利润/自由现金流用中文惯用表达
-- 美股金额以"亿美元"为单位（大于100亿用"X,XXX亿美元"或"X.X万亿美元"）
-- 禁止口语化和感叹号
-- **HTML 正文占位符不得使用 Markdown**：勿在 `{{SUMMARY_PARA_*}}`、`{{TREND*_TEXT}}`、`{{GEO_REVENUE_TEXT}}`、`{{INVESTMENT_THESIS}}`、`{{SANKEY_ANALYSIS_TEXT}}` 等字段中写入 `**加粗**`、`*斜体*`、反引号代码等；最终页面不会渲染 Markdown，会出现裸露星号。需强调处用中文「」或必要时少量 `<strong>…</strong>`（慎用以免破坏版式）。
-- **禁止破坏锁定 HTML 中的注释闭合**：第四节、第五节 company 面板等处曾用多行 `<!-- …` 且下一行含示例 `{{…}}` 再用 `-->` 闭合；若生成脚本按字串删除「含 `{{分数}}` 的行」，会删掉唯一的 `-->`，导致**整段后续 DOM 被浏览器当作注释吞掉**（第五、六节版式全崩）。生成 HTML 时**不得**删除任何可能是**多行注释唯一闭合**的 `-->` 行。
-- **可选：清理单行样例注释**：仅当确认某条注释是独立单行提示、与多行注释闭合无关时，才可删除以免残留 `{{...}}` 触发校验；**不确定则保留**，或改写注释文字而不删行。

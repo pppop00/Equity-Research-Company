@@ -99,7 +99,8 @@ In Phase 2, after computing ratios and trend narratives, write a short **regiona
 
 - Source **regional / country revenue tables** from the latest annual/quarterly filing (or `financial_data.json` geographic breakdown if Agent 1 populated it). If only product segments exist, say geographic disclosure is limited.
 - Cover **amounts, % of total**, YoY or organic growth **by region** when disclosed, and **concentration** (e.g. top region share changing).
-- **Do not** discuss FX, hedging, USD/DXY, or “折算” in this field — reserve currency/macro for Section III and `macro_factors.json`.
+- **Scope:** Currency translation, hedging, and broad FX/DXY discussion belong in **Section III** / `macro_factors.json`, not in this card.
+- **Tone:** Write **only** substantive facts from disclosures — do **not** paste boilerplate such as “this section does not discuss FX/DXY”; that is an author instruction, not reader-facing copy.
 
 Store the prose in **`financial_analysis.json`** → `geographic_revenue.analysis`. Phase 5 pastes it into `{{GEO_REVENUE_TEXT}}`. Use plain text only (no Markdown bold/italic); HTML does not render `**`.
 

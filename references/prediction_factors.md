@@ -59,22 +59,50 @@ These are the default starting values. Adjust based on company-specific characte
 - Positive: this macro factor rising helps revenue
 - Negative: this macro factor rising hurts revenue
 
-**Interest Rate β note:** Measured as the impact of a 1% decline in the Fed Funds Rate level (not basis points). So β = 1.8 for REITs means a 1% rate *decline* → ~1.8% revenue growth benefit (before φ).
+**Interest Rate β note:** Measured as the impact of a **1 percentage-point decline** in the **dominant policy rate for the chosen geography** (not basis points). For **`US`**, use the Fed Funds effective / target band. For **`Greater_China`**, use **1-year LPR** or **MLF rate** as the policy-rate proxy (state which in `macro_factors.json` notes). For **`Eurozone`**, use ECB deposit facility rate. Same β column applies — you are measuring sensitivity to *local* monetary easing/tightening.
 
 ---
 
-## Macro Factor Registry
+## Macro Factor Registry (US — default labels)
 
-Agents should search for current values of these factors:
+If `primary_operating_geography` = **`US`**, agents search for these **US** series:
 
-| Factor | What to search for | Unit | Change direction |
-|--------|-------------------|------|-----------------|
-| Fed Funds Rate | "federal funds rate current FOMC forecast year-end 2026" | % level | Lower rates = positive for most sectors |
-| Real GDP Growth | "US real GDP growth forecast 2026 IMF Fed" | % YoY | Higher = positive |
-| PCE Inflation | "PCE inflation rate 2026 Federal Reserve forecast" | % YoY | Higher = raises costs for most sectors |
-| USD Index (DXY) | "DXY dollar index current 2026" | Index level | Higher USD = negative for exporters |
-| WTI Crude Oil | "WTI crude oil price forecast 2026" | $/barrel | Sector-dependent |
-| Consumer Confidence | "US consumer confidence index Conference Board 2026" | Index level | Higher = positive for consumer sectors |
+| Factor slot | What to search for | Unit | Change direction |
+|-------------|-------------------|------|-----------------|
+| Policy rate | Fed Funds Rate | "federal funds rate current FOMC forecast year-end 2026" | % level | Lower rates = positive for most sectors |
+| Real GDP | US real GDP | "US real GDP growth forecast 2026 IMF Fed" | % YoY | Higher = positive |
+| CPI-type inflation | PCE | "PCE inflation rate 2026 Federal Reserve forecast" | % YoY | Higher = raises costs for most sectors |
+| FX | USD broad strength | "DXY dollar index current 2026" | Index level | Higher USD = negative for US exporters |
+| Oil | Global benchmark | "WTI crude oil price forecast 2026" | $/barrel | Sector-dependent |
+| Consumer confidence | US household | "US consumer confidence index Conference Board 2026" | Index level | Higher = positive for consumer sectors |
+
+---
+
+## Primary operating geography — **same β slots, regional instruments**
+
+The sector row in the β table always has **six macro slots** in fixed order: **Interest Rate | GDP | CPI-type inflation | FX | Oil | Consumer confidence**.  
+**Do not** apply US data for a company whose revenue is **mainly outside the US** unless `primary_operating_geography` is `US`. Map each slot to the **local** series below; **keep the same β values** from the sector row for that slot index (column 1–6).
+
+| Slot | `US` | `Greater_China` | `Eurozone` | `Japan` | `UK` |
+|------|------|-----------------|------------|---------|------|
+| Policy rate | Fed Funds / upper bound | 1-year **LPR** or **MLF** (state in notes) | ECB deposit rate | BOJ policy rate / YCC context | Bank Rate |
+| Real GDP | US real GDP YoY | **China** real GDP YoY | Euro area real GDP YoY | Japan real GDP YoY | UK real GDP YoY |
+| Inflation | PCE YoY | **China CPI** YoY | Euro area **HICP** YoY | Japan CPI YoY | UK CPI YoY |
+| FX | **DXY** (or specify) | **CFETS RMB index** and/or **USD/CNY** (explain sign: CNY vs USD move vs margins) | **EUR/USD** or nominal effective EUR | **USD/JPY** | **GBP/USD** or trade-weighted GBP |
+| Oil | WTI / Brent | **Brent or WTI** (global; keep one benchmark for comparability) | same | same | same |
+| Confidence | **Conference Board** or Michigan | **国家统计局消费者信心指数** or major third-party China consumer index (name the series) | EC consumer confidence / Eurozone | Cabinet Office / confidence | GfK or ONS-related |
+
+**`Emerging_Asia_ex_China`:** Use the **single largest country market** within that bucket for GDP/CPI/confidence if one dominates; otherwise use `Global_other` and document a **composite / regional** choice in `notes`.
+
+**`Global_other` / multi-hub:** Prefer the geography with **>50% revenue**; if none, pick the **headline investment driver** region and state the limitation in `notes`.
+
+**Report language:** `macro_factors.json` → `factors[].name` must read naturally in the report — **Chinese** labels for `zh` (e.g. `中国消费者信心指数`), **English** for `en` (e.g. `China consumer confidence (NBS)`).
+
+---
+
+## Macro Factor Registry (legacy one-line reference)
+
+Agents should search for current values using the **regional mapping** above. The US-only table in older runs maps to `primary_operating_geography = US`.
 
 **Factor_Change% calculation:**
 - For rate/index levels: `(Forecast - Current) / |Current| × 100`

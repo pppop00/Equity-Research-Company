@@ -1,0 +1,56 @@
+{
+  "company": "阿里巴巴",
+  "sector": "Consumer Discretionary",
+  "data_freshness": "2026-04-10",
+  "company_events": [
+    {
+      "type": "product",
+      "description": "FY2025 云智能收入同比 +11%，公共云与 AI 相关产品收入连续多季高速增长，AI 编码与企业工具采用率提升。",
+      "revenue_impact_pct": 0.35,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "公司 FY2025 业绩公告（截至 2025-03-31）"
+    },
+    {
+      "type": "product",
+      "description": "淘天客户管理收入改善、全站推等带动变现；FY2025 国际数字商业收入同比 +29%，跨境与海外本地化扩张。",
+      "revenue_impact_pct": 0.3,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "同上"
+    },
+    {
+      "type": "capex",
+      "description": "云与 AI 基础设施资本开支显著上升，FY2025 自由现金流同比大幅下降，管理层强调算力投入为中长期增长前提。",
+      "revenue_impact_pct": -0.2,
+      "impact_direction": "negative",
+      "confidence": "high",
+      "source": "同上及公开电话会整理"
+    },
+    {
+      "type": "capital_return",
+      "description": "FY2025 大额回购与分红提升股东回报，流通股净减少，有利于每股指标但减少现金储备。",
+      "revenue_impact_pct": 0.05,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "公司公告"
+    }
+  ],
+  "company_specific_adjustment_pct": 0.5,
+  "industry_dynamics": {
+    "supplier_power": "云上游算力与电力集中，头部芯片与带宽议价能力强；物流与支付环节规模效应显著。",
+    "buyer_power": "中小商家对平台佣金与广告竞价敏感；大品牌多平台布局提高买方议价。",
+    "new_entrants": "直播电商、短视频带货与独立站降低开店门槛，但流量与履约网络仍向头部平台集中。",
+    "substitutes": "线下零售复苏、社交电商与即时零售分流用户时长与预算。",
+    "rivalry": "国内电商与公有云竞争白热化，AI 能力与履约效率成为差异化核心。"
+  },
+  "forward_looking": {
+    "supplier_power": "若 AI 算力长期紧平衡，云业务毛利率与交付周期仍受压。",
+    "buyer_power": "AI 营销工具或提升转化，缓解单纯价格战。",
+    "new_entrants": "跨境合规与本地化运营门槛仍高，头部规模优势延续。",
+    "substitutes": "即时零售与内容电商继续侵蚀传统货架电商份额。",
+    "rivalry": "海外扩张与云价格战可能持续消耗利润。"
+  },
+  "data_source_note": "基于公司已发布财报与公开新闻整理；非实时行情。",
+  "confidence": "medium"
+}

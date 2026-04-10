@@ -1,0 +1,61 @@
+{
+  "profitability": {
+    "gross_margin_current": 39.9,
+    "gross_margin_prior": 37.7,
+    "operating_margin_current": 14.1,
+    "operating_margin_prior": 12.0,
+    "net_margin_current": 13.0,
+    "net_margin_prior": 8.5,
+    "roe_current": 12.0,
+    "roa_current": 7.2,
+    "ebitda_current": null,
+    "ebitda_margin_current": null
+  },
+  "growth": {
+    "revenue_growth_yoy_pct": 6.0,
+    "organic_revenue_growth_yoy_pct": null,
+    "net_income_growth_yoy_pct": 62.4,
+    "eps_growth_yoy_pct": 71.4
+  },
+  "cash_flow": {
+    "free_cash_flow": 73870,
+    "fcf_margin_pct": 7.4,
+    "fcf_conversion_pct": null,
+    "capex_intensity_pct": 9.0
+  },
+  "leverage": {
+    "debt_equity_ratio": 0.66,
+    "net_debt": null,
+    "interest_coverage_ratio": 14.7
+  },
+  "valuation": {
+    "stock_price": null,
+    "pe_ratio": null,
+    "market_cap": null,
+    "ev": null,
+    "ev_ebitda": null,
+    "note": "未抓取即期港股/ADR 股价；估值需结合流动性与南向资金偏好另行更新。"
+  },
+  "trends": {
+    "net_income": {
+      "label": "↑ 改善",
+      "class": "positive",
+      "analysis": "FY2025 归母净利润（普通股股东）约 1295 亿元，同比约 +62%，受投资收益公允价值变动及经营利润改善共同影响；剔除投资损益后的 Non-GAAP 净利约 1581 亿元、同比大致持平，反映主业盈利提质与加大电商与云投入并存。"
+    },
+    "net_margin": {
+      "label": "↑ 改善",
+      "class": "positive",
+      "analysis": "FY2025 归母净利率约 13.0%，较 FY2024 的约 8.5% 明显回升；毛利率约 40% 随低毛利直采业务收缩与变现效率提升而改善。"
+    },
+    "fcf": {
+      "label": "↓ 承压",
+      "class": "negative",
+      "analysis": "年报披露自由现金流约 739 亿元，同比约 −53%，主要因云与 AI 基础设施资本开支显著上升，部分被调整后 EBITDA 改善抵消；后续需跟踪 Capex 强度与云收入增速的匹配。"
+    }
+  },
+  "geographic_revenue": {
+    "analysis": "公司未在简明表中按国别单列全部收入；业务结构以中国国内电商与本地生活为核心，国际数字商业（跨境零售与批发）占比约 13%，云与菜鸟具跨境交付属性。"
+  },
+  "unit": "百万人民币或百分比",
+  "notes": []
+}

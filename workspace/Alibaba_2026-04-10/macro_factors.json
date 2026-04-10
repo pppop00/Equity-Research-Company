@@ -1,0 +1,82 @@
+{
+  "company": "Alibaba",
+  "primary_operating_geography": "Greater_China",
+  "sector": "Consumer Discretionary",
+  "phi": 0.5,
+  "beta_source": "references/prediction_factors.md — Consumer Discretionary 行；大中华序列",
+  "data_freshness": "2026-04-10",
+  "factor_geography_note": "因子采用中国内地宏观与市场序列，匹配国内电商与本地主业；布伦特油价为全球基准；β 使用非必需消费行业默认六槽位。",
+  "factors": [
+    {
+      "name": "1年期LPR",
+      "current_value": 3.1,
+      "forecast_value": 3.0,
+      "factor_change_pct": -3.23,
+      "beta": 0.5,
+      "phi": 0.5,
+      "adjustment_pct": -0.81,
+      "unit": "percent level",
+      "source": "人民银行与政策利率共识（示意）"
+    },
+    {
+      "name": "中国实际GDP增速",
+      "current_value": 5.0,
+      "forecast_value": 5.1,
+      "factor_change_pct": 2.0,
+      "beta": 1.5,
+      "phi": 0.5,
+      "adjustment_pct": 1.5,
+      "unit": "percent YoY",
+      "source": "IMF / NBS（示意）"
+    },
+    {
+      "name": "中国CPI同比",
+      "current_value": 0.4,
+      "forecast_value": 0.432,
+      "factor_change_pct": 8.0,
+      "beta": -0.5,
+      "phi": 0.5,
+      "adjustment_pct": -2.0,
+      "unit": "percent YoY",
+      "source": "统计局与一致预期（示意）"
+    },
+    {
+      "name": "美元兑人民币中间价",
+      "current_value": 7.2,
+      "forecast_value": 7.12,
+      "factor_change_pct": -1.11,
+      "beta": -0.3,
+      "phi": 0.5,
+      "adjustment_pct": 0.17,
+      "unit": "CNY per USD",
+      "source": "即期与共识（示意）"
+    },
+    {
+      "name": "布伦特原油价格",
+      "current_value": 82.0,
+      "forecast_value": 77.9,
+      "factor_change_pct": -5.0,
+      "beta": -0.2,
+      "phi": 0.5,
+      "adjustment_pct": 0.5,
+      "unit": "USD/bbl",
+      "source": "ICE 与共识（示意）"
+    },
+    {
+      "name": "中国消费者信心指数",
+      "current_value": 88.0,
+      "forecast_value": 92.0,
+      "factor_change_pct": 4.55,
+      "beta": 1.2,
+      "phi": 0.5,
+      "adjustment_pct": 2.73,
+      "unit": "指数",
+      "source": "国家统计局（示意）"
+    }
+  ],
+  "total_macro_adjustment_pct": 2.09,
+  "notes": [
+    "Consumer Discretionary 行业 β；与 Communication Services 不同，消费与可选支出权重更高。",
+    "合计宏观调整四舍五入后与 prediction_waterfall 对齐。"
+  ]
+}

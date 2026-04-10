@@ -1,21 +1,22 @@
 {
   "company": "Tencent",
+  "primary_operating_geography": "Greater_China",
   "sector_beta_row": "Communication Services",
   "phi": 0.5,
   "baseline_revenue_growth_pct": 12.0,
-  "baseline_note": "FY2025 营收同比 +14%，基数已高；基准情景假设 FY2026E 温和放缓至约 12%。预测标签为 FY2026E（相对 FY2025 实际的下一完整财年）。",
+  "baseline_note": "FY2025 营收同比约 +14%，基数已高；基准情景假设 FY2026E 温和放缓至约 12%。预测标签为 FY2026E（相对 FY2025 实际的下一完整财年）。",
   "macro_adjustments": [
-    {"factor": "联邦基金利率", "macro_change_pct": -17.07, "beta": 0.2, "phi": 0.5, "adjustment_pct": -1.71},
-    {"factor": "美国实际GDP增速", "macro_change_pct": 4.35, "beta": 1.0, "phi": 0.5, "adjustment_pct": 2.18},
-    {"factor": "PCE通胀", "macro_change_pct": 3.85, "beta": -0.1, "phi": 0.5, "adjustment_pct": -0.19},
-    {"factor": "美元指数DXY", "macro_change_pct": -2.88, "beta": -0.2, "phi": 0.5, "adjustment_pct": 0.29},
-    {"factor": "WTI原油价格", "macro_change_pct": -10.42, "beta": 0.0, "phi": 0.5, "adjustment_pct": 0.0},
-    {"factor": "美国消费者信心", "macro_change_pct": 4.32, "beta": 0.8, "phi": 0.5, "adjustment_pct": 1.73}
+    {"factor": "1年期LPR", "macro_change_pct": -3.23, "beta": 0.2, "phi": 0.5, "adjustment_pct": -0.32},
+    {"factor": "中国实际GDP增速", "macro_change_pct": 2.0, "beta": 1.0, "phi": 0.5, "adjustment_pct": 1.0},
+    {"factor": "中国CPI同比", "macro_change_pct": 8.0, "beta": -0.1, "phi": 0.5, "adjustment_pct": -0.4},
+    {"factor": "美元兑人民币中间价", "macro_change_pct": -1.11, "beta": -0.2, "phi": 0.5, "adjustment_pct": 0.11},
+    {"factor": "布伦特原油价格", "macro_change_pct": -5.0, "beta": 0.0, "phi": 0.5, "adjustment_pct": 0.0},
+    {"factor": "中国消费者信心指数", "macro_change_pct": 4.55, "beta": 0.8, "phi": 0.5, "adjustment_pct": 1.82}
   ],
-  "macro_subtotal_pct": 2.29,
+  "macro_subtotal_pct": 2.21,
   "company_specific_adjustment_pct": 0.5,
-  "company_specific_note": "汇总 news_intel 中广告 AI、游戏、Capex 与监管环境等示意净影响。",
-  "predicted_revenue_growth_pct": 14.79,
+  "company_specific_note": "汇总广告 AI、游戏、Capex 与监管环境等示意净影响（与 news_intel 方向一致）。",
+  "predicted_revenue_growth_pct": 14.71,
   "confidence": "medium",
   "predicted_fiscal_year_label": "FY2026E"
 }

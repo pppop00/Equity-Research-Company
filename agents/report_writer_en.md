@@ -27,7 +27,7 @@ Additional note: after filling placeholders, you may remove a **single-line** in
 
 - `financial_data.json`
 - `financial_analysis.json`
-- `macro_factors.json`
+- `macro_factors.json` — **Canonical source** for Section III factor **row labels** (e.g. `China consumer confidence (NBS)` vs `US Consumer Confidence`), geography, and numbers. Build `{{FACTOR_ROWS}}` from this file plus `prediction_waterfall.json`; **do not** invent a parallel US-only factor set or relabel factors in HTML only.
 - `news_intel.json`
 - `prediction_waterfall.json`
 - `porter_analysis.json`
@@ -1082,7 +1082,7 @@ window.addEventListener('resize', () => {
 | `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>` |
 | `{{SUMMARY_PARA_*}}`, `{{TREND*_TEXT}}`, thesis, Sankey note | Text | Plain English/Chinese only; **no** Markdown (`**`, backticks) in values — HTML does not render it |
 | `{{TREND*_DIRECTION}}` | class | `up` / `down`; all four trend cards use the same **green** left border |
-| `{{GEO_REVENUE_TEXT}}` | Text | 2–4 sentences: regional revenue only — amounts, % of total, growth by region, concentration; no FX/DXY (Section III) |
+| `{{GEO_REVENUE_TEXT}}` | Text | 2–4 sentences: regional revenue only — amounts, % of total, growth by region, concentration (`references/financial_metrics.md`, Geographic revenue mix) |
 | `{{WATERFALL_JS_DATA}}` | JS Array | 见模板注释中的格式示例 |
 | `{{SANKEY_YEAR_ACTUAL}}` | Text | Same fiscal label as `financial_data.json` latest full year (see `SKILL.md` Step 0C) |
 | `{{SANKEY_YEAR_FORECAST}}` | Text | Next-fiscal forecast label; must match `prediction_waterfall.json` → `predicted_fiscal_year_label` (default FY{N+1}E) |

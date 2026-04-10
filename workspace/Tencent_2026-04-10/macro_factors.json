@@ -1,80 +1,82 @@
 {
   "company": "Tencent",
+  "primary_operating_geography": "Greater_China",
   "sector": "Communication Services",
   "phi": 0.5,
-  "beta_source": "references/prediction_factors.md — Communication Services 行",
+  "beta_source": "references/prediction_factors.md — Communication Services 行；指标序列按 Greater_China 映射",
   "data_freshness": "2026-04-10",
+  "factor_geography_note": "宏观因子采用中国内地（及人民币市场）系列，与腾讯主营业务所在地一致；国际油价沿用全球基准（布伦特/WTI），β 仍用行业默认六槽位。",
   "factors": [
     {
-      "name": "联邦基金利率",
-      "current_value": 4.1,
-      "forecast_value": 3.4,
-      "factor_change_pct": -17.07,
+      "name": "1年期LPR",
+      "current_value": 3.1,
+      "forecast_value": 3.0,
+      "factor_change_pct": -3.23,
       "beta": 0.2,
       "phi": 0.5,
-      "adjustment_pct": -1.71,
+      "adjustment_pct": -0.32,
       "unit": "percent level",
-      "source": "FOMC 路径（示意）"
+      "source": "人民银行 LPR 与政策利率路径（公开共识/示意）"
     },
     {
-      "name": "美国实际 GDP 增速",
-      "current_value": 2.3,
-      "forecast_value": 2.4,
-      "factor_change_pct": 4.35,
+      "name": "中国实际GDP增速",
+      "current_value": 5.0,
+      "forecast_value": 5.1,
+      "factor_change_pct": 2.0,
       "beta": 1.0,
       "phi": 0.5,
-      "adjustment_pct": 2.18,
+      "adjustment_pct": 1.0,
       "unit": "percent YoY",
-      "source": "公开宏观共识（示意）"
+      "source": "国家统计局、IMF 与中国增长共识（示意）"
     },
     {
-      "name": "PCE 通胀",
-      "current_value": 2.6,
-      "forecast_value": 2.7,
-      "factor_change_pct": 3.85,
+      "name": "中国CPI同比",
+      "current_value": 0.4,
+      "forecast_value": 0.432,
+      "factor_change_pct": 8.0,
       "beta": -0.1,
       "phi": 0.5,
-      "adjustment_pct": -0.19,
+      "adjustment_pct": -0.4,
       "unit": "percent YoY",
-      "source": "Fed 预测区间（示意）"
+      "source": "国家统计局与一致预期（示意）"
     },
     {
-      "name": "美元指数 DXY",
-      "current_value": 104.0,
-      "forecast_value": 101.0,
-      "factor_change_pct": -2.88,
+      "name": "美元兑人民币中间价",
+      "current_value": 7.2,
+      "forecast_value": 7.12,
+      "factor_change_pct": -1.11,
       "beta": -0.2,
       "phi": 0.5,
-      "adjustment_pct": 0.29,
-      "unit": "index level",
-      "source": "即期与共识（示意）"
+      "adjustment_pct": 0.11,
+      "unit": "CNY per USD",
+      "source": "即期与汇率共识（示意；β 槽位同原「美元指数」列，符号按本序列解释）"
     },
     {
-      "name": "WTI 原油价格",
-      "current_value": 96.0,
-      "forecast_value": 86.0,
-      "factor_change_pct": -10.42,
+      "name": "布伦特原油价格",
+      "current_value": 82.0,
+      "forecast_value": 77.9,
+      "factor_change_pct": -5.0,
       "beta": 0.0,
       "phi": 0.5,
       "adjustment_pct": 0.0,
       "unit": "USD/bbl",
-      "source": "情景示意（该 sector 默认油价 β 为 0）"
+      "source": "ICE 布伦特期货与共识（示意）"
     },
     {
-      "name": "美国消费者信心",
+      "name": "中国消费者信心指数",
       "current_value": 88.0,
-      "forecast_value": 91.8,
-      "factor_change_pct": 4.32,
+      "forecast_value": 92.0,
+      "factor_change_pct": 4.55,
       "beta": 0.8,
       "phi": 0.5,
-      "adjustment_pct": 1.73,
+      "adjustment_pct": 1.82,
       "unit": "指数",
-      "source": "Conference Board 等"
+      "source": "国家统计局消费者信心指数（示意）"
     }
   ],
-  "total_macro_adjustment_pct": 2.29,
+  "total_macro_adjustment_pct": 2.21,
   "notes": [
-    "腾讯收入以内需与华语数字生态为主，美国宏观因子仅为模型示意；游戏出海与云国际业务对美元与海外需求亦有一定敞口。",
-    "β 取自 Communication Services 行，φ=0.5。"
+    "β 取自 Communication Services 行六槽位；仅替换为大中华区可观测序列与列名。",
+    "腾讯收入以内需与华语数字生态为主；出海游戏与跨境云对汇率、海外需求仍有次要敞口，模型未单列。"
   ]
 }
