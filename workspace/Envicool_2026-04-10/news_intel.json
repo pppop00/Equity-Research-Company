@@ -1,0 +1,75 @@
+{
+  "company": "英维克",
+  "sector": "Industrials",
+  "data_freshness": "2026-04-10",
+  "company_events": [
+    {
+      "type": "results",
+      "description": "FY2024 营收约 45.89 亿元、归母净利润约 4.53 亿元，同比双位数增长；机房温控仍为第一大收入来源。",
+      "revenue_impact_pct": 0.2,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "2024 年报"
+    },
+    {
+      "type": "results",
+      "description": "2025 年前三季度营收约 40.26 亿元、同比约 +40%，归母净利约 3.99 亿元、同比约 +13%；利润增速低于营收，单季增速放缓引发市场分歧。",
+      "revenue_impact_pct": 0.35,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "2025 三季报"
+    },
+    {
+      "type": "product",
+      "description": "AI 算力与数据中心液冷需求推动机房温控高增；全链条液冷方案与头部互联网、运营商项目持续落地。",
+      "revenue_impact_pct": 0.45,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "年报 MD&A、半年报"
+    },
+    {
+      "type": "margin_pressure",
+      "description": "2025 年上半年毛利率同比回落，机房业务占比上升及国内竞争加剧为主因之一。",
+      "revenue_impact_pct": -0.15,
+      "impact_direction": "negative",
+      "confidence": "medium",
+      "source": "2025 半年报点评"
+    },
+    {
+      "type": "cash_flow",
+      "description": "2025 年前三季度经营性现金流净额为负，公司在季报中提示与采购、薪酬支出增加相关。",
+      "revenue_impact_pct": -0.1,
+      "impact_direction": "negative",
+      "confidence": "medium",
+      "source": "2025 三季报"
+    },
+    {
+      "type": "international",
+      "description": "公司在香港、东南亚、美国等地布局子公司，拓展海外 AIDC 与储能客户；关税与地缘影响需持续跟踪。",
+      "revenue_impact_pct": 0.1,
+      "impact_direction": "positive",
+      "confidence": "low",
+      "source": "半年报、新闻"
+    }
+  ],
+  "company_specific_adjustment_pct": 0.55,
+  "industry_dynamics": {
+    "supplier_power": "压缩机、铜材、芯片与冷板等关键件受大宗与半导体周期影响；头部企业通过规模采购与自研降本。",
+    "buyer_power": "运营商、云厂商、EPC 招标压价强，集采份额决定出货量。",
+    "new_entrants": "液冷与储能温控吸引设备商与初创进入，技术认证与项目履历构成门槛。",
+    "substitutes": "风冷仍占存量市场；不同技术路线（冷板、浸没）分流需求。",
+    "rivalry": "价格战与交付周期竞争并存，研发投入与全链条交付能力决定份额。"
+  },
+  "forward_looking": {
+    "supplier_power": "若上游原材料走平，毛利或有修复窗口。",
+    "buyer_power": "智算中心集中建设期买方议价仍偏强。",
+    "new_entrants": "行业标准趋严可能提高合规成本，有利于龙头集中。",
+    "substitutes": "液冷渗透率提升或重塑赛道结构。",
+    "rivalry": "海外订单与专利布局可能成为第二增长曲线。"
+  },
+  "key_analyst_views": [
+    "主线：AI 数据中心与储能双轮驱动温控需求，英维克为 A 股液冷代表性标的之一。",
+    "风险：毛利率波动、现金流阶段承压及估值对预期敏感度较高。"
+  ],
+  "notes": []
+}

@@ -68,6 +68,33 @@ All intermediate JSON files and the final HTML go here.
 
 ---
 
+## Step 0C: Report calendar anchor & latest annual (mandatory)
+
+Use this on **every** run so Section II, Section IV (Sankey), and Phase 2.5 use the **same** fiscal baseline — not an arbitrary lag.
+
+1. **`report_calendar_year` (`Y_cal`)**  
+   Derive from the **`{Date}`** in `workspace/{Company}_{Date}/` (use the **four-digit calendar year** of that date, e.g. `Envicool_2026-04-10` → **2026**), unless the user gives an explicit **报告日 / as-of date** — then use that date’s year. This is the skill’s default “today” for **filing availability**.
+
+2. **What “latest annual” must be (Agent 1)**  
+   - **US 10-K / many HK & A-share 年报:** As of `Y_cal`, the orchestrator and Agent 1 **must first verify** whether the **complete annual** for fiscal **`FY(Y_cal − 1)`** is already **published** (e.g. in **2026** Q1–Q2, prioritize **FY2025** vs **FY2024** for YoY, not FY2024 vs FY2023).  
+   - **Non–December fiscal year ends:** The fiscal **label** comes from the filing (e.g. FY ending Mar 2025). `Y_cal − 1` is only a **default search hint** for December FY names; do **not** force the wrong FY — read the report header.
+
+3. **`financial_data.json` pair (Section II)**  
+   - **`income_statement.current_year`** = the **latest complete fiscal year** in the filing set (normally **`FY(Y_cal − 1)`** once that annual is out).  
+   - **`prior_year`** = the **immediately preceding** full fiscal year.  
+   - **If `FY(Y_cal − 1)` annual is not yet published** on the report date, use the **latest two consecutive full fiscal years that *are* published** (e.g. FY2024 vs FY2023) and add a **`notes[]`** line stating that **`FY(Y_cal − 1)` was unavailable** so readers know why the table lags.
+
+4. **Section IV — Sankey (two tabs)**  
+   - **Actual tab (`{{SANKEY_YEAR_ACTUAL}}`, `sankeyActualData`):** Built from the **same** P&L basis as **`current_year`** in `financial_data.json` (the latest **full-year** actual in the file). **Do not** label or scale “actual” two years behind `Y_cal` without the note in §3.  
+   - **Forecast tab (`{{SANKEY_YEAR_FORECAST}}`, `sankeyForecastData`):** **P&L structure scaled** to the **next fiscal year** after `current_year` using the model’s predicted revenue growth — label **`FY{current_FY + 1}E`** (e.g. actual FY2025 → **FY2026E**). This is the default “次财年 / 相对最新年报的下一完整财年” forecast, not a jump to **FY2027E** unless the model and narrative **explicitly** target that later year and the HTML label matches `prediction_waterfall.json`.
+
+5. **Phase 2.5 — `prediction_waterfall.json`**  
+   - **`predicted_fiscal_year_label`** **must match** the Sankey **forecast** tab (default **`FY(latest_actual + 1)E`**). The waterfall “预测财年” line should use the **same** label.
+
+Pass **`Report calendar year: {Y_cal}`** (and **`Report date: {YYYY-MM-DD}`** if known) into **every** Agent 1 task prompt so searches target the correct 10-K / 年报.
+
+---
+
 ## Phase 1 + 2 (Macro) + 3 (News): Parallel data collection
 
 Spawn or run Agents 1–3. **Each task prompt must include `Report language: {en|zh}`.**
@@ -78,6 +105,8 @@ Spawn or run Agents 1–3. **Each task prompt must include `Report language: {en
 
 ```
 Report language: {en|zh}
+Report calendar year: {Y_cal}
+Report date (optional): {YYYY-MM-DD}
 Company: {company_name}
 Uploaded files: {PDFs or "none"}
 Output path: workspace/{Company}_{Date}/financial_data.json
@@ -116,6 +145,9 @@ Follow agents/news_researcher.md
 ## Phase 2: Financial analysis (orchestrator, inline)
 
 Read `financial_data.json`; compute metrics per `references/financial_metrics.md`.  
+**Fiscal year labels (“当年 / 上年”, KPI 财年, `METRICS_YEAR_CUR` / `METRICS_YEAR_PREV`):** Must match **`income_statement.current_year`** and **`prior_year`** as fixed by **Step 0C** (latest **published** full-year pair; default target **`FY(Y_cal − 1)`** vs **`FY(Y_cal − 2)`** when that annual exists). **YoY / 同比** is always those two **consecutive** full fiscal years in the JSON. If only interim (e.g. 9M) exists for the newest year, either keep the table on the last two **full** fiscal years with a **`notes[]`** lag explanation per Step 0C, or add a clearly labeled “最近中期 vs 上年同期” block — do not mix without stating it.
+**Geographic revenue (Section II, fourth trend-card):** Write **`geographic_revenue.analysis`** for **`{{GEO_REVENUE_TEXT}}`** only — regional net revenue amounts, share of total, and growth/concentration **from filings / `financial_data.json`**. **Do not** discuss FX, currency translation, hedging, or DXY in this block (those belong in Section III / macro narrative). See `references/financial_metrics.md`.  
+**HTML narrative (no Markdown):** All strings that fill `{{SUMMARY_PARA_*}}`, `{{TREND*_TEXT}}`, `{{GEO_REVENUE_TEXT}}`, thesis, Sankey note, etc. must be **plain text** — do **not** use `**` / `*` / backticks; the template does not run a Markdown processor. See `references/report_style_guide_cn.md` or `report_style_guide_en.md` and `agents/report_writer_*.md`.  
 **If `report_language=en`:** all free-text fields in `financial_analysis.json` must be **English**.  
 **If `zh`:** Chinese prose as before.
 
@@ -126,6 +158,7 @@ Save `workspace/{Company}_{Date}/financial_analysis.json`.
 ## Phase 2.5: Revenue prediction (macro factor model)
 
 Same formula as `references/prediction_factors.md`.  
+**Forecast horizon label:** Set **`predicted_fiscal_year_label`** to **`FY(latest_actual + 1)E`** where **`latest_actual`** is the fiscal year in `financial_data.json` → **`income_statement.current_year`** (e.g. FY2025 actual → **FY2026E**). This must match the Sankey **forecast** tab (Step 0C §4). Only use a later year (e.g. FY2027E) if you deliberately extend the horizon and keep **Sankey + waterfall + appendix** consistent.  
 **If `en`:** use English for factor display names in `prediction_waterfall.json` where they are meant for the HTML table; numeric fields unchanged.
 
 Save `prediction_waterfall.json`.
@@ -143,7 +176,7 @@ Save `porter_analysis.json`.
 
 ## Phase 4: Sankey data preparation
 
-Build actual and forecast Sankey JS objects from `financial_data.json` and predicted growth.  
+Build **`sankeyActualData`** from **`current_year`** P&L in `financial_data.json` and **`sankeyForecastData`** by scaling that structure with **`prediction_waterfall.json` → `predicted_revenue_growth_pct`** for **`FY(latest_actual + 1)E`** (see **Step 0C §4**). Fill **`{{SANKEY_YEAR_ACTUAL}}`** / **`{{SANKEY_YEAR_FORECAST}}`** accordingly.  
 **If `en`:** Sankey node `name` strings **English** (Revenue, Cost of revenue, …). **If `zh`:** Chinese labels as in the Chinese template examples.
 
 ---
@@ -163,7 +196,7 @@ python3 scripts/extract_report_template.py --lang cn --sha256 \
   -o workspace/{Company}_{Date}/_locked_cn_skeleton.html
 ```
 
-Then fill **only** `{{PLACEHOLDER}}` markers in the extracted file (or paste into your editor from the same extract) and save as `{Company}_Research_CN.html`. Do not alter the locked HTML/CSS/JS skeleton.
+Then fill **only** `{{PLACEHOLDER}}` markers in the extracted file (or paste into your editor from the same extract) and save as `{Company}_Research_CN.html`. Do not alter the locked HTML/CSS/JS skeleton. **Post-processing caution:** Do **not** delete HTML comment lines that contain `-->` solely because they include illustrative `{{…}}` text — removing the only closing `-->` for a multi-line `<!--` will comment out the Porter/Appendix DOM (see `agents/report_writer_cn.md` 写作规范、`agents/report_validator.md` §5).
 
 ### If `report_language = en`
 
@@ -179,6 +212,8 @@ python3 scripts/extract_report_template.py --lang en --sha256 \
 ```
 
 Then fill **only** placeholders and save as `{Company}_Research_EN.html`.
+
+**Post-processing:** Same HTML comment rule as Chinese — do **not** strip lines that close a `<!--` block inside the Porter company panel (see `report_writer_en.md`).
 
 - Header: **English legal name** in the first name line; **ticker only** on the second line (see `report_writer_en.md` rules).  
 - Use `{{RATING_EN}}`, `{{CONFIDENCE_EN}}` per the English template.  

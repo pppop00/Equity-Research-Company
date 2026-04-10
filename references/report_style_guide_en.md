@@ -12,6 +12,7 @@ For **Agent 4A** (`agents/report_writer_en.md`). Tone: institutional sell-side /
 - Prefer active voice sparingly; neutral institutional register
 
 **Avoid:**
+- **Markdown in HTML placeholders** — the final report is static HTML; `**bold**` and `` `code` `` are not rendered and will show as raw characters. Use plain prose in all narrative fields pasted into `{{…}}` slots; use `<strong>…</strong>` only sparingly if emphasis is truly needed.
 - Casual language, fluff, exclamation marks
 - Unsubstantiated superlatives (“industry-leading”) unless cited
 - Machine translation from Chinese — write natively in English

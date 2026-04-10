@@ -1,0 +1,61 @@
+{
+  "profitability": {
+    "gross_margin_current": 28.6,
+    "gross_margin_prior": 31.0,
+    "operating_margin_current": 11.0,
+    "operating_margin_prior": 11.7,
+    "net_margin_current": 9.9,
+    "net_margin_prior": 9.8,
+    "roe_current": 16.9,
+    "roa_current": 7.5,
+    "ebitda_current": null,
+    "ebitda_margin_current": null
+  },
+  "growth": {
+    "revenue_growth_yoy_pct": 30.0,
+    "organic_revenue_growth_yoy_pct": null,
+    "net_income_growth_yoy_pct": 31.6,
+    "eps_growth_yoy_pct": 29.8
+  },
+  "cash_flow": {
+    "free_cash_flow": 85,
+    "fcf_margin_pct": 1.9,
+    "fcf_conversion_pct": 18.8,
+    "capex_intensity_pct": 2.5
+  },
+  "leverage": {
+    "debt_equity_ratio": 0.29,
+    "net_debt": 122,
+    "interest_coverage_ratio": 62.9
+  },
+  "valuation": {
+    "stock_price": null,
+    "pe_ratio": null,
+    "market_cap": null,
+    "ev": null,
+    "ev_ebitda": null,
+    "note": "未抓取估值即期数；AI 液冷叙事下二级市场波动大，估值需单独更新。"
+  },
+  "trends": {
+    "net_income": {
+      "label": "↑ 改善",
+      "class": "positive",
+      "analysis": "FY2024 归母净利润约 4.53 亿元，同比约 +31.6%；扣非增速更高，机房温控高增为主要拉动。2025 年以来前三季度利润增速低于营收，验证与费用、产品结构及结算节奏有关。"
+    },
+    "net_margin": {
+      "label": "→ 基本稳定",
+      "class": "neutral",
+      "analysis": "FY2024 净利率与 FY2023 同在约 10% 附近窄幅波动；2025 年上半年毛利率同比走低、机房业务占比上升压制整体毛利，为后续观察点。"
+    },
+    "fcf": {
+      "label": "↓ 承压",
+      "class": "negative",
+      "analysis": "FY2024 经营活动现金流净额约 2 亿元，同比明显下降；2025 年前三季度经营活动现金流为负，公司在三季报中归因于采购与薪酬等支出增加，与备货与扩张阶段一致。"
+    }
+  },
+  "geographic_revenue": {
+    "analysis": "FY2024 年报摘要未单列完整境内外金额。公司互动易引用定期报告：2023 年全年境外收入占营收约 17.97%，2024 年上半年境外约 16.08%，境内仍为主体。2025 年上半年公开材料显示境内收入高增、境外同比回落，境内收入占比升至约九成。区域披露以交易所文件为准；本卡仅述结构，不展开汇率推断。"
+  },
+  "unit": "百万人民币或百分比",
+  "notes": []
+}

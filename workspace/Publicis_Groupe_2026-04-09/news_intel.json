@@ -1,0 +1,51 @@
+{
+  "company": "Publicis Groupe",
+  "sector": "Communication Services",
+  "data_freshness": "2026-04-09",
+  "company_events": [
+    {
+      "type": "results",
+      "description": "FY2025 有机净营收约 +5.6%，营业利润率 18.2%再上台阶；Headline EPS 约 7.48 欧元、FCF 约 20 亿欧元，管理层指引 2026 年继续跑赢行业。",
+      "revenue_impact_pct": 0.35,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "Publicis FY2025 press release, 2026-02-03"
+    },
+    {
+      "type": "acquisition",
+      "description": "2026 年 4 月宣布收购 160over90 等补强体育与体验营销，中长期或带来增量客户与项目制收入。",
+      "revenue_impact_pct": 0.15,
+      "impact_direction": "positive",
+      "confidence": "low",
+      "source": "公司新闻稿"
+    },
+    {
+      "type": "fx",
+      "description": "FY2025 汇兑对净营收约 −4.97 亿欧元拖累 reported 增速；若美元走弱，折算压力或缓和但北美美元收入占比仍高，需双向评估。",
+      "revenue_impact_pct": -0.1,
+      "impact_direction": "negative",
+      "confidence": "medium",
+      "source": "FY2025 业绩材料"
+    }
+  ],
+  "company_specific_adjustment_pct": 0.4,
+  "industry_dynamics": {
+    "supplier_power": "人力、数据与 AI 算力/平台许可构成主要可变成本与能力约束；大集团以规模采购与生态联盟部分对冲。",
+    "buyer_power": "全球大客户比稿与集权采购压价；具备数据闭环与效果证明的履约方议价更稳。",
+    "new_entrants": "垂直精品与咨询型新贵切入长尾；全球整合比稿与合规仍利于头部 holding。",
+    "substitutes": "In-housing、零售媒体与平台内生工具持续分流传统代理费池。",
+    "rivalry": "与 Omnicom、WPP、IPG 等在新业务净额与人才上竞争激烈；阳狮近年有机与利润率阶段性领先但非结构性垄断。"
+  },
+  "forward_looking": {
+    "supplier_power": "AI 相关成本与关键数据资源可能继续定价走强。",
+    "buyer_power": "经济走弱时品牌主首要削减 discretionary 营销，买方议价周期性强。",
+    "new_entrants": "Agentic 营销工具可能降低部分执行环节门槛，头部需产品化自有栈。",
+    "substitutes": "体育/体验与内容电商继续挤占经典电视预算。",
+    "rivalry": "比稿与 M&A 节奏或维持高位，利润率离散度取决于 US 需求与内部效率。"
+  },
+  "key_analyst_views": [
+    "新闻稿强调 2026 年为连续第七年 intended industry outperformance，关键在执行与宏观广告韧性。",
+    "主要下行情景：美国企业营销预算超预期收缩或强美元长期压制欧元报表增速。"
+  ],
+  "notes": []
+}

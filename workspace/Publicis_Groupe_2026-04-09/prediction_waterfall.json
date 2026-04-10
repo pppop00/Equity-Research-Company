@@ -1,0 +1,21 @@
+{
+  "company": "Publicis Groupe",
+  "sector_beta_row": "Communication Services",
+  "phi": 0.5,
+  "baseline_revenue_growth_pct": 5.8,
+  "baseline_note": "基准参考 FY2025 有机约 +5.6% 与管理层对 2026「再度跑赢行业」的指引语气，略上修至 +5.8% 作为 FY2027E 情景起点（示意）。",
+  "macro_adjustments": [
+    {"factor": "联邦基金利率", "macro_change_pct": -17.07, "beta": 0.2, "phi": 0.5, "adjustment_pct": -1.71},
+    {"factor": "美国实际GDP增速", "macro_change_pct": 4.35, "beta": 1.0, "phi": 0.5, "adjustment_pct": 2.17},
+    {"factor": "PCE通胀", "macro_change_pct": 3.85, "beta": -0.1, "phi": 0.5, "adjustment_pct": -0.19},
+    {"factor": "美元指数DXY", "macro_change_pct": -2.88, "beta": -0.2, "phi": 0.5, "adjustment_pct": 0.29},
+    {"factor": "WTI原油价格", "macro_change_pct": -10.42, "beta": 0.0, "phi": 0.5, "adjustment_pct": 0.0},
+    {"factor": "美国消费者信心", "macro_change_pct": 4.32, "beta": 0.8, "phi": 0.5, "adjustment_pct": 1.73}
+  ],
+  "macro_subtotal_pct": 2.29,
+  "company_specific_adjustment_pct": 0.4,
+  "company_specific_note": "并购与指引等事件净影响约 +0.4pct（见 news_intel.json）。",
+  "predicted_revenue_growth_pct": 8.49,
+  "confidence": "medium",
+  "predicted_fiscal_year_label": "FY2027E"
+}

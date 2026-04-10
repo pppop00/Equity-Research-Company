@@ -284,13 +284,14 @@ body {
 /* --- Trend Cards --- */
 .trend-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
 .trend-card {
-  border-left: 4px solid var(--border);
+  border-left: 4px solid var(--accent-green);
   padding: 12px 16px;
   border-radius: 0 8px 8px 0;
   background: var(--bg);
 }
 .trend-card.up   { border-left-color: var(--accent-green); }
-.trend-card.down { border-left-color: var(--accent-red);   }
+.trend-card.down { border-left-color: var(--accent-green); }
+.trend-card.trend-geo { border-left-color: var(--accent-green); }
 .trend-card-label { font-weight: 700; font-size: 13px; margin-bottom: 5px; color: var(--text-primary); }
 .trend-card-text  { font-size: 13px; color: var(--text-secondary); line-height: 1.75; }
 /* --- Tabs --- */
@@ -400,7 +401,7 @@ body {
 .score-dot.s1, .score-dot.s2 { background: var(--accent-green); }
 .score-dot.s3               { background: var(--accent-amber); }
 .score-dot.s4, .score-dot.s5 { background: var(--accent-red); }
-.porter-text { font-size: 13px; line-height: 1.85; color: var(--text-secondary); }
+.porter-text { font-size: 13px; line-height: 1.85; color: var(--text-secondary); word-break: break-word; }
 /* --- Appendix --- */
 .appendix-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 16px; }
 .appendix-table th {
@@ -412,7 +413,7 @@ body {
   font-weight: 600;
 }
 [data-theme="dark"] .appendix-table th { background: var(--primary-light, #1a3a6e); }
-.appendix-table td { padding: 7px 12px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-secondary); }
+.appendix-table td { padding: 7px 12px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-secondary); vertical-align: top; word-break: break-word; }
 .appendix-table tr:last-child td { border-bottom: none; }
 .disclaimer-box {
   background: var(--bg);
@@ -579,7 +580,7 @@ body {
       </tbody>
     </table>
 
-    <!-- 趋势分析：固定 3 张 trend-card，顺序固定 -->
+    <!-- 趋势分析：固定 4 张 trend-card；四张左边框均为绿色（up/down/trend-geo 仅作可选语义类，不再改颜色） -->
     <div class="trend-cards">
       <div class="trend-card {{TREND1_DIRECTION}}">
         <div class="trend-card-label">归母净利润趋势</div>
@@ -592,6 +593,10 @@ body {
       <div class="trend-card {{TREND3_DIRECTION}}">
         <div class="trend-card-label">自由现金流趋势</div>
         <div class="trend-card-text">{{TREND3_TEXT}}</div>
+      </div>
+      <div class="trend-card trend-geo">
+        <div class="trend-card-label">地区收入结构</div>
+        <div class="trend-card-text">{{GEO_REVENUE_TEXT}}</div>
       </div>
     </div>
   </div>
@@ -675,8 +680,7 @@ body {
         </div>
         <div>
           <ul class="porter-scores" id="scores-company">
-            <!-- 5 行，顺序固定：供应商议价能力 / 买方议价能力 / 新进入者威胁 / 替代品威胁 / 行业竞争强度
-              格式：<li><span class="score-dot s{{分数}}">{{分数}}</span>{{力名称}}</li> -->
+            <!-- 5 个 li：供应商议价能力、买方议价能力、新进入者威胁、替代品威胁、行业竞争强度；占位符见下方填充规则，勿删本行注释或引入未闭合的 HTML 注释 -->
             {{PORTER_COMPANY_SCORES}}
           </ul>
           <div class="porter-text">{{PORTER_COMPANY_TEXT}}</div>
@@ -1078,9 +1082,14 @@ window.addEventListener('resize', () => {
 | `{{KPI1_VALUE}}` | 文字 | 带单位数值，例如 "39.1亿美元" |
 | `{{KPI1_CHANGE}}` | 文字 | 同比变化，例如 "同比 +7.2%" |
 | `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>` |
+| `{{SUMMARY_PARA_1}}` 等 | 文字 | 纯中文/英文叙述；**禁止** `**` 等 Markdown（见上文写作规范） |
+| `{{TREND1_TEXT}}` 等 | 文字 | 同上；语义类由 `{{TREND*_DIRECTION}}` 控制（`up` / `down`），四张卡左边框均为绿色 |
+| `{{GEO_REVENUE_TEXT}}` | 文字 | 2–4 句：仅写地区收入——最新披露期各区域（或主要国家）净营收金额、占比、有机/同比增速（如有）、集中度变化；不写汇率、折算、DXY 或宏观传导（第三节处理） |
 | `{{WATERFALL_JS_DATA}}` | JS Array | 见模板注释中的格式示例 |
+| `{{SANKEY_YEAR_ACTUAL}}` | 文字 | 与 `financial_data.json` 中「当年」完整财年一致（最新已发布年报，如 FY2025）；参见 `SKILL.md` Step 0C |
+| `{{SANKEY_YEAR_FORECAST}}` | 文字 | 下一完整财年预测标签，与 `prediction_waterfall.json` 的 `predicted_fiscal_year_label` 一致（默认 FY{当年+1}E，如 FY2026E） |
 | `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
-| `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | 同上 |
+| `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | 同上；由「当年」P&L 按预测营收增速缩放 |
 | `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
 | `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>` 含 score-dot |
 | `{{PORTER_COMPANY_TEXT}}` | HTML | 约300字波特五力分析正文 |
@@ -1097,3 +1106,5 @@ window.addEventListener('resize', () => {
 - 归母净利润/自由现金流用中文惯用表达
 - 美股金额以"亿美元"为单位（大于100亿用"X,XXX亿美元"或"X.X万亿美元"）
 - 禁止口语化和感叹号
+- **HTML 正文占位符不得使用 Markdown**：勿在 `{{SUMMARY_PARA_*}}`、`{{TREND*_TEXT}}`、`{{GEO_REVENUE_TEXT}}`、`{{INVESTMENT_THESIS}}`、`{{SANKEY_ANALYSIS_TEXT}}` 等字段中写入 `**加粗**`、`*斜体*`、反引号代码等；最终页面不会渲染 Markdown，会出现裸露星号。需强调处用中文「」或必要时少量 `<strong>…</strong>`（慎用以免破坏版式）。
+- **禁止破坏锁定 HTML 中的注释闭合**：第四节、第五节company 面板等处曾用多行 `<!-- …` 且下一行含示例 `{{…}}` 再用 `-->` 闭合；若生成脚本按字串删除「含 `{{分数}}` 的行」，会删掉唯一的 `-->`，导致**整段后续 DOM 被浏览器当作注释吞掉**（第五、六节版式全崩）。生成 HTML 时**不得**删除带 `-->` 的注释行；第五节「公司层面」已改为**单行自闭合注释**。

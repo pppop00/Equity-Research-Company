@@ -1,0 +1,61 @@
+{
+  "profitability": {
+    "gross_margin_current": 45.0,
+    "gross_margin_prior": 40.0,
+    "operating_margin_current": -2.5,
+    "operating_margin_prior": -33.3,
+    "net_margin_current": -40.0,
+    "net_margin_prior": -83.3,
+    "roe_current": null,
+    "roa_current": null,
+    "ebitda_current": null,
+    "ebitda_margin_current": null
+  },
+  "growth": {
+    "revenue_growth_yoy_pct": 233.3,
+    "organic_revenue_growth_yoy_pct": null,
+    "net_income_growth_yoy_pct": -60.0,
+    "eps_growth_yoy_pct": null
+  },
+  "cash_flow": {
+    "free_cash_flow": null,
+    "fcf_margin_pct": null,
+    "fcf_conversion_pct": null,
+    "capex_intensity_pct": null
+  },
+  "leverage": {
+    "debt_equity_ratio": null,
+    "net_debt": null,
+    "interest_coverage_ratio": null
+  },
+  "valuation": {
+    "stock_price": null,
+    "pe_ratio": null,
+    "market_cap": null,
+    "ev": null,
+    "ev_ebitda": null,
+    "note": "未上市；媒体对估值与融资轮次的报道波动极大，本表不采单一数字。"
+  },
+  "trends": {
+    "net_income": {
+      "label": "↓ 承压",
+      "class": "negative",
+      "analysis": "在 ARR 由约 60 亿美元量级跃升至约 200 亿美元（CFO 官方口径、2023→2025 约 10×）的同时，多轮媒体报道仍指向绝对亏损额随算力 capex 与研发同步扩大；净利润未经审计，须以未来招股或完整报表为准。"
+    },
+    "net_margin": {
+      "label": "↓ 承压",
+      "class": "negative",
+      "analysis": "示意净利率仍深度为负；高毛利潜力或被推理成本、模型训练和获客效率稀释，真实分部利润率对不同产品线差异极大。"
+    },
+    "fcf": {
+      "label": "↓ 承压",
+      "class": "negative",
+      "analysis": "无私募公司现金流披露；结合行业惯例与报道，自由现金流大概率长期为负，依赖股权融资与合作伙伴资本开支。"
+    }
+  },
+  "geographic_revenue": {
+    "analysis": "公司未公布标准地理收入分摊。第三方流量/用户统计显示美国占比通常为个位数到二十个百分点区间，印度、巴西、日本、欧洲多国有大量使用者；企业侧《Enterprise AI 2025》报告称澳大利亚、巴西、荷兰、法国等市场付费企业客户增速显著。下列结构为基于「用户/流量占比向付费转化」的示意拆分，非财报口径。北美约 42%、欧洲约 26%、亚太约 24%、拉美与其余约 8%（合计 100%）。"
+  },
+  "unit": "%; 或百万美元；示意",
+  "notes": ["私营公司与社交媒体披露为主，所有利润率与地理拆分为低置信度推断。"]
+}

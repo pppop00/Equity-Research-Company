@@ -1,0 +1,60 @@
+{
+  "company": "腾讯",
+  "sector": "Communication Services",
+  "data_freshness": "2026-04-10",
+  "company_events": [
+    {
+      "type": "product",
+      "description": "FY2025 业绩超预期：AI 驱动广告定向与视频号、搜一搜库存变现，营销服务收入同比 +19% 至约 1450 亿元。",
+      "revenue_impact_pct": 0.35,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "公司 2025 年报及业绩演示 2026-03-18"
+    },
+    {
+      "type": "product",
+      "description": "本土与国际游戏强劲；国际市场游戏年收入创历史新高，Q4 同比高增长。",
+      "revenue_impact_pct": 0.25,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "同上"
+    },
+    {
+      "type": "capex",
+      "description": "全年资本开支约 792 亿元创历史新高，管理层提示 AI 芯片供给约束；2026 年利润增速或慢于收入因投入加大。",
+      "revenue_impact_pct": -0.15,
+      "impact_direction": "negative",
+      "confidence": "medium",
+      "source": "业绩电话会纪要（公开整理）"
+    },
+    {
+      "type": "regulatory",
+      "description": "中国内地平台经济与游戏版号环境较前几年缓和，但监管与未成年人保护合规仍为长线变量。",
+      "revenue_impact_pct": 0.05,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "行业公开评论"
+    }
+  ],
+  "company_specific_adjustment_pct": 0.5,
+  "industry_dynamics": {
+    "supplier_power": "算力与高端 GPU 供给集中，云与 AI 业务上游议价能力强；内容与 IP 采购成本随爆款游戏与赛事波动。",
+    "buyer_power": "广告主与大型游戏渠道对价格敏感；超级 App 内流量分配权提升平台议价，但大客户直投与多平台分流限制定价。",
+    "new_entrants": "短视频、电商直播、AIGC 工具降低部分营销门槛；但社交网络与游戏研运壁垒仍高。",
+    "substitutes": "用户时间在短视频、电商、线下娱乐间迁移；国际化产品替代本土游戏与支付场景。",
+    "rivalry": "游戏、广告、公有云赛道竞争激烈，巨头在 AI 与小程序生态上短兵相接。"
+  },
+  "forward_looking": {
+    "supplier_power": "若 AI 算力持续紧俏，上游芯片与电力成本或进一步挤压云业务毛利。",
+    "buyer_power": "品牌主对可度量 ROI 要求更高，AI 投放工具或缓解单价压力。",
+    "new_entrants": "多模态与 Agent 应用可能重塑分发；平台需以生态工具抬高迁移成本。",
+    "substitutes": "海外游戏与广告平台分流出海预算；国内竞品在小程序电商与本地生活领域持续渗透。",
+    "rivalry": "2026–2027 年 AI Capex 竞赛或加剧云服务与内容投入强度。"
+  },
+  "key_analyst_views": [
+    "多数机构关注 AI 对广告 ARPU、云及企业服务的拉动与 Capex 节奏的平衡。"
+  ],
+  "notes": [
+    "以下为示意性影响估算，非一致预期汇总。"
+  ]
+}

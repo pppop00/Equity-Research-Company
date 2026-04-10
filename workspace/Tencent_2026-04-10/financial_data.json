@@ -1,0 +1,75 @@
+{
+  "company": "腾讯",
+  "company_en": "Tencent Holdings Limited",
+  "ticker": "0700",
+  "sector": "Communication Services",
+  "sub_industry": "互动媒体与服务 / 游戏与社交网络",
+  "fiscal_year": "FY2025",
+  "fiscal_year_end": "2025-12-31",
+  "prior_fiscal_year": "FY2024",
+  "currency": "CNY",
+  "data_source": "腾讯控股《截至2025年12月31日止年度业绩公告》及投资者演示材料（港交所 2026-03-18），RMB 百万。",
+  "data_confidence": "high",
+  "income_statement": {
+    "current_year": {
+      "revenue": 751766,
+      "cogs": 329173,
+      "gross_profit": 422593,
+      "rd_expense": 85000,
+      "sm_expense": 41727,
+      "ga_expense": 51127,
+      "total_opex": 177854,
+      "operating_income": 241562,
+      "interest_expense": 3572,
+      "pretax_income": 277200,
+      "income_tax": 47448,
+      "net_income": 224842,
+      "diluted_eps": 24.65,
+      "diluted_shares": 9112
+    },
+    "prior_year": {
+      "revenue": 660257,
+      "cogs": 311011,
+      "gross_profit": 349246,
+      "rd_expense": 72000,
+      "sm_expense": 36388,
+      "ga_expense": 40761,
+      "total_opex": 149149,
+      "operating_income": 208099,
+      "interest_expense": 3320,
+      "pretax_income": 238300,
+      "income_tax": 44200,
+      "net_income": 194073,
+      "diluted_eps": 20.82,
+      "diluted_shares": 9320
+    },
+    "unit": "百万人民币；营收、毛利、经营利润、所得税等来自合并利润表；研发支出约 850 亿元为年报附注披露口径；一般行政费用为 G&A 总额扣减研发近似拆分，用于模型与桑基示意。",
+    "notes_on_mapping": "归母净利润用于 EPS/净利率主线；经营利润后仍有投资收益、利息与联营等科目，桑基图底部以「税及其他」轧差连接经营利润与归母净利。"
+  },
+  "balance_sheet": {
+    "cash_and_equivalents": 141041,
+    "short_term_investments": 354419,
+    "total_assets": 2038986,
+    "total_debt": 377191,
+    "total_equity": 1241065,
+    "shares_outstanding": 9112,
+    "unit": "百万人民币；现金与类现金含定期存款等 treasury 工具；总债务含借款与应付票据（借款约 2509.87 亿 + 票据等，见年报）。"
+  },
+  "cash_flow": {
+    "operating_cash_flow": 261800,
+    "capex": -79200,
+    "free_cash_flow": 182600,
+    "unit": "百万人民币；自由现金流为年报披露值；资本开支约 792 亿元；经营性现金流为 FCF+Capex 近似。"
+  },
+  "segment_data": [
+    {"name": "增值服务（VAS）", "revenue": 369281, "pct_of_total": 49.1},
+    {"name": "营销服务（广告）", "revenue": 144973, "pct_of_total": 19.3},
+    {"name": "金融科技与企业服务", "revenue": 229435, "pct_of_total": 30.5},
+    {"name": "其他", "revenue": 8077, "pct_of_total": 1.1}
+  ],
+  "notes": [
+    "报告日历年 2026，已刊发 FY2025 完整年报；因此 current_year = FY2025，prior_year = FY2024。",
+    "微信及 Weixin 合并月活约 14.18 亿（2025-12-31，公司披露）。",
+    "Non-IFRS 口径与 IFRS 差异较大，本表以 IFRS 为主，并在综述中必要时提示 Non-IFRS 盈利。"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "company": "OpenAI",
+  "company_en": "OpenAI, Inc.",
+  "ticker": "未上市",
+  "sector": "Technology",
+  "sub_industry": "Generative AI / Cloud Software",
+  "fiscal_year": "2025 run-rate",
+  "fiscal_year_end": "2025-12-31（日历对照）",
+  "prior_fiscal_year": "2024 run-rate",
+  "currency": "USD",
+  "data_source": "无经审计年报；收入以 CFO Sarah Friar 2026-01-18 官方博文 disclosed ARR（2023–2025）为主，辅以 Reuters / The Information / Decrypt / X（高管帖文）与行业报道交叉验证；成本与利润为媒体区间与模型示意，非公司确认值。",
+  "data_confidence": "low",
+  "income_statement": {
+    "current_year": {
+      "revenue": 20000,
+      "cogs": 11000,
+      "gross_profit": 9000,
+      "rd_expense": 5500,
+      "sm_expense": 2800,
+      "ga_expense": 1200,
+      "total_opex": 9500,
+      "operating_income": -500,
+      "interest_expense": 0,
+      "pretax_income": -7500,
+      "income_tax": 0,
+      "net_income": -8000,
+      "diluted_eps": null,
+      "diluted_shares": null
+    },
+    "prior_year": {
+      "revenue": 6000,
+      "cogs": 3600,
+      "gross_profit": 2400,
+      "rd_expense": 2200,
+      "sm_expense": 1400,
+      "ga_expense": 800,
+      "total_opex": 4400,
+      "operating_income": -2000,
+      "interest_expense": 0,
+      "pretax_income": -5000,
+      "income_tax": 0,
+      "net_income": -5000,
+      "diluted_eps": null,
+      "diluted_shares": null
+    },
+    "unit": "millions USD；营收列为「披露年化经常性收入（ARR）」近似截面，不等同于 GAAP 全年收入；2025 年取 CFO 口径年末约 200 亿美元ARR；2024 年取同系列披露约 60 亿美元。成本与净利润行取自多篇媒体报道区间的中位示意，用于比率与桑基结构，非精确申报。",
+    "notes_on_mapping": "私营公司无 10-K；利润表行为技能包示意拼装，便于与上市模板对齐。若未来 S-1/招股文件发布，应以法定报表替换。"
+  },
+  "balance_sheet": {
+    "cash_and_equivalents": null,
+    "short_term_investments": null,
+    "total_assets": null,
+    "total_debt": null,
+    "total_equity": null,
+    "shares_outstanding": null,
+    "unit": "未披露合并资产负债表；巨额私募融资（如 2026 年媒体所称约 1,220 亿美元量级融资新闻）仅作定性背景。"
+  },
+  "cash_flow": {
+    "operating_cash_flow": null,
+    "capex": null,
+    "free_cash_flow": null,
+    "unit": "无公开现金流量表；媒体报道公司仍处于高投入阶段，FCF 大概率显著为负，本报告 KPI 另栏说明。"
+  },
+  "segment_data": [
+    {"name": "消费者订阅（ChatGPT Plus / Pro / Go 等）", "revenue": 9000, "pct_of_total": 45.0},
+    {"name": "企业与团队（Enterprise / Team / 教育等）", "revenue": 8000, "pct_of_total": 40.0},
+    {"name": "API 与开发者平台", "revenue": 3000, "pct_of_total": 15.0}
+  ],
+  "notes": [
+    "营收结构比例参考 2026 年 Decrypt 等引述「企业收入已超 40%」与第三方对 API/消费者的区间拆分，属推断。",
+    "Sam Altman 等在 X 上发布的 ARR 里程碑帖与 CFO 博文是本报告最重要的「社会化披露」交叉锚点。",
+    "与微软协议下收入分成、Azure 代销等会使「 headline ARR」与 OpenAI 实际留存现金不完全一致，IPO 前细节通常不透明。"
+  ]
+}

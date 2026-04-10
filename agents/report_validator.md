@@ -77,6 +77,7 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 
 ### ✅ 5. 波特五力 HTML 结构
 
+- **`<!--` 注释完整性（CRITICAL）：** 在 `#porter-panel-company .porter-scores` 上方不得存在**未闭合**的多行 HTML 注释。若某脚本删除了带 `-->` 的说明行，会导致从该行起至下一个 `-->` 之间的**真实 DOM（含第一组 `<li>`、`.porter-text`、甚至附录）被浏览器当作注释隐藏**，版式表现为第五、六节「崩了」。校验：在 `porter-panel-company` 内 `document.querySelectorAll('#porter-panel-company .porter-scores li')` 逻辑上应有 5 条；或直接在源码中确认 `scores-company` 的 `<li>` **不在**同一未闭合 `<!--` 块内。
 - 3 个 tab-panel：`id="porter-panel-company"`, `id="porter-panel-industry"`, `id="porter-panel-forward"`
 - 每个 panel 内有 `.porter-scores` 列表，恰好 5 个 `<li>`
 - 每个 `<li>` 包含一个 `.score-dot` 元素

@@ -1,0 +1,61 @@
+{
+  "profitability": {
+    "gross_margin_current": 56.2,
+    "gross_margin_prior": 52.9,
+    "operating_margin_current": 32.1,
+    "operating_margin_prior": 31.5,
+    "net_margin_current": 29.9,
+    "net_margin_prior": 29.4,
+    "roe_current": 19.5,
+    "roa_current": 11.0,
+    "ebitda_current": null,
+    "ebitda_margin_current": null
+  },
+  "growth": {
+    "revenue_growth_yoy_pct": 13.9,
+    "organic_revenue_growth_yoy_pct": null,
+    "net_income_growth_yoy_pct": 15.9,
+    "eps_growth_yoy_pct": 18.4
+  },
+  "cash_flow": {
+    "free_cash_flow": 182600,
+    "fcf_margin_pct": 24.3,
+    "fcf_conversion_pct": null,
+    "capex_intensity_pct": 10.5
+  },
+  "leverage": {
+    "debt_equity_ratio": 0.30,
+    "net_debt": null,
+    "interest_coverage_ratio": 67.6
+  },
+  "valuation": {
+    "stock_price": null,
+    "pe_ratio": null,
+    "market_cap": null,
+    "ev": null,
+    "ev_ebitda": null,
+    "note": "未抓取即期股价与估值；港 ADR/港股波动与南向资金相关，需另行更新。"
+  },
+  "trends": {
+    "net_income": {
+      "label": "↑ 改善",
+      "class": "positive",
+      "analysis": "FY2025 归母净利润约 2248 亿元，同比约 +16%；在收入 +14% 的同时，毛利改善与费用效率支撑利润略快于收入增长。Non-IFRS 口径利润增速亦在 +17% 左右，核心主业韧性较强。"
+    },
+    "net_margin": {
+      "label": "↑ 改善",
+      "class": "positive",
+      "analysis": "FY2025 归母净利率约 29.9%，较 FY2024 的约 29.4% 小幅扩张；毛利率同比提升至约 56%，反映高毛利广告与游戏贡献及成本结构优化。"
+    },
+    "fcf": {
+      "label": "↑ 改善",
+      "class": "positive",
+      "analysis": "年报披露自由现金流约 1826 亿元，同比约 +18%；在资本开支创纪录背景下仍保持强劲现金创造，体现内生性造血能力，但需跟踪 AI 投资强度对 FCF 的边际影响。"
+    }
+  },
+  "geographic_revenue": {
+    "analysis": "公司分项以增值、广告与金融科技为主，完整境内外收入拆分以年报分部注释为准。游戏业务中国际市场 2025 年收入创历史新高，广告与支付仍以大中华区核心用户与商户为主。本卡仅描述业务结构重心，不展开汇率或情景压力测试（归宏观章节）。"
+  },
+  "unit": "百万人民币或百分比",
+  "notes": []
+}

@@ -1,0 +1,21 @@
+{
+  "company": "OpenAI",
+  "sector_beta_row": "Technology",
+  "phi": 0.5,
+  "baseline_revenue_growth_pct": 38.0,
+  "baseline_note": "以 2025 披露的约 200 亿美元 ARR 为锚，参考 2024→2025 超 3× 的官方轨迹；随基数抬升，主观下调至 38% 作为 FY2027E 情景起点（仍远高于一般 SaaS）。",
+  "macro_adjustments": [
+    {"factor": "联邦基金利率", "macro_change_pct": -17.07, "beta": 0.3, "phi": 0.5, "adjustment_pct": -2.56},
+    {"factor": "美国实际GDP增速", "macro_change_pct": 4.35, "beta": 1.2, "phi": 0.5, "adjustment_pct": 2.61},
+    {"factor": "PCE通胀", "macro_change_pct": 3.85, "beta": -0.2, "phi": 0.5, "adjustment_pct": -0.39},
+    {"factor": "美元指数DXY", "macro_change_pct": -2.88, "beta": -0.4, "phi": 0.5, "adjustment_pct": 0.58},
+    {"factor": "WTI原油价格", "macro_change_pct": -10.42, "beta": -0.1, "phi": 0.5, "adjustment_pct": 0.52},
+    {"factor": "美国消费者信心", "macro_change_pct": 4.32, "beta": 0.5, "phi": 0.5, "adjustment_pct": 1.08}
+  ],
+  "macro_subtotal_pct": 1.84,
+  "company_specific_adjustment_pct": 1.1,
+  "company_specific_note": "汇总 news_intel.json 中产品、融资、监管等事件之示意净影响（非精确财务模型）。",
+  "predicted_revenue_growth_pct": 40.94,
+  "confidence": "low",
+  "predicted_fiscal_year_label": "FY2027E"
+}

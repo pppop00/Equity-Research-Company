@@ -67,7 +67,7 @@ These require additional web searches for current market data. Mark as "N/A (mar
 
 ## Trend Classification Logic
 
-For Net Income, Net Margin, and FCF, classify the trend and write the corresponding analysis:
+For Net Income, Net Margin, and FCF, classify the trend and write the corresponding analysis (2–3 sentences of plain prose only — no Markdown asterisk bold/italic in JSON fields; they paste into HTML as-is):
 
 ```
 IF current_year > prior_year (improvement):
@@ -90,6 +90,30 @@ ELSE:
     trend_label = "→ Stable"
     trend_class = "neutral"
 ```
+
+---
+
+## Geographic revenue mix (地区收入结构)
+
+In Phase 2, after computing ratios and trend narratives, write a short **regional revenue** note for Section II’s fourth trend-card (**标题：地区收入结构**; English template: **Geographic revenue mix**). The card uses CSS class **`trend-geo`** (green left accent); content must stay **descriptive only**.
+
+- Source **regional / country revenue tables** from the latest annual/quarterly filing (or `financial_data.json` geographic breakdown if Agent 1 populated it). If only product segments exist, say geographic disclosure is limited.
+- Cover **amounts, % of total**, YoY or organic growth **by region** when disclosed, and **concentration** (e.g. top region share changing).
+- **Do not** discuss FX, hedging, USD/DXY, or “折算” in this field — reserve currency/macro for Section III and `macro_factors.json`.
+
+Store the prose in **`financial_analysis.json`** → `geographic_revenue.analysis`. Phase 5 pastes it into `{{GEO_REVENUE_TEXT}}`. Use plain text only (no Markdown bold/italic); HTML does not render `**`.
+
+**Phase 5 — `{{TREND1_DIRECTION}}` … `{{TREND3_DIRECTION}}`:** Map `trends.*.class` to the template’s CSS tokens: `positive` → `up`, `negative` → `down`, `neutral` → `up` (or `down` if the narrative fits). Do **not** emit `negative` or `positive` as the div class — those are not styled. All four trend cards use a **green** left border in the locked template; `up`/`down` are semantic only.
+
+---
+
+## Fiscal year convention (和财报表格「当年/上年」对齐)
+
+- **`income_statement.current_year` / `prior_year` in `financial_data.json`** define the two fiscal years used for Section II, KPIs, and YoY narratives.
+- **同比** = `prior_year` → `current_year` as **two consecutive full fiscal years** (e.g. FY2024 → FY2025). It is **not** “skip a year” or “FY2024 vs FY2026.”
+- **Calendar anchor (`Y_cal`):** See **`SKILL.md` Step 0C**. When the report folder date is in calendar **2026**, Agent 1 **must** first try **`FY2025` vs `FY2024`** (latest **published** annual normally **`FY(Y_cal − 1)`**). Use **FY2024 vs FY2023** only if **FY2025** annual is **not yet published** — and **`notes[]`** must say so.
+- **Sankey:** “Actual” tab = **`current_year`** P&L; “Forecast” tab = **`FY(latest_actual + 1)E`** scaled by model growth, aligned with **`prediction_waterfall.json` → `predicted_fiscal_year_label`**.
+- Interim periods (e.g. 9M) require explicit labeling if used; default remains **last two complete fiscal years**.
 
 ---
 
@@ -153,6 +177,9 @@ Save to `workspace/{Company}_{Date}/financial_analysis.json`:
       "class": "positive",
       "analysis": "Free cash flow improved to $108.8B..."
     }
+  },
+  "geographic_revenue": {
+    "analysis": "FY2025 net revenue: Americas $X.XB (~43%), Europe ~26%, Greater China ~18%; top region share stable YoY; geographic concentration moderate."
   },
   "unit": "millions USD",
   "notes": []

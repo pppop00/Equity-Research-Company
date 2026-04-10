@@ -1,0 +1,61 @@
+{
+  "profitability": {
+    "gross_margin_current": 34.1,
+    "gross_margin_prior": 33.9,
+    "operating_margin_current": 18.2,
+    "operating_margin_prior": 18.0,
+    "net_margin_current": 12.9,
+    "net_margin_prior": 11.9,
+    "roe_current": 17.9,
+    "roa_current": 4.7,
+    "ebitda_current": 3168,
+    "ebitda_margin_current": 21.8
+  },
+  "growth": {
+    "revenue_growth_yoy_pct": 4.2,
+    "organic_revenue_growth_yoy_pct": 5.6,
+    "net_income_growth_yoy_pct": 13.0,
+    "eps_growth_yoy_pct": 13.0
+  },
+  "cash_flow": {
+    "free_cash_flow": 2000,
+    "fcf_margin_pct": 13.7,
+    "fcf_conversion_pct": 106.7,
+    "capex_intensity_pct": 1.7
+  },
+  "leverage": {
+    "debt_equity_ratio": 0.18,
+    "net_debt": -548,
+    "interest_coverage_ratio": 40.0
+  },
+  "valuation": {
+    "stock_price": null,
+    "pe_ratio": null,
+    "market_cap": null,
+    "ev": null,
+    "ev_ebitda": null,
+    "note": "本轮未拉取泛欧即期估值"
+  },
+  "trends": {
+    "net_income": {
+      "label": "↑ 改善",
+      "class": "positive",
+      "analysis": "FY2025 在汇兑逆风下仍实现有机增长约 +5.6%，Headline 口径下 EPS 约 7.48 欧元，较 FY2024 的 6.62 欧元继续抬升；利润质量需结合汇兑、并购摊销与一次性项目一并观察。"
+    },
+    "net_margin": {
+      "label": "↑ 改善",
+      "class": "positive",
+      "analysis": "营业利润率 18.2%，较上年约 +20 bps；净利率随规模与效率改善小幅走高，与集团「行业领先 KPI」叙事一致。"
+    },
+    "fcf": {
+      "label": "↑ 改善",
+      "class": "positive",
+      "analysis": "披露 FCF（剔除营运资本变动前口径）约 20 亿欧元，同比约 +10.6%；股息提议约 3.75 欧元/股，股东回报与 AI/人才投资并行。"
+    }
+  },
+  "geographic_revenue": {
+    "analysis": "FY2025 分地区净营收（百万欧元）：北美 8,899（约 61.2%）、欧洲 3,520（约 24.2%）、亚太 1,260（约 8.7%）、中东与非洲 440、拉美 428。北美仍为第一大市场；拉美有机增速领先，欧洲与亚太稳步扩张。集团披露以区域管理口径列示，细至单一国家时需查阅年报附注。"
+  },
+  "unit": "millions EUR 或 %；部分为计算近似",
+  "notes": []
+}

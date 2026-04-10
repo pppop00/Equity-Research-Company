@@ -1,0 +1,18 @@
+OpenAI 中文研报校验摘要（Phase 6 手工执行）
+日期：2026-04-10
+
+1. Section id：section-summary / section-financials / section-prediction / section-sankey / section-porter / section-appendix — 均存在（PASS）。
+
+2. KPI：kpi-grid 下 4 张卡片，含 up/down 与 kpi-change 方向类（PASS）。营业收入叙事约 200 亿美元 ARR，与 financial_data.json income_statement.current_year.revenue=20000（百万美元）一致（PASS）。
+
+3. Waterfall：waterfallData 非空；首项 type=baseline；末项 type=result；预测增长率约 +40.9%，在合理区间（PASS）。
+
+4. Sankey：双 SVG 与 sankeyActualData / sankeyForecastData 存在；links 索引有效，value>0（PASS）。说明：为兼容绘图，营业利润为小额示意正值，正文已声明与 GAAP 净亏损不一致（DISCLOSURE）。
+
+5. Porter：porterScores 三组各 5 个整数 1–5（PASS）。
+
+6. 第四张趋势卡：class 含 trend-geo，GEO_REVENUE_TEXT 未混入汇率叙事（PASS）。
+
+7. 数据置信度：整条链路标记为低/推断；符合私营公司 + 社交披露场景（INFORMATIONAL）。
+
+结论：结构 CRITICAL 项无失败；读者应以「非审计 + 示意拆分」理解数值。

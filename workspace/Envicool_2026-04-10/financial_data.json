@@ -1,0 +1,77 @@
+{
+  "company": "英维克",
+  "company_en": "Shenzhen Envicool Technology Co., Ltd.",
+  "ticker": "002837",
+  "sector": "Industrials",
+  "sub_industry": "精密温控节能设备 / 数据中心液冷",
+  "fiscal_year": "FY2024",
+  "fiscal_year_end": "2024-12-31",
+  "prior_fiscal_year": "FY2023",
+  "currency": "CNY",
+  "data_source": "深交所 2024 年年度报告及摘要（巨潮 2025-04-22）、2025 年第三季度报告（2025-10-14）及公开新闻报道；部分费用拆分为与报表核对后的百万人民币近似。",
+  "data_confidence": "high",
+  "income_statement": {
+    "current_year": {
+      "revenue": 4589,
+      "cogs": 3275,
+      "gross_profit": 1314,
+      "rd_expense": 350,
+      "sm_expense": 280,
+      "ga_expense": 181,
+      "total_opex": 811,
+      "operating_income": 503,
+      "interest_expense": 8,
+      "pretax_income": 511,
+      "income_tax": 58,
+      "net_income": 453,
+      "diluted_eps": 0.61,
+      "diluted_shares": 744
+    },
+    "prior_year": {
+      "revenue": 3529,
+      "cogs": 2435,
+      "gross_profit": 1094,
+      "rd_expense": 290,
+      "sm_expense": 240,
+      "ga_expense": 150,
+      "total_opex": 680,
+      "operating_income": 414,
+      "interest_expense": 7,
+      "pretax_income": 401,
+      "income_tax": 57,
+      "net_income": 344,
+      "diluted_eps": 0.47,
+      "diluted_shares": 738
+    },
+    "unit": "百万人民币；2024 年营收 4,588,819,487.27 元、归母净利润 452,664,369.42 元；2023 营收 3,528,859,077.13 元、归母 344,006,335.07 元；本表四舍五入。",
+    "notes_on_mapping": "研发费用区间参考媒体报道「研发总投入约 3.5 亿元」与报表一致性；营业利润、所得税为与净利润自洽之示意轧差。"
+  },
+  "balance_sheet": {
+    "cash_and_equivalents": 728,
+    "short_term_investments": 0,
+    "total_assets": 6014,
+    "total_debt": 850,
+    "total_equity": 2916,
+    "shares_outstanding": 744,
+    "unit": "百万人民币；股本对应约 7.44 亿股（利润分配预案口径）"
+  },
+  "cash_flow": {
+    "operating_cash_flow": 200,
+    "capex": -115,
+    "free_cash_flow": 85,
+    "unit": "百万人民币；经营活动现金流净额约 2.0 亿元（较 2023 年下降，年报摘要）；资本开支为估计值，用于 FCF 近似。"
+  },
+  "segment_data": [
+    {"name": "机房温控节能产品", "revenue": 2441, "pct_of_total": 53.2},
+    {"name": "机柜温控节能产品", "revenue": 1715, "pct_of_total": 37.4},
+    {"name": "客车空调", "revenue": 111, "pct_of_total": 2.4},
+    {"name": "轨道交通列车空调及服务", "revenue": 75, "pct_of_total": 1.6},
+    {"name": "其他", "revenue": 247, "pct_of_total": 5.4}
+  ],
+  "notes": [
+    "截至本工作区报告日 2026-04-10，巨潮资讯公告列表尚无《2025 年度报告》；按 SKILL Step 0C 第二节采用最近两期完整财年 FY2024 对 FY2023。2025 年经营近况另见 2025 年三季报（未用于取代上表全年口径）。",
+    "分部收入占比来自 2024 年报公开披露之分产品营业收入（雪球等二次整理与摘要一致）。",
+    "2025 年前三季度营收约 40.26 亿元、同比约 +40.2%，归母净利润约 3.99 亿元、同比约 +13.1%；单季利润增速放缓与毛利率、现金流为近期关注点。",
+    "液冷相关收入在年报披露中计入机房及其他产品线，需查阅管理层讨论细分。"
+  ]
+}

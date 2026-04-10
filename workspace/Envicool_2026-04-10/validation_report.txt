@@ -1,0 +1,14 @@
+英维克（002837）中文研报校验摘要（Phase 6）
+日期：2026-04-10
+
+1. 六段 section id 齐全（PASS）。
+2. KPI 四宫格与 financial_data.json 营收 4589 百万人民币（约 45.9 亿元）一致（PASS）。
+3. waterfallData：末项 type=result；预测增速约 +22.1%（PASS）。
+4. Sankey：双图、links 正值、索引有效；税及其他 = 营业利润 − 归母净利示意轧差（PASS）。
+5. 趋势卡 TREND 使用 up/down class；模板四卡左边框均为绿色（PASS）。
+6. GEO_REVENUE_TEXT 无汇率展开（PASS）。
+7. 正文占位符无裸露 Markdown **（PASS）。
+
+8. 截至 2026-04-10 巨潮无 2025 年度报告；故 actual 仍为 FY2024；预测财年已对齐 FY2025E（PASS）。
+
+备注：FY2025 年报披露后，将 current_year 升为 FY2025、prior_year 为 FY2024，预测标签改为 FY2026E，并重算 Sankey。

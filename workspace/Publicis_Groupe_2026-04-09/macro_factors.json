@@ -1,0 +1,80 @@
+{
+  "company": "Publicis Groupe",
+  "sector": "Communication Services",
+  "phi": 0.5,
+  "beta_source": "default",
+  "data_freshness": "2026-04-09",
+  "factors": [
+    {
+      "name": "联邦基金利率",
+      "current_value": 4.1,
+      "forecast_value": 3.4,
+      "factor_change_pct": -17.07,
+      "beta": 0.2,
+      "phi": 0.5,
+      "adjustment_pct": -1.71,
+      "unit": "percent level",
+      "source": "FOMC 2026 年 3 月 SEP 中位数（示意）"
+    },
+    {
+      "name": "美国实际 GDP 增速",
+      "current_value": 2.3,
+      "forecast_value": 2.4,
+      "factor_change_pct": 4.35,
+      "beta": 1.0,
+      "phi": 0.5,
+      "adjustment_pct": 2.17,
+      "unit": "percent YoY",
+      "source": "FOMC SEP 与市场共识"
+    },
+    {
+      "name": "PCE 通胀",
+      "current_value": 2.6,
+      "forecast_value": 2.7,
+      "factor_change_pct": 3.85,
+      "beta": -0.1,
+      "phi": 0.5,
+      "adjustment_pct": -0.19,
+      "unit": "percent YoY",
+      "source": "公开宏观评论"
+    },
+    {
+      "name": "美元指数 DXY",
+      "current_value": 104.0,
+      "forecast_value": 101.0,
+      "factor_change_pct": -2.88,
+      "beta": -0.2,
+      "phi": 0.5,
+      "adjustment_pct": 0.29,
+      "unit": "index level",
+      "source": "即期与共识区间（示意）"
+    },
+    {
+      "name": "WTI 原油价格",
+      "current_value": 96.0,
+      "forecast_value": 86.0,
+      "factor_change_pct": -10.42,
+      "beta": 0.0,
+      "phi": 0.5,
+      "adjustment_pct": 0.0,
+      "unit": "USD/bbl",
+      "source": "情景示意"
+    },
+    {
+      "name": "美国消费者信心",
+      "current_value": 88.0,
+      "forecast_value": 91.8,
+      "factor_change_pct": 4.32,
+      "beta": 0.8,
+      "phi": 0.5,
+      "adjustment_pct": 1.73,
+      "unit": "指数",
+      "source": "Conference Board 等"
+    }
+  ],
+  "total_macro_adjustment_pct": 2.29,
+  "notes": [
+    "β 行：Communication Services（prediction_factors.md）。",
+    "FY2025 年报电话会强调汇兑对 reported 收入显著负面，与 DXY/欧元美元路径相关，模型仍为线性近似。"
+  ]
+}

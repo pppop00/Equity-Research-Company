@@ -1,0 +1,80 @@
+{
+  "company": "OpenAI",
+  "sector": "Technology",
+  "phi": 0.5,
+  "beta_source": "references/prediction_factors.md — Technology 行",
+  "data_freshness": "2026-04-10",
+  "factors": [
+    {
+      "name": "联邦基金利率",
+      "current_value": 4.1,
+      "forecast_value": 3.4,
+      "factor_change_pct": -17.07,
+      "beta": 0.3,
+      "phi": 0.5,
+      "adjustment_pct": -2.56,
+      "unit": "percent level",
+      "source": "FOMC SEP 情景（示意）"
+    },
+    {
+      "name": "美国实际 GDP 增速",
+      "current_value": 2.3,
+      "forecast_value": 2.4,
+      "factor_change_pct": 4.35,
+      "beta": 1.2,
+      "phi": 0.5,
+      "adjustment_pct": 2.61,
+      "unit": "percent YoY",
+      "source": "公开宏观评论"
+    },
+    {
+      "name": "PCE 通胀",
+      "current_value": 2.6,
+      "forecast_value": 2.7,
+      "factor_change_pct": 3.85,
+      "beta": -0.2,
+      "phi": 0.5,
+      "adjustment_pct": -0.39,
+      "unit": "percent YoY",
+      "source": "Fed 预测区间（示意）"
+    },
+    {
+      "name": "美元指数 DXY",
+      "current_value": 104.0,
+      "forecast_value": 101.0,
+      "factor_change_pct": -2.88,
+      "beta": -0.4,
+      "phi": 0.5,
+      "adjustment_pct": 0.58,
+      "unit": "index level",
+      "source": "即期与共识（示意）"
+    },
+    {
+      "name": "WTI 原油价格",
+      "current_value": 96.0,
+      "forecast_value": 86.0,
+      "factor_change_pct": -10.42,
+      "beta": -0.1,
+      "phi": 0.5,
+      "adjustment_pct": 0.52,
+      "unit": "USD/bbl",
+      "source": "情景示意"
+    },
+    {
+      "name": "美国消费者信心",
+      "current_value": 88.0,
+      "forecast_value": 91.8,
+      "factor_change_pct": 4.32,
+      "beta": 0.5,
+      "phi": 0.5,
+      "adjustment_pct": 1.08,
+      "unit": "指数",
+      "source": "Conference Board 等"
+    }
+  ],
+  "total_macro_adjustment_pct": 1.84,
+  "notes": [
+    "OpenAI 收入全球化程度高，线性宏观模型对订阅+用量计费混合业务的拟合度有限。",
+    "利率项符号遵循 prediction_factors.md（利率下行对科技板块在模型中的定义）。"
+  ]
+}

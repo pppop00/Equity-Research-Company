@@ -1,0 +1,76 @@
+{
+  "company": "阳狮集团",
+  "company_en": "Publicis Groupe S.A.",
+  "ticker": "PUB",
+  "sector": "Communication Services",
+  "sub_industry": "Advertising / Marketing Services",
+  "fiscal_year": "FY2025",
+  "fiscal_year_end": "2025-12-31",
+  "prior_fiscal_year": "FY2024",
+  "currency": "EUR",
+  "data_source": "Publicis Groupe FY2025 业绩新闻稿（2026-02-03）及摘要表；巴黎泛欧上市，非 SEC 申报主体。",
+  "data_confidence": "medium",
+  "income_statement": {
+    "current_year": {
+      "revenue": 14547,
+      "cogs": 9590,
+      "gross_profit": 4957,
+      "rd_expense": 0,
+      "sm_expense": 0,
+      "ga_expense": 2309,
+      "total_opex": 2309,
+      "operating_income": 2648,
+      "interest_expense": 0,
+      "pretax_income": 2640,
+      "income_tax": 580,
+      "net_income": 1875,
+      "diluted_eps": 7.48,
+      "diluted_shares": 251
+    },
+    "prior_year": {
+      "revenue": 13965,
+      "cogs": 9224,
+      "gross_profit": 4741,
+      "rd_expense": 0,
+      "sm_expense": 0,
+      "ga_expense": 2222,
+      "total_opex": 2222,
+      "operating_income": 2519,
+      "interest_expense": -6,
+      "pretax_income": 2525,
+      "income_tax": 549,
+      "net_income": 1660,
+      "diluted_eps": 6.62,
+      "diluted_shares": 251
+    },
+    "unit": "millions EUR（净 Net revenue 口径）",
+    "notes_on_mapping": "FY2025 营业利润取新闻稿 Operating margin 2,648（百万欧元）与 18.2% 利润率一致；归母净利润由 Headline diluted EPS × 稀释股数近似（≈1875），可能与法定合并净利润附注存在细项差异。FY2024 对应用以比较之经营数据与上年披露对齐。"
+  },
+  "balance_sheet": {
+    "cash_and_equivalents": 3800,
+    "short_term_investments": 0,
+    "total_assets": 40010,
+    "total_debt": 1900,
+    "total_equity": 10447,
+    "shares_outstanding": 251,
+    "unit": "millions EUR；股份数为百万股近似"
+  },
+  "cash_flow": {
+    "operating_cash_flow": 2480,
+    "capex": -245,
+    "free_cash_flow": 2000,
+    "unit": "百万欧元；FCF 采用新闻稿「约 20 亿欧元、同比约 +10.6%」之披露口径（剔除营运资本变动前定义与公司一致）"
+  },
+  "segment_data": [
+    {"name": "North America（北美）", "revenue": 8899, "pct_of_total": 61.2},
+    {"name": "Europe（欧洲）", "revenue": 3520, "pct_of_total": 24.2},
+    {"name": "Asia Pacific（亚太）", "revenue": 1260, "pct_of_total": 8.7},
+    {"name": "Middle East & Africa", "revenue": 440, "pct_of_total": 3.0},
+    {"name": "Latin America（拉美）", "revenue": 428, "pct_of_total": 2.9}
+  ],
+  "notes": [
+    "FY2025 有机净营收增长约 +5.6%，汇兑对 reported 收入约 −4.97 亿欧元拖累，并购净贡献约 +3.21 亿欧元。",
+    "2026 年 4 月公告收购 160over90 等补强体育营销，属增量管线，本报告数值截至 FY2025。",
+    "集团股本下降主要反映分红与回购等股东回报，ROE 解读需结合平均权益。"
+  ]
+}

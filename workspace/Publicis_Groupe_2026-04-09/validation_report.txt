@@ -1,0 +1,9 @@
+Publicis Groupe — 重新生成校验（2026-04-09）
+
+- 数据锚点：FY2025 vs FY2024（当年/上年与 financial_data.json 一致）。
+- 模板：自 agents/report_writer_cn.md 抽取；4 张 trend-card，第四张 class 为 trend-geo（地区收入结构，不写汇率）。
+- 占位符：成品 HTML 无 {{ 残留。
+- 摘要：Headline EPS、有机增长、FCF、汇兑拖累等来自 FY2025 新闻稿口径；归母净利润为示意推算，与法定合并报表或有差异。
+
+CRITICAL：0（自检）
+WARNING：估值与即期股价未接入；桑基为示意科目拆分。

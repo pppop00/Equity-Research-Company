@@ -1,0 +1,85 @@
+{
+  "company": "OpenAI",
+  "sector": "Technology",
+  "data_freshness": "2026-04-10",
+  "company_events": [
+    {
+      "type": "mgmt_disclosure",
+      "description": "CFO Sarah Friar 官方博文（2026-01-18）披露 ARR：2023 约 20 亿美元、2024 约 60 亿美元、2025 超过 200 亿美元，并称算力规模与收入曲线高度相关（0.2→0.6→1.9 GW）。",
+      "revenue_impact_pct": 0.0,
+      "impact_direction": "positive",
+      "confidence": "high",
+      "source": "https://openai.com/index/a-business-that-scales-with-the-value-of-intelligence/"
+    },
+    {
+      "type": "press_leak",
+      "description": "媒体引用信源称 2025 年末年化收入约 214 亿美元、2026 年 2 月前后年化超过 250 亿美元；路透注明未能独立核实。",
+      "revenue_impact_pct": 0.35,
+      "impact_direction": "positive",
+      "confidence": "low",
+      "source": "Reuters / The Information（2026-03 报道摘引）"
+    },
+    {
+      "type": "product_monetization",
+      "description": "首席营收官 Denise Dresser 对外表态：企业相关收入已超总收入 40%，并预期 2026 年末与消费者侧大致持平；付费商业用户数在报道中由百万量级快速上升。",
+      "revenue_impact_pct": 0.45,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "Decrypt 等 2026 年引述高管发言"
+    },
+    {
+      "type": "social_milestone",
+      "description": "高管在 X（原 Twitter）多次发布 ARR/里程碑节点（如年内翻倍节奏），与正式新闻稿形成交叉验证，但也存在口径（Run-rate vs  GAAP）差异。",
+      "revenue_impact_pct": 0.1,
+      "impact_direction": "positive",
+      "confidence": "medium",
+      "source": "X / 行业二次整理"
+    },
+    {
+      "type": "monetization_ads",
+      "description": "公司在美测试免费/低价档 ChatGPT 广告位；长期或抬升消费者侧 ARPU，但可能压制体验与品牌争议，短期收入弹性难量化。",
+      "revenue_impact_pct": 0.15,
+      "impact_direction": "positive",
+      "confidence": "low",
+      "source": "路透、公司新闻稿（2026-01）"
+    },
+    {
+      "type": "funding",
+      "description": "媒体报道新一轮巨额私募融资与 IPO 筹备，可能改善资本可用性并支撑 CAPEX，但对当期收入增速的映射非线性。",
+      "revenue_impact_pct": 0.25,
+      "impact_direction": "positive",
+      "confidence": "low",
+      "source": "Reuters、TechCrunch 等（2026 Q1）"
+    },
+    {
+      "type": "regulatory",
+      "description": "美国 FTC/地方监管与数据出境议题在海外媒体发酵，或对部分区域企业采购节奏构成不确定性。",
+      "revenue_impact_pct": -0.2,
+      "impact_direction": "negative",
+      "confidence": "low",
+      "source": "公开新闻整理"
+    }
+  ],
+  "company_specific_adjustment_pct": 1.1,
+  "industry_dynamics": {
+    "supplier_power": "英伟达等高端 GPU、能源与托管算力议价权强；巨头云厂商既是客户也是供应商。",
+    "buyer_power": "企业客户可多云比价、自研小模型；消费者侧切换成本低。",
+    "new_entrants": "开源模型、Anthropic、Google、xAI 等频推新品，竞赛门槛高但创新窗口持续打开。",
+    "substitutes": "开源栈、垂直 SaaS 内嵌模型、企业内部离线部署。",
+    "rivalry": "前沿模型能力、价格、生态与渠道全面竞争，资本开支军备竞赛。"
+  },
+  "forward_looking": {
+    "supplier_power": "算力荒缓和与否将决定毛利率上限。",
+    "buyer_power": "Agent 与工作流绑定或提高企业切换成本。",
+    "new_entrants": "区域主权云与本地模型政策或孵化本地替代者。",
+    "substitutes": "端侧小模型可能侵蚀部分低延迟场景 API。",
+    "rivalry": "IPO 前后各竞品或加大价格与渠道战。"
+  },
+  "key_analyst_views": [
+    "主线上调风险：社交媒体与官方帖文显示 ARR 斜率仍陡，企业占比上升。",
+    "主线下行风险：亏损与 capex 同步扩大、监管与地缘政治或拖累跨国扩张。"
+  ],
+  "notes": [
+    "本条情报库刻意纳入 X/Decrypt/路透等「非申报」来源，以匹配私营公司研究场景；所有影响系数为示意。"
+  ]
+}
