@@ -8,6 +8,7 @@ You are a macroeconomic analyst. Your job is to collect **region-appropriate** m
 - `primary_operating_geography`: **Required** — one of: **`US`** | **`Greater_China`** | **`Eurozone`** | **`Japan`** | **`UK`** | **`Emerging_Asia_ex_China`** | **`Global_other`**. Set by the orchestrator per `SKILL.md` Step 0D from revenue concentration / listing / user hint. **Do not** default to US data when geography is **`Greater_China`** or another non-US region.
 - `company_name`: The company
 - `sector`: GICS sector (e.g., "Technology", "Real Estate", "Communication Services")
+- **Optional cross-reads (if available in workspace):** `financial_data.json` → **`latest_interim`** (recent 10-Q / interim) and **`news_intel.json`** — use only to **align** narrative tone (e.g. demand inflection) in **`macro_factor_commentary`** with recent operating facts; **do not** replace the six macro slots or β/φ math with ad hoc figures.
 - `reference file`: Load `references/prediction_factors.md` for the β table, φ value, formula, and **regional instrument mapping**
 - `output_path`: Where to save `macro_factors.json`
 
@@ -100,9 +101,32 @@ Each object in `factors[]` must include **`name`** exactly as readers should see
 
 **Never** label a **China-sourced** series as “US” or “American” in `name`. **Never** use US consumer confidence for **`Greater_China`** unless the note explicitly says it is a **secondary** global risk factor (rare; prefer China series first).
 
+## Step 7b: Analyst transmission commentary (`macro_factor_commentary`)
+
+Write a **single string** field **`macro_factor_commentary`** for Section III placeholder **`{{MACRO_FACTOR_COMMENTARY}}`** (filled in Phase 5 **verbatim** from `macro_factors.json`).
+
+**Language:** If `report_language` is **`zh`**, use **Simplified Chinese**; if **`en`**, use **English**.
+
+**Format:** Plain prose with optional HTML: one or more `<p>…</p>` blocks (preferred) or `<br>` line breaks. **Do not** use Markdown (`**`, backticks) — the page does not render Markdown.
+
+**Substance (institutional / CFA-style “transmission”):**
+
+1. **Bridge table → waterfall:** In 1–2 sentences, state that the **sum** of the six `adjustment_pct` values equals **`total_macro_adjustment_pct`**, which corresponds to the **“宏观调整”** bar in the waterfall chart (aggregate — the chart does not show each factor as a separate bar unless the orchestrator uses an extended waterfall).
+2. **Company-specific “why”:** For **at least four** of the six slots, explain **how** that macro variable plausibly affects **this company’s** revenue growth or operating economics (not generic macro textbook text). Examples of angles (pick what fits the company):
+   - **Policy rate:** financing cost, discount-rate / valuation channel for capex-heavy tech, USD liquidity.
+   - **Real GDP:** end-demand for devices, enterprise IT, datacenter build.
+   - **Inflation (PCE-type):** input costs, pricing power in cyclical hardware.
+   - **FX (DXY or local pair):** export competitiveness, USD reporting vs. Asia manufacturing.
+   - **Oil:** logistics/energy input, indirect risk sentiment; keep the sign consistent with β and the table’s **direction** column.
+   - **Consumer confidence:** consumer end-market demand for retail/PC/mobile storage (if relevant to the company’s mix).
+3. **Sign / convention:** If any row uses a **scaled** `factor_change_pct` or a **sign convention** that differs from raw `Factor_Change% × β × φ` (e.g. GDP in pp, or policy rate mapped to “easing is positive”), **state that explicitly** in this commentary so readers do not think the table is wrong.
+4. **Length:** Target **180–450 Chinese characters** or **120–320 English words** — dense, not filler.
+
+If evidence is thin, still produce the field and flag uncertainty in one sentence (do not leave `macro_factor_commentary` empty).
+
 ## Step 8: Save output
 
-Include `primary_operating_geography`, `factor_geography_note`, and localized `factors[].name` fields.
+Include `primary_operating_geography`, `factor_geography_note`, **`macro_factor_commentary`**, and localized `factors[].name` fields.
 
 ```json
 {
@@ -113,6 +137,7 @@ Include `primary_operating_geography`, `factor_geography_note`, and localized `f
   "beta_source": "default",
   "data_freshness": "2026-04-08",
   "factor_geography_note": "宏观因子采用中国内地系列，与主营业务所在地一致；油价沿用国际基准。",
+  "macro_factor_commentary": "<p>表中六项调整幅度之和等于「宏观调整」柱所对应的合计百分点；此处从公司视角说明传导机制（示例略）。</p>",
   "factors": [
     {
       "name": "1年期LPR",
@@ -154,6 +179,7 @@ This agent **owns** the full macro table contract for the run:
 |----------------|----------------|
 | `primary_operating_geography`, regional series choice, `factor_geography_note` | **`macro_factors.json`** |
 | Localized factor **row labels** (`factors[].name`), current/forecast, `factor_change_pct`, β, φ, `adjustment_pct` | **`macro_factors.json`** |
+| **`macro_factor_commentary`** (Section III `{{MACRO_FACTOR_COMMENTARY}}`) | **`macro_factors.json`** — **Step 7b**; Phase 5 copies **verbatim** |
 | Sector β **slot values** (same six columns as `references/prediction_factors.md`) | Filled here; **no second β table** required unless you deliberately calibrate |
 
-**Phase 2.5** (`prediction_waterfall.json`) should **align** with this file (same factor names and order for the HTML waterfall / factor table). **Agent 4 (report writer)** must **copy** factor rows into `{{FACTOR_ROWS}}` (and related narrative) from **`macro_factors.json` + `prediction_waterfall.json`** — do **not** invent alternate geography, rename “中国消费者信心” into “US consumer confidence”, or pull a parallel US macro set. If something is wrong, **fix `macro_factors.json` (re-run Agent 2)** or adjust Phase 2.5; do not patch labels only in HTML.
+**Phase 2.5** (`prediction_waterfall.json`) should **align** with this file (same factor names and order for the HTML waterfall / factor table). **Agent 4 (report writer)** must **copy** factor rows into `{{FACTOR_ROWS}}` (and related narrative) from **`macro_factors.json` + `prediction_waterfall.json`** — do **not** invent alternate geography, rename “中国消费者信心” into “US consumer confidence”, or pull a parallel US macro set. If something is wrong, **fix `macro_factors.json` (re-run Agent 2)** or adjust Phase 2.5; do not patch labels only in HTML. **`{{MACRO_FACTOR_COMMENTARY}}`** must come **only** from **`macro_factors.json` → `macro_factor_commentary`**.

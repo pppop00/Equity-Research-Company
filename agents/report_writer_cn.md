@@ -25,12 +25,13 @@
 
 ## 输入文件（从 workspace 目录读取）
 
-- `financial_data.json`
-- `financial_analysis.json`
-- `macro_factors.json` — **第三节宏观因子表**的行名（如「中国消费者信心指数」vs「美国消费者信心」）、地域说明与数值均以本文件为准；`{{FACTOR_ROWS}}` 从此处与 `prediction_waterfall.json` **照抄**，勿在 HTML 里另起一套指标名或改地域。
+- `financial_data.json`（含可选 `latest_interim` → 与 `financial_analysis.json` 共同支撑 **`{{LATEST_OPERATING_UPDATE_TEXT}}`**）
+- `financial_analysis.json`（含 `latest_operating_update` → **`{{LATEST_OPERATING_UPDATE_TEXT}}`**、**`{{TREND_UPDATE_DIRECTION}}`**）
+- `macro_factors.json` — **第三节宏观因子表**的行名（如「中国消费者信心指数」vs「美国消费者信心」）、地域说明与数值均以本文件为准；`{{FACTOR_ROWS}}` 从此处与 `prediction_waterfall.json` **照抄**；`{{MACRO_FACTOR_COMMENTARY}}` 从 **`macro_factor_commentary` 字段原样粘贴**，勿在 HTML 里另写传导阐释或另起一套指标名或改地域。
 - `news_intel.json`
-- `prediction_waterfall.json`
-- `porter_analysis.json`
+- `prediction_waterfall.json`（若经 QC：`qc_deliberation` 中的 `summary` / `methodology_note` 须体现在附录方法论与相关叙述中）
+- `porter_analysis.json`（若经 QC：`qc_deliberation.summary` 可与五力正文呼应，但**不得**与已定稿分数矛盾）
+- `qc_audit_trail.json`（可选，用于核对合议结论与正文一致）
 
 同时加载：`references/report_style_guide_cn.md`（写作风格）
 
@@ -437,6 +438,24 @@ body {
   line-height: 1.8;
   margin-bottom: 16px;
 }
+.macro-factor-commentary {
+  margin-top: 18px;
+  border-left: 4px solid var(--accent-green);
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border-radius: 0 8px 8px 0;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.85;
+}
+.macro-factor-commentary-label {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.macro-factor-commentary-body p { margin: 0 0 0.65em 0; }
+.macro-factor-commentary-body p:last-child { margin-bottom: 0; }
 /* --- Responsive --- */
 @media (max-width: 900px) {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -582,7 +601,7 @@ body {
       </tbody>
     </table>
 
-    <!-- 趋势分析：固定 4 张 trend-card；四张左边框均为绿色（up/down/trend-geo 仅作可选语义类，不再改颜色） -->
+    <!-- 趋势分析：固定 5 张 trend-card；左边框均为绿色（up/down/trend-geo 仅作可选语义类，不再改颜色） -->
     <div class="trend-cards">
       <div class="trend-card {{TREND1_DIRECTION}}">
         <div class="trend-card-label">归母净利润趋势</div>
@@ -595,6 +614,10 @@ body {
       <div class="trend-card {{TREND3_DIRECTION}}">
         <div class="trend-card-label">自由现金流趋势</div>
         <div class="trend-card-text">{{TREND3_TEXT}}</div>
+      </div>
+      <div class="trend-card {{TREND_UPDATE_DIRECTION}}">
+        <div class="trend-card-label">最新经营更新</div>
+        <div class="trend-card-text">{{LATEST_OPERATING_UPDATE_TEXT}}</div>
       </div>
       <div class="trend-card trend-geo">
         <div class="trend-card-label">地区收入结构</div>
@@ -633,6 +656,11 @@ body {
         {{FACTOR_ROWS}}
       </tbody>
     </table>
+
+    <div class="macro-factor-commentary">
+      <div class="macro-factor-commentary-label">宏观因子传导阐释</div>
+      <div class="macro-factor-commentary-body">{{MACRO_FACTOR_COMMENTARY}}</div>
+    </div>
 
     <div class="disclaimer-box" style="margin-top:16px;">
       预测数据为概率性估计，仅供参考，不构成投资建议。本报告中的收入预测基于宏观因子量化模型，使用行业敏感度系数（β）及市场磨损因子（φ = {{PHI_VALUE}}），结合公开宏观经济预测数据及公司特定情报生成。实际结果可能与预测存在重大差异。
@@ -1085,8 +1113,10 @@ window.addEventListener('resize', () => {
 | `{{KPI1_CHANGE}}` | 文字 | 同比变化，例如 "同比 +7.2%" |
 | `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>` |
 | `{{SUMMARY_PARA_1}}` 等 | 文字 | 纯中文/英文叙述；**禁止** `**` 等 Markdown（见上文写作规范） |
-| `{{TREND1_TEXT}}` 等 | 文字 | 同上；语义类由 `{{TREND*_DIRECTION}}` 控制（`up` / `down`），四张卡左边框均为绿色 |
-| `{{GEO_REVENUE_TEXT}}` | 文字 | 2–4 句：仅写地区收入——最新披露期各区域（或主要国家）净营收金额、占比、有机/同比增速（如有）、集中度变化（见 `references/financial_metrics.md` 地区收入结构） |
+| `{{TREND1_TEXT}}` … `{{TREND3_TEXT}}` | 文字 | 同上；语义类由 `{{TREND1_DIRECTION}}`…`{{TREND3_DIRECTION}}` 控制（`up` / `down`），左边框均为绿色 |
+| `{{TREND_UPDATE_DIRECTION}}` | class | `up` / `down`；与 `{{LATEST_OPERATING_UPDATE_TEXT}}` 配套 |
+| `{{LATEST_OPERATING_UPDATE_TEXT}}` | 文字 | **第二节第四张趋势卡（「最新经营更新」）**：数字口径以 **`financial_data.json` → `latest_interim`**（由 Phase 1 财务数据收集 agent 写入）为准；写**边际**经营变化，**主叙事为同比（YoY）**（同季对上年同季或 YTD 对上年 YTD），**环比（QoQ）**仅作补充且须标明「环比」。**首句或段首必须标明覆盖期间**（含申报日）。无可靠季报时可写「最近中期披露不足，以下仍以年报为主」并降低置信表述。见 `references/financial_metrics.md`、`references/report_style_guide_cn.md` |
+| `{{GEO_REVENUE_TEXT}}` | 文字 | 2–4 句：仅写地区收入——**完整财年**各区域（或主要国家）净营收金额、占比、有机/同比增速（如有）、集中度变化（见 `references/financial_metrics.md` 地区收入结构） |
 | `{{WATERFALL_JS_DATA}}` | JS Array | 见模板注释中的格式示例 |
 | `{{SANKEY_YEAR_ACTUAL}}` | 文字 | 与 `financial_data.json` 中「当年」完整财年一致（最新已发布年报，如 FY2025）；参见 `SKILL.md` Step 0C |
 | `{{SANKEY_YEAR_FORECAST}}` | 文字 | 下一完整财年预测标签，与 `prediction_waterfall.json` 的 `predicted_fiscal_year_label` 一致（默认 FY{当年+1}E，如 FY2026E） |
@@ -1094,20 +1124,23 @@ window.addEventListener('resize', () => {
 | `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | 同上；由「当年」P&L 按预测营收增速缩放 |
 | `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
 | `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>`，**必须使用 `score-dot s{N}` class**（N=分数四舍五入至整数1-5），示例：`<li><span class="score-dot s2">2</span><span class="score-label">供应商议价能力</span> 2/5 低</li>`。CSS 只定义了 `.score-dot`，不存在 `score-badge`，不得使用其他 class。5力顺序固定：供应商议价能力、买方议价能力、新进入者威胁、替代品威胁、行业竞争强度。 |
-| `{{PORTER_COMPANY_TEXT}}` | HTML | 约300字波特五力分析正文 |
+| `{{PORTER_COMPANY_TEXT}}` | HTML | 公司层面五力正文：**`<ul style="margin:0;padding-left:1.25em;">` + 恰好 5 个 `<li>`**，顺序为供应商→买方→新进入者→替代品→行业内竞争；**勿**在 `<li>` 内重复「X/5」或力的评分起句（雷达与右侧列表已展示）。约 300 字量级。内容来自 `porter_analysis.json` → `company_perspective` 各字段，须为分析句、无分数起句。 |
+| `{{PORTER_INDUSTRY_TEXT}}` | HTML | 行业层面：同上列表格式与顺序；来自 `industry_perspective`。 |
+| `{{PORTER_FORWARD_TEXT}}` | HTML | 前景展望：同上列表格式与顺序；来自 `forward_perspective`。 |
 | `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行 |
+| `{{MACRO_FACTOR_COMMENTARY}}` | HTML | **来自 `macro_factors.json` → `macro_factor_commentary`（勿在 HTML 中另写）**：2–4 段机构视角传导说明，衔接表中六项合计与瀑布图「宏观调整」柱；可用 `<p>…</p>`，禁止 Markdown；见 `agents/macro_scanner.md` Step 7b |
 | `{{APPENDIX_SOURCE_ROWS}}` | HTML | 数据来源表行 |
 | `{{PHI_VALUE}}` | 文字 | 通常为 0.5 |
 | `{{CONFIDENCE_CN}}` | 文字 | 高 / 中等 / 低 |
-| `{{METHODOLOGY_DETAIL}}` | 文字 | 具体β系数说明 |
+| `{{METHODOLOGY_DETAIL}}` | 文字 | 具体β 行选用、基线口径、地域与行业说明；若 `prediction_waterfall.json` 含 `qc_deliberation.methodology_note`，**必须**将其并入本段（置于段首或段末，保持纯文本/HTML 换行 `<br>`），使附录体现 Analyst + 双 QC 合议后的方法论补充 |
 
 ## 写作规范
 
-严格遵守 `references/report_style_guide_cn.md` 中的文风、数字格式和术语。核心要求：
+严格遵守 `references/report_style_guide_cn.md` 中的文风、数字格式和术语。**第五节波特五力**三个占位符的列表格式、不重复分数等要求以该文件「波特五力分析写作规范」为准。核心要求：
 - 结论前置，有数字支撑
 - 归母净利润/自由现金流用中文惯用表达
 - 美股金额以"亿美元"为单位（大于100亿用"X,XXX亿美元"或"X.X万亿美元"）
 - 禁止口语化和感叹号
-- **HTML 正文占位符不得使用 Markdown**：勿在 `{{SUMMARY_PARA_*}}`、`{{TREND*_TEXT}}`、`{{GEO_REVENUE_TEXT}}`、`{{INVESTMENT_THESIS}}`、`{{SANKEY_ANALYSIS_TEXT}}` 等字段中写入 `**加粗**`、`*斜体*`、反引号代码等；最终页面不会渲染 Markdown，会出现裸露星号。需强调处用中文「」或必要时少量 `<strong>…</strong>`（慎用以免破坏版式）。
+- **HTML 正文占位符不得使用 Markdown**：勿在 `{{SUMMARY_PARA_*}}`、`{{TREND*_TEXT}}`、`{{LATEST_OPERATING_UPDATE_TEXT}}`、`{{GEO_REVENUE_TEXT}}`、`{{INVESTMENT_THESIS}}`、`{{SANKEY_ANALYSIS_TEXT}}` 等字段中写入 `**加粗**`、`*斜体*`、反引号代码等；最终页面不会渲染 Markdown，会出现裸露星号。需强调处用中文「」或必要时少量 `<strong>…</strong>`（慎用以免破坏版式）。
 - **禁止破坏锁定 HTML 中的注释闭合**：第四节、第五节 company 面板等处曾用多行 `<!-- …` 且下一行含示例 `{{…}}` 再用 `-->` 闭合；若生成脚本按字串删除「含 `{{分数}}` 的行」，会删掉唯一的 `-->`，导致**整段后续 DOM 被浏览器当作注释吞掉**（第五、六节版式全崩）。生成 HTML 时**不得**删除任何可能是**多行注释唯一闭合**的 `-->` 行。
 - **可选：清理单行样例注释**：仅当确认某条注释是独立单行提示、与多行注释闭合无关时，才可删除以免残留 `{{...}}` 触发校验；**不确定则保留**，或改写注释文字而不删行。

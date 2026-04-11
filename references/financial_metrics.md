@@ -95,7 +95,7 @@ ELSE:
 
 ## Geographic revenue mix (地区收入结构)
 
-In Phase 2, after computing ratios and trend narratives, write a short **regional revenue** note for Section II’s fourth trend-card (**标题：地区收入结构**; English template: **Geographic revenue mix**). The card uses CSS class **`trend-geo`** (green left accent); content must stay **descriptive only**.
+In Phase 2, after computing ratios and trend narratives, write a short **regional revenue** note for Section II’s **fifth** trend-card (**标题：地区收入结构**; English template: **Geographic revenue mix**). The card uses CSS class **`trend-geo`** (green left accent); content must stay **descriptive only**.
 
 - Source **regional / country revenue tables** from the latest annual/quarterly filing (or `financial_data.json` geographic breakdown if Agent 1 populated it). If only product segments exist, say geographic disclosure is limited.
 - Cover **amounts, % of total**, YoY or organic growth **by region** when disclosed, and **concentration** (e.g. top region share changing).
@@ -104,7 +104,25 @@ In Phase 2, after computing ratios and trend narratives, write a short **regiona
 
 Store the prose in **`financial_analysis.json`** → `geographic_revenue.analysis`. Phase 5 pastes it into `{{GEO_REVENUE_TEXT}}`. Use plain text only (no Markdown bold/italic); HTML does not render `**`.
 
-**Phase 5 — `{{TREND1_DIRECTION}}` … `{{TREND3_DIRECTION}}`:** Map `trends.*.class` to the template’s CSS tokens: `positive` → `up`, `negative` → `down`, `neutral` → `up` (or `down` if the narrative fits). Do **not** emit `negative` or `positive` as the div class — those are not styled. All four trend cards use a **green** left border in the locked template; `up`/`down` are semantic only.
+**Phase 5 — `{{TREND1_DIRECTION}}` … `{{TREND3_DIRECTION}}`:** Map `trends.*.class` to the template’s CSS tokens: `positive` → `up`, `negative` → `down`, `neutral` → `up` (or `down` if the narrative fits). Do **not** emit `negative` or `positive` as the div class — those are not styled. All Section-II trend cards use a **green** left border in the locked template; `up`/`down` are semantic only.
+
+---
+
+## Latest operating update (最新经营更新)
+
+**Section II, fourth trend-card** (between **Free cash flow** and **Geographic revenue mix**). Sources: **`financial_data.json` → `latest_interim`** (if present), latest **10-Q / 半年报 / TTM** line items, earnings release, and **`news_intel.json`** for guidance or one-off items.
+
+**Content rules:**
+
+1. **Marginal, not a duplicate FY YoY:** Describe **momentum** or **inflection** after the latest **full-year** pair used in KPIs — e.g. **YTD** revenue growth vs. prior-year YTD, **last quarter** vs. prior-year quarter, or **TTM** vs. prior TTM.  
+2. **YoY vs QoQ (which comparison goes first):** **Lead with YoY (同比)** — same fiscal quarter vs. the same quarter **one year ago**, or **YTD vs. prior-year YTD** — because seasonality usually makes YoY the primary sell-side convention. **QoQ (环比, vs. the immediately prior fiscal quarter)** may be added as a **secondary** clause when the filing, release, or thesis stresses sequential inflection; when you cite QoQ for a single quarter, **name it as sequential** and avoid implying it replaces YoY unless the narrative is explicitly quarter-on-quarter (e.g. exit rate). **Data source:** **`financial_data.json` → `latest_interim`** must be populated by **Agent 1 (`financial_data_collector.md`)** from the latest 10-Q / interim; Phase 2 only interprets those fields.  
+3. **Period label (mandatory):** The first sentence must state the **exact coverage** (e.g. “截至 FY2026 第二季度已披露 10-Q（…）” / “YTD through Q2 FY2026 per Form 10-Q filed …”). Readers must not think this card repeats the same FY2025 vs FY2024 annual comparison as the cards above.  
+4. **If no interim filing:** Say so explicitly (“最近中期披露不足，以下仍以年报为主”) and keep **`latest_interim`** null or `notes[]` with reason; the card still exists but is short and honest.  
+5. **No Markdown** in HTML placeholders.
+
+Store prose in **`financial_analysis.json`** → `latest_operating_update.analysis` and **`class`** (`positive` / `negative` / `neutral`) for **`{{TREND_UPDATE_DIRECTION}}`** mapping (same as other trend cards: `positive`→`up`, etc.).
+
+**Downstream use (optional but recommended):** When interim shows a **material** revenue or margin swing vs. annual run-rate, Phase 2.5 may reflect it in **`prediction_waterfall.json`** → `company_specific_adjustment_pct` / `company_events_detail` and/or **one sentence** in `macro_factor_commentary` **only if** consistent with `macro_factors.json`. The **Sankey forecast tab** remains scaled from **`predicted_revenue_growth_pct`** — ensure narrative in **Section III** and **Sankey note** does not contradict the interim story.
 
 ---
 
@@ -178,6 +196,11 @@ Save to `workspace/{Company}_{Date}/financial_analysis.json`:
       "class": "positive",
       "analysis": "Free cash flow improved to $108.8B..."
     }
+  },
+  "latest_operating_update": {
+    "label": "→ Mixed",
+    "class": "neutral",
+    "analysis": "Per Form 10-Q for Q2 FY2026 (filed …), revenue YTD +X% YoY; gross margin Z%. Period differs from full-year FY2025 vs FY2024 above."
   },
   "geographic_revenue": {
     "analysis": "FY2025 net revenue: Americas $X.XB (~43%), Europe ~26%, Greater China ~18%; top region share stable YoY; geographic concentration moderate."

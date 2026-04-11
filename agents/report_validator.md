@@ -10,6 +10,7 @@
 - `workspace/{Company}_{Date}/macro_factors.json`
 - `workspace/{Company}_{Date}/news_intel.json`
 - `workspace/{Company}_{Date}/prediction_waterfall.json`
+- `workspace/{Company}_{Date}/qc_audit_trail.json`（若本次运行包含 Phase 2.6–3.6 对抗审查）
 
 **第 10–13 项与 WARNING 级别：** 这几条在输出中标记为 **WARNING**，是因为叙述是否越界、来源日期是否矛盾等问题难以像结构缺失或未替换的 `{{…}}` 那样用固定规则 **100% 自动判为 CRITICAL**；**不代表可忽略**。编排器在 `SKILL.md` Phase 6 已将第 10–13 项与第 9 项一样列为交付前必改；有此类 WARNING 时须在交付用户前修正 HTML（及关联 JSON 叙述）。
 
@@ -88,6 +89,7 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - 每个 `<li>` 包含一个 `.score-dot` 元素
 - `.score-dot` 的 class 包含 `s1`-`s5` 之一，与 `porterScores` 数组值对应
 - 每个 tab-panel 中有 `.porter-text` 且：若 `<html lang="zh-CN">` 则正文 ≥ **100 个汉字**；若 `<html lang="en-US">`（或 `lang="en"`）则正文 ≥ **450 个英文字符**（约同等信息量）
+- **推荐版式（Phase 5）：** 每个 `.porter-text` 内为**单个 `<ul>` 含恰好 5 个 `<li>`**（顺序对应五力），且**不在** `<li>` 内重复「X/5」起句——见 `references/report_style_guide_cn.md` / `report_style_guide_en.md` 波特五力 / Porter Five Forces。若仅为连续 `<p>` 而无列表 → **WARNING**（风格偏离，交付前可接受但建议对齐技能包规范）。
 
 **失败条件：** li 数量不是5 → CRITICAL；score-dot class 与数组不符 → WARNING；达不到上述字数/字符门槛 → WARNING。
 
@@ -118,6 +120,16 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - **交付口径：** 最终交付 HTML 不应保留示例性 `{{内容}}` / `{{...}}` 注释。允许存在的唯一例外是你已人工确认某个 `-->` 为多行注释闭合所必需，且删除会破坏 DOM；除此以外，示例性占位符注释也应清理掉。**实操：** 只有确认某行是**独立单行**注释、与多行 `<!-- …` 的闭合无关时才删除；**存疑则整行保留**，或改写注释文字去掉 `{{`/`}}`，勿误删唯一闭合 `-->`。
 
 **失败条件：** 发现任何残留 → CRITICAL。
+
+---
+
+### ✅ 7b. 第三节 `macro_factor_commentary`（传导阐释）
+
+- 在 `id="section-prediction"` 内应存在 **`.macro-factor-commentary`** 容器，且 **`{{MACRO_FACTOR_COMMENTARY}}`** 已替换为实质内容（非空、非占位符）。
+- 若 `macro_factors.json` 含 **`macro_factor_commentary`**：HTML 中传导阐释的 **核心事实**（如「六项合计等于 `total_macro_adjustment_pct`」、与瀑布图「宏观调整」栏的关系）应与 JSON 一致；**不得**在 HTML 中另写与 JSON 矛盾的第二套宏观传导故事。
+- 若 `macro_factors.json` **缺少** `macro_factor_commentary` 或为空字符串 → **WARNING**（交付前补全，见 `agents/macro_scanner.md` Step 7b）。
+
+**失败条件：** 传导区为空或未替换 → CRITICAL；与 JSON 明显矛盾 → WARNING。
 
 ---
 
@@ -170,7 +182,8 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 
 ### ✅ 12. 地理口径与品牌/分部口径不得混用
 
-- 第二节第四张趋势卡标题若为“地区收入结构 / Geographic revenue mix”，正文只能出现地区/国家/区域层级项目。
+- 第二节第四张趋势卡标题若为“最新经营更新 / Latest operating update”，正文须**明确**所写数据的**覆盖期间**（10-Q / TTM / YTD 等），且不得与「完整财年」同比口径混写而不加说明。
+- 第二节第五张趋势卡标题若为“地区收入结构 / Geographic revenue mix”，正文只能出现地区/国家/区域层级项目。
 - 不得在同一“地区收入结构”叙述中混入品牌、产品线、渠道等非地理维度标签（例如 `Converse`、`Footwear`、`Wholesale`）。
 - 若公司披露将某品牌单列，而该品牌并非地区维度，应在别处说明，不能塞入地区列表冒充 region。
 
@@ -185,6 +198,15 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - 若定量冲击为估算，需明确标注“估算/情景假设/定性冲击”，避免把情景假设写成已落地精确事实。
 
 **失败条件：** 同一政策叙述前后自相矛盾或证据链断裂 → **WARNING**（视为交付前必改项）。
+
+---
+
+### ✅ 14. QC 合议与成品一致性（若存在 `qc_audit_trail.json`）
+
+- 若 `qc_audit_trail.json` 中某条 `verdict` 为 `accept_qc` 且列明了 `fields_changed`，最终 HTML / JSON 叙述应在相应主题上与裁定一致（例如已采纳的 β/叙事修正不得在五力或方法论中被无说明地推翻）。
+- `prediction_waterfall.json` → `qc_deliberation.methodology_note` 应已并入附录 `{{METHODOLOGY_DETAIL}}`（或等价英文段落），不得遗漏。
+
+**失败条件：** 审计轨迹显示已采纳修改但 HTML 仍为明显旧口径 → **WARNING**（交付前必改）。
 
 ---
 
@@ -241,6 +263,10 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 
 --- 13. 政策/关税叙述一致性 ---
 [PASS] 政策冲击口径前后一致 ✓
+
+--- 14. QC 合议一致性（可选）---
+[PASS] 无 qc_audit_trail.json，跳过 ✓
+（或）[WARNING] 合议已采纳修改但附录/正文仍用旧口径 → 须对齐
 
 === 总结 ===
 CRITICAL 错误：0

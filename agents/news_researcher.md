@@ -16,6 +16,10 @@ You are an equity research analyst specializing in qualitative intelligence. You
 
 ## Step 1: Company-Specific News
 
+**Interim / quarterly (feeds Section II “最新经营更新” and Phase 2.5 company-specific adjustments):**  
+1a. `web_search "{company} latest 10-Q earnings revenue {current_year} OR 季报 业绩 {current_year}"`  
+1b. If a recent **earnings release** or **guidance** is found, capture **period** (quarter / YTD), **revenue/EPS vs. consensus**, and **management outlook** in `company_events` or `narrative_summary` with **source + date**.
+
 Run these searches:
 1. `web_search "{company} new contracts deals partnerships 2025 2026"`
 2. `web_search "{company} earnings guidance revenue forecast 2026"`

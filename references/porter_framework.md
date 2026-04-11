@@ -143,6 +143,8 @@ Focus on the broader industry / sector dynamics. Use:
 - Web search results on sector competitive landscape
 - Reference publicly known industry facts (e.g., "Cloud computing is dominated by AWS, Azure, GCP")
 
+**Naming rule (industry tab is not an excuse for vagueness):** When you refer to **incumbents**, **leading players**, **the oligopoly**, or **existing giants** (e.g., in *Threat of new entrants* when the real dynamic is node races and capacity adds among IDMs), **name the top 3–5 firms** in the same or the immediately following sentence—unless the sector truly has no public peer set, in which case say so briefly. Do **not** leave "existing giants" undefined.
+
 Example framing: "The cloud infrastructure industry faces moderate buyer power (3/5) at the enterprise level. Large customers increasingly adopt multi-cloud strategies..."
 
 ### Perspective 3: Forward-Looking
@@ -159,6 +161,16 @@ Example framing: "Supplier power in semiconductors is expected to increase (movi
 
 - Each perspective: ~300 words covering all five forces
 - Be specific — name competitors, customers, suppliers where known
+- **Incumbents / rivalry / new entrants:** If the narrative says competition is among **existing giants** or **industry leaders** (including "new entrant threat is low because rivalry is really between incumbents"), **list those firms by name** (typically 3–5). Generic placeholders alone are not acceptable in any tab.
 - Quantify where possible (market share %, customer concentration %)
 - Avoid generic statements like "competition is intense" without substantiation
 - Connect Porter analysis to financial performance where relevant (e.g., "High buyer power has compressed gross margins from 45% to 38% over 3 years")
+
+### Phase 5 HTML (locked report template)
+
+For **`{{PORTER_COMPANY_TEXT}}`**, **`{{PORTER_INDUSTRY_TEXT}}`**, and **`{{PORTER_FORWARD_TEXT}}`** in the generated HTML:
+
+1. Use **one `<ul>` with exactly five `<li>` elements** per perspective. Recommended wrapper: `<ul style="margin:0;padding-left:1.25em;">` (matches Equity Research Skill house style).
+2. **Fixed order** of list items: supplier power, buyer power, new entrants, substitutes, competitive rivalry — aligned with the radar chart and score list.
+3. **Do not** repeat "Force name (X/5)…" at the start of each bullet; scores belong in **`PORTER_*_SCORES`** and the chart, not duplicated in the narrative list.
+4. Draft JSON in `porter_analysis.json` so each of `supplier_power`, `buyer_power`, `new_entrants`, `substitutes`, `rivalry` under the relevant perspective is **analysis-only** (no redundant score lead-in), then paste or assemble into the five `<li>` blocks in Phase 5.

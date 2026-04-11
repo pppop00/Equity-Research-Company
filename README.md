@@ -13,7 +13,7 @@ The workflow collects data, runs financial and industry analysis, and produces *
 ## What you get
 
 - **Single deliverable:** `{Company}_Research_CN.html` — open locally in a browser; light / dark theme toggle included.
-- **Intermediate JSON:** financials, macro, news intel, prediction waterfall, Porter analysis — easy to audit or pipe into other tools.
+- **Intermediate JSON:** financials, macro, news intel, prediction waterfall, Porter analysis, optional **`qc_audit_trail.json`** after adversarial QC — easy to audit or pipe into other tools.
 - **Traceable process:** orchestration in **`SKILL.md`** at repo root; sub-tasks in **`agents/`**; formulas and sector β tables in **`references/`**.
 
 > **Note:** Final deliverable is either `*_Research_CN.html` or `*_Research_EN.html` per user choice. Agent instructions may mix English and Chinese; templates are locked separately in `agents/report_writer_cn.md` and `agents/report_writer_en.md`.
@@ -36,7 +36,10 @@ Equity-Research-Skill/
 │   ├── report_validator.md # HTML structure / data checklist
 │   ├── financial_data_collector.md
 │   ├── macro_scanner.md
-│   └── news_researcher.md
+│   ├── news_researcher.md
+│   ├── qc_macro_peer_a.md / qc_macro_peer_b.md  # Adversarial QC on macro & prediction
+│   ├── qc_porter_peer_a.md / qc_porter_peer_b.md  # Adversarial QC on Porter
+│   └── qc_resolution_merge.md  # Merge QC challenges → updated JSON + qc_audit_trail.json
 ├── references/
 │   ├── prediction_factors.md   # Macro model: φ, β, formulas
 │   ├── porter_framework.md     # Porter Five Forces writing guide

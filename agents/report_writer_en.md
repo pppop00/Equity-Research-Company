@@ -25,12 +25,13 @@ Additional note: after filling placeholders, you may remove a **single-line** in
 
 ## Inputs (read from workspace)
 
-- `financial_data.json`
-- `financial_analysis.json`
-- `macro_factors.json` — **Canonical source** for Section III factor **row labels** (e.g. `China consumer confidence (NBS)` vs `US Consumer Confidence`), geography, and numbers. Build `{{FACTOR_ROWS}}` from this file plus `prediction_waterfall.json`; **do not** invent a parallel US-only factor set or relabel factors in HTML only.
+- `financial_data.json` (optional **`latest_interim`** — with `financial_analysis.json`, feeds **`{{LATEST_OPERATING_UPDATE_TEXT}}`**)
+- `financial_analysis.json` (`latest_operating_update` → **`{{LATEST_OPERATING_UPDATE_TEXT}}`**, **`{{TREND_UPDATE_DIRECTION}}`**)
+- `macro_factors.json` — **Canonical source** for Section III factor **row labels** (e.g. `China consumer confidence (NBS)` vs `US Consumer Confidence`), geography, and numbers. Build `{{FACTOR_ROWS}}` from this file plus `prediction_waterfall.json`; copy **`{{MACRO_FACTOR_COMMENTARY}}` verbatim** from `macro_factor_commentary`. **Do not** invent a parallel US-only factor set or relabel factors in HTML only.
 - `news_intel.json`
-- `prediction_waterfall.json`
-- `porter_analysis.json`
+- `prediction_waterfall.json` — if QC ran: merge `qc_deliberation.methodology_note` into `{{METHODOLOGY_DETAIL}}` as required.
+- `porter_analysis.json` — if `qc_deliberation` is present, keep Porter text consistent with resolved scores (no new contradictions).
+- `qc_audit_trail.json` (optional cross-check)
 
 Also load: **`references/report_style_guide_en.md`** (voice and number format).
 
@@ -442,6 +443,24 @@ body {
   line-height: 1.8;
   margin-bottom: 16px;
 }
+.macro-factor-commentary {
+  margin-top: 18px;
+  border-left: 4px solid var(--accent-green);
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border-radius: 0 8px 8px 0;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.85;
+}
+.macro-factor-commentary-label {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.macro-factor-commentary-body p { margin: 0 0 0.65em 0; }
+.macro-factor-commentary-body p:last-child { margin-bottom: 0; }
 /* --- Responsive --- */
 @media (max-width: 900px) {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -579,7 +598,7 @@ body {
       </tbody>
     </table>
 
-    <!-- Trend analysis: four cards; all four use green left accent (up/down/trend-geo do not change color) -->
+    <!-- Trend analysis: five cards; all use green left accent (up/down/trend-geo do not change color) -->
     <div class="trend-cards">
       <div class="trend-card {{TREND1_DIRECTION}}">
         <div class="trend-card-label">Net income trend</div>
@@ -592,6 +611,10 @@ body {
       <div class="trend-card {{TREND3_DIRECTION}}">
         <div class="trend-card-label">Free cash flow trend</div>
         <div class="trend-card-text">{{TREND3_TEXT}}</div>
+      </div>
+      <div class="trend-card {{TREND_UPDATE_DIRECTION}}">
+        <div class="trend-card-label">Latest operating update</div>
+        <div class="trend-card-text">{{LATEST_OPERATING_UPDATE_TEXT}}</div>
       </div>
       <div class="trend-card trend-geo">
         <div class="trend-card-label">Geographic revenue mix</div>
@@ -630,6 +653,11 @@ body {
         {{FACTOR_ROWS}}
       </tbody>
     </table>
+
+    <div class="macro-factor-commentary">
+      <div class="macro-factor-commentary-label">Factor transmission (analyst view)</div>
+      <div class="macro-factor-commentary-body">{{MACRO_FACTOR_COMMENTARY}}</div>
+    </div>
 
     <div class="disclaimer-box" style="margin-top:16px;">
       Forecasts are probabilistic illustrations only and not investment advice. Revenue projections use a macro factor model with sector β and friction φ = {{PHI_VALUE}}, combined with public macro views and company-specific intel. Actual results may differ materially.
@@ -1081,8 +1109,10 @@ window.addEventListener('resize', () => {
 | `{{KPI1_CHANGE}}` | Text | e.g. **+7.2% YoY** |
 | `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>` |
 | `{{SUMMARY_PARA_*}}`, `{{TREND*_TEXT}}`, thesis, Sankey note | Text | Plain English/Chinese only; **no** Markdown (`**`, backticks) in values — HTML does not render it |
-| `{{TREND*_DIRECTION}}` | class | `up` / `down`; all four trend cards use the same **green** left border |
-| `{{GEO_REVENUE_TEXT}}` | Text | 2–4 sentences: regional revenue only — amounts, % of total, growth by region, concentration (`references/financial_metrics.md`, Geographic revenue mix) |
+| `{{TREND1_DIRECTION}}`…`{{TREND3_DIRECTION}}`, `{{TREND_UPDATE_DIRECTION}}` | class | `up` / `down`; all Section-II trend cards use the same **green** left border |
+| `{{TREND_UPDATE_DIRECTION}}` | class | `up` / `down`; pairs with `{{LATEST_OPERATING_UPDATE_TEXT}}` |
+| `{{LATEST_OPERATING_UPDATE_TEXT}}` | Text | **Fourth Section-II trend card (“Latest operating update”)**: Use **`financial_data.json` → `latest_interim`** (populated by the Phase 1 financial data collector) as the numeric anchor; **lead with YoY** (same quarter last year or YTD vs prior-year YTD), add **QoQ vs prior quarter** only as a labeled sequential extra. **Lead with the period covered** (including filing date). If no reliable interim filing, state that and keep confidence language modest. See `references/financial_metrics.md`, `references/report_style_guide_en.md`. |
+| `{{GEO_REVENUE_TEXT}}` | Text | 2–4 sentences: **full-fiscal-year** regional revenue only — amounts, % of total, growth by region, concentration (`references/financial_metrics.md`, Geographic revenue mix) |
 | `{{WATERFALL_JS_DATA}}` | JS Array | 见模板注释中的格式示例 |
 | `{{SANKEY_YEAR_ACTUAL}}` | Text | Same fiscal label as `financial_data.json` latest full year (see `SKILL.md` Step 0C) |
 | `{{SANKEY_YEAR_FORECAST}}` | Text | Next-fiscal forecast label; must match `prediction_waterfall.json` → `predicted_fiscal_year_label` (default FY{N+1}E) |
@@ -1090,16 +1120,19 @@ window.addEventListener('resize', () => {
 | `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | Scaled from actual via predicted revenue growth |
 | `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
 | `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>` 含 score-dot |
-| `{{PORTER_COMPANY_TEXT}}` | HTML | ~300 words Porter narrative (English) |
-| `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行 |
-| `{{APPENDIX_SOURCE_ROWS}}` | HTML | 数据来源表行 |
+| `{{PORTER_COMPANY_TEXT}}` | HTML | Company tab: one `<ul style="margin:0;padding-left:1.25em;">` with exactly five `<li>` items, order: Supplier → Buyer → New entrants → Substitutes → Rivalry. Do not repeat X/5 or score-prefixed openings in each item (radar + score list show scores). ~300 words. Source: `porter_analysis.json` → `company_perspective` (analysis-only lines per force). |
+| `{{PORTER_INDUSTRY_TEXT}}` | HTML | Industry tab: same list shape and order; `industry_perspective`. |
+| `{{PORTER_FORWARD_TEXT}}` | HTML | Forward tab: same list shape and order; `forward_perspective`. |
+| `{{FACTOR_ROWS}}` | HTML | Factor table rows from `macro_factors.json` |
+| `{{MACRO_FACTOR_COMMENTARY}}` | HTML | **From `macro_factors.json` → `macro_factor_commentary` only** (see `agents/macro_scanner.md` Step 7b). Institutional transmission narrative; `<p>` blocks OK; no Markdown. |
+| `{{APPENDIX_SOURCE_ROWS}}` | HTML | Appendix source rows |
 | `{{PHI_VALUE}}` | 文字 | 通常为 0.5 |
 | `{{CONFIDENCE_EN}}` | Text | High / Medium / Low |
-| `{{METHODOLOGY_DETAIL}}` | Text | β vector and baseline explanation (English) |
+| `{{METHODOLOGY_DETAIL}}` | Text | β row choice, baseline, geography; **must** incorporate `prediction_waterfall.json` → `qc_deliberation.methodology_note` when present (Analyst + dual-QC synthesis for the appendix) |
 
 ## Style
 
-Follow `references/report_style_guide_en.md` for tone, units, and terminology.
+Follow `references/report_style_guide_en.md` for tone, units, and terminology. **Section V Porter Five Forces** — list HTML shape and no duplicate scores: see **Porter Five Forces** in that file.
 
 **No Markdown in narrative placeholders:** Any field pasted into the locked HTML body must be plain text (no `**bold**`). Use `<strong>` only if truly necessary.
 **Safe comment cleanup:** Optional: drop self-contained single-line instructional comments that still show `{{...}}` examples, **only when their role is obvious**; if ambiguous, **keep the line** or rewrite the comment text. Never remove a `-->` that might be the only closer for a multi-line `<!--`.

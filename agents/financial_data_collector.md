@@ -79,6 +79,14 @@ For each financial statement, extract:
 - Capital Expenditures (CapEx)
 - Free Cash Flow = Operating CF - CapEx
 
+**Latest interim (10-Q / 季报 / 半年报 — required to attempt):**  
+After annuals are populated, **this agent owns** pulling the **most recent qualifying interim filing** on or before `report_date` (US: **Form 10-Q**; CN/HK: quarterly or semi-annual reports) and writing **`latest_interim`**. Downstream agents (financial analysis, report writer) **must not invent** 10-Q line items when this object is missing — they only summarize what is here (or honestly state the gap). Populate **`latest_interim`** (see schema below). If nothing is filed or web access fails, set **`latest_interim`** to **`null`** and add a **`notes[]`** entry explaining the gap. This block feeds Section II **「最新经营更新 / Latest operating update」** and may inform Phase 2.5 **company-specific** revenue adjustments when material.
+
+**YoY vs QoQ (what to extract for the “最新经营更新” card):**  
+- **Default headline comparison — YoY (同比):** Match **like period to like period** under the issuer’s fiscal calendar. Examples: **latest single fiscal quarter vs the same fiscal quarter one year ago**; or **YTD through Qn vs YTD through Qn prior year** from the 10-Q face financials or MD&A. YoY removes most seasonality and is what readers expect in sell-side “latest quarter” blurbs.  
+- **Optional second beat — QoQ (环比):** **Prior fiscal quarter vs current quarter** (or sequential margin/OCF) when the filing or earnings materials highlight sequential momentum, or when QoQ is material to the thesis. **Always label it as sequential** and, for a single quarter, **remind that seasonality can distort QoQ**; do not let QoQ **replace** YoY as the only growth statistic unless the narrative explicitly compares two adjacent quarters (e.g. exit-rate stories).  
+- **Store enough in JSON** for Phase 2 to write one tight paragraph: at minimum **`fiscal_period_label`**, **`period_end`**, **`filing_date`**, **`revenue`** (and/or YTD revenue) plus **`revenue_yoy_pct`** when computable from the filing; add **gross margin or OCF YTD** fields when disclosed. Put definitions of “YoY basis” / “QoQ” in **`latest_interim.notes`** if multiple bases appear in one filing.
+
 **Validation checks:**
 - Revenue - COGS ≈ Gross Profit (within rounding)
 - Gross Profit - OpEx ≈ Operating Income
@@ -165,9 +173,24 @@ Save to `output_path`:
     {"name": "iPad", "revenue": 26694, "pct_of_total": 6.8},
     {"name": "Wearables, Home & Accessories", "revenue": 37005, "pct_of_total": 9.5}
   ],
+  "latest_interim": {
+    "form_type": "10-Q",
+    "period_end": "2025-12-28",
+    "fiscal_period_label": "FY2026 Q2",
+    "revenue": 1820,
+    "revenue_yoy_pct": 8.2,
+    "revenue_qoq_pct": null,
+    "net_income": -120,
+    "operating_cash_flow_ytd": 50,
+    "filing_date": "2026-02-05",
+    "source_url": "https://www.sec.gov/...",
+    "notes": "revenue_yoy_pct = single quarter vs same quarter prior fiscal year; revenue_qoq_pct optional vs immediately prior quarter; YTD figures are not comparable to annual blocks without explicit labels."
+  },
   "notes": []
 }
 ```
+
+- **`latest_interim`:** Use **`null`** if no qualifying filing exists before `report_date`. Numeric fields in **same units** as annual blocks (`millions USD` unless company reports otherwise — then state in `notes`). **Do not** silently mix fiscal periods; **`fiscal_period_label`** must match the filing.
 
 Use `null` for any field that could not be found, and add a note to the `notes` array explaining what was unavailable and why. Set `data_confidence` to:
 - `"high"` — from verified 10-K/10-Q filing

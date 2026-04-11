@@ -82,6 +82,7 @@ Use this on **every** run so Section II, Section IV (Sankey), and Phase 2.5 use 
 3. **`financial_data.json` pair (Section II)**  
    - **`income_statement.current_year`** = the **latest complete fiscal year** in the filing set (normally **`FY(Y_cal − 1)`** once that annual is out).  
    - **`prior_year`** = the **immediately preceding** full fiscal year.  
+   - **`latest_interim`** (optional but **required to attempt**): most recent **10-Q / 季报 / 半年报** on or before the report date — **Agent 1 alone** structures this from primary filings per `agents/financial_data_collector.md`; downstream agents **summarize or declare a gap**, they do not invent quarterly tables. Use **`null`** only if no filing exists, with **`notes[]`** explanation. Feeds Section II **「最新经营更新」** and may inform **`prediction_waterfall.json`** company-specific lines when material. **Comparison convention:** card prose **leads with YoY** (same quarter prior year or YTD vs prior-year YTD); **QoQ vs prior quarter** only as a labeled secondary beat when material (see `references/financial_metrics.md` — Latest operating update).  
    - **If `FY(Y_cal − 1)` annual is not yet published** on the report date, use the **latest two consecutive full fiscal years that *are* published** (e.g. FY2024 vs FY2023) and add a **`notes[]`** line stating that **`FY(Y_cal − 1)` was unavailable** so readers know why the table lags.
 
 4. **Section IV — Sankey (two tabs)**  
@@ -167,9 +168,10 @@ Follow agents/news_researcher.md
 
 Read `financial_data.json`; compute metrics per `references/financial_metrics.md`.  
 **Fiscal year labels (“当年 / 上年”, KPI 财年, `METRICS_YEAR_CUR` / `METRICS_YEAR_PREV`):** Must match **`income_statement.current_year`** and **`prior_year`** as fixed by **Step 0C** (latest **published** full-year pair; default target **`FY(Y_cal − 1)`** vs **`FY(Y_cal − 2)`** when that annual exists). **YoY / 同比** is always those two **consecutive** full fiscal years in the JSON. If only interim (e.g. 9M) exists for the newest year, either keep the table on the last two **full** fiscal years with a **`notes[]`** lag explanation per Step 0C, or add a clearly labeled “最近中期 vs 上年同期” block — do not mix without stating it.
-**Geographic revenue (Section II, fourth trend-card):** Fill **`geographic_revenue.analysis`** → **`{{GEO_REVENUE_TEXT}}`** from filings / `financial_data.json` (regional amounts, shares, growth, concentration as disclosed). Rules: **`references/financial_metrics.md`** (Geographic revenue mix) — keep the **card text factual**; do not add meta-lines like “this card does not discuss FX.”  
+**Latest operating update (Section II, fourth trend-card — **最新经营更新** / **Latest operating update**):** Fill **`latest_operating_update`** in `financial_analysis.json` → **`{{LATEST_OPERATING_UPDATE_TEXT}}`** and **`{{TREND_UPDATE_DIRECTION}}`**, using **`financial_data.json` → `latest_interim`** (10-Q / TTM / interim) **as produced by Agent 1**, plus filings and **`news_intel.json`** for guidance. **Lead with the covered period** so readers do not confuse interim momentum with full-year YoY; **headline growth = YoY** unless the user or filing explicitly centers QoQ (then say so). Rules: **`references/financial_metrics.md`** (Latest operating update) and **`references/report_style_guide_{cn|en}.md`** (Latest operating update).  
+**Geographic revenue (Section II, fifth trend-card):** Fill **`geographic_revenue.analysis`** → **`{{GEO_REVENUE_TEXT}}`** from filings / `financial_data.json` (regional amounts, shares, growth, concentration as disclosed). Rules: **`references/financial_metrics.md`** (Geographic revenue mix) — keep the **card text factual**; do not add meta-lines like “this card does not discuss FX.”  
 **Evidence gate for narrative claims:** Any valuation statement in summary / thesis / appendix (e.g. “估值处于历史低位”, target price, upside/downside, cheap/expensive vs history/peers) must be backed by non-null fields in `financial_analysis.json` → `valuation` or by explicitly cited market-data sources in the appendix. If valuation fields are unavailable, remove the valuation claim instead of hand-waving it. Likewise, do not present a live-market conclusion as fact when the underlying market-data fields are `null`.
-**HTML narrative (no Markdown):** All strings that fill `{{SUMMARY_PARA_*}}`, `{{TREND*_TEXT}}`, `{{GEO_REVENUE_TEXT}}`, thesis, Sankey note, etc. must be **plain text** — do **not** use `**` / `*` / backticks; the template does not run a Markdown processor. See `references/report_style_guide_cn.md` or `report_style_guide_en.md` and `agents/report_writer_*.md`.  
+**HTML narrative (no Markdown):** All strings that fill `{{SUMMARY_PARA_*}}`, `{{TREND*_TEXT}}`, `{{LATEST_OPERATING_UPDATE_TEXT}}`, `{{GEO_REVENUE_TEXT}}`, thesis, Sankey note, etc. must be **plain text** — do **not** use `**` / `*` / backticks; the template does not run a Markdown processor. See `references/report_style_guide_cn.md` or `report_style_guide_en.md` and `agents/report_writer_*.md`.  
 **If `report_language=en`:** all free-text fields in `financial_analysis.json` must be **English**.  
 **If `zh`:** Chinese prose as before.
 
@@ -184,7 +186,47 @@ Same formula as `references/prediction_factors.md`.
 **Forecast horizon label:** Set **`predicted_fiscal_year_label`** to **`FY(latest_actual + 1)E`** where **`latest_actual`** is the fiscal year in `financial_data.json` → **`income_statement.current_year`** (e.g. FY2025 actual → **FY2026E**). This must match the Sankey **forecast** tab (Step 0C §4). Only use a later year (e.g. FY2027E) if you deliberately extend the horizon and keep **Sankey + waterfall + appendix** consistent.  
 **If `en`:** use English for factor display names in `prediction_waterfall.json` where they are meant for the HTML table; numeric fields unchanged.
 
+**Macro factor commentary (Section III):** `macro_factors.json` must include **`macro_factor_commentary`** (string, HTML-safe) written per **`agents/macro_scanner.md` Step 7b** — analyst-style explanation of **why** the six macro slots affect **this** company’s revenue/margins and how the rows sum to **`total_macro_adjustment_pct`** (bridge to the waterfall “宏观调整 / macro adjustment” bar). Phase 5 copies it into **`{{MACRO_FACTOR_COMMENTARY}}`** verbatim; do not invent a second narrative in HTML.
+
 Save `prediction_waterfall.json`.
+
+**Interim → model bridge (when material):** If **`latest_interim`** (or TTM read from filings) implies a **material** change in revenue run-rate vs. extrapolating from the last **full year** alone, Phase 2.5 may adjust **`company_specific_adjustment_pct`** / **`company_events_detail`** in `prediction_waterfall.json` and add **at most one clarifying sentence** to **`macro_factor_commentary`** (must remain consistent with `macro_factors.json` totals). This **feeds the same** **`predicted_revenue_growth_pct`** used for **Section III** waterfall and **Section IV** Sankey **forecast** tab — keep **`SANKEY_ANALYSIS_TEXT`** and methodology appendix aligned with that choice.
+
+---
+
+## Phase 2.6 — Macro adversarial QC（双审查员，并行）
+
+在初稿 `prediction_waterfall.json` / `macro_factors.json` 定稿前，由两名**独立** QC 审查员挑战「基于数据的宏观与预测叙述」。Spawn 或顺序执行（Claude.ai 则顺序执行）：
+
+### QC Macro — Peer A（模型与表内一致性）
+
+**File:** `agents/qc_macro_peer_a.md`
+
+```
+Report language: {en|zh}
+Primary operating geography: {同 Step 0D}
+Sector / 行业: {与 Agent 2 一致}
+Company: {company_name}
+Inputs: workspace/{Company}_{Date}/macro_factors.json, prediction_waterfall.json, news_intel.json
+Output path: workspace/{Company}_{Date}/qc_macro_peer_a.json
+Follow agents/qc_macro_peer_a.md
+```
+
+### QC Macro — Peer B（情景与叙事压力）
+
+**File:** `agents/qc_macro_peer_b.md`
+
+```
+Report language: {en|zh}
+Primary operating geography: {同 Step 0D}
+Sector / 行业: {与 Agent 2 一致}
+Company: {company_name}
+Inputs: 同上
+Output path: workspace/{Company}_{Date}/qc_macro_peer_b.json
+Follow agents/qc_macro_peer_b.md
+```
+
+**Wait for Peer A and Peer B to finish**（宏观 QC 的输出由 Phase 3.6 合并裁定，不在此步单独改 JSON）。
 
 ---
 
@@ -194,6 +236,63 @@ Use `references/porter_framework.md`. Three perspectives (~300 words each).
 **If `en`:** `porter_analysis.json` body text **English**. **If `zh`:** Chinese.
 
 Save `porter_analysis.json`.
+
+---
+
+## Phase 3.5 — Porter adversarial QC（双审查员，并行）
+
+对初稿 `porter_analysis.json` 进行独立挑战（供应商/买方/新进入者/替代品/竞争强度、主要竞争者是否遗漏等）。
+
+### QC Porter — Peer A（分数与证据）
+
+**File:** `agents/qc_porter_peer_a.md`
+
+```
+Report language: {en|zh}
+Company: {company_name}
+Inputs: workspace/{Company}_{Date}/porter_analysis.json, news_intel.json, financial_data.json
+Output path: workspace/{Company}_{Date}/qc_porter_peer_a.json
+Follow agents/qc_porter_peer_a.md
+```
+
+### QC Porter — Peer B（竞争者与市场动态）
+
+**File:** `agents/qc_porter_peer_b.md`
+
+```
+Report language: {en|zh}
+Company: {company_name}
+Inputs: workspace/{Company}_{Date}/porter_analysis.json, news_intel.json
+Output path: workspace/{Company}_{Date}/qc_porter_peer_b.json
+Follow agents/qc_porter_peer_b.md
+```
+
+**Wait for Peer A and Peer B to finish.**
+
+---
+
+## Phase 3.6 — QC resolution merge（合议、更新 JSON）
+
+**File:** `agents/qc_resolution_merge.md`
+
+对 **Phase 2.6** 与 **Phase 3.5** 的全部质疑进行裁定：**质疑成立则修改**初稿对应字段；**不成立则保留**分析师原文。生成审计轨迹并写入合议摘要。
+
+```
+Report language: {en|zh}
+Company: {company_name}
+Inputs:
+  - macro_factors.json, prediction_waterfall.json, news_intel.json
+  - qc_macro_peer_a.json, qc_macro_peer_b.json
+  - porter_analysis.json, financial_data.json (as needed)
+  - qc_porter_peer_a.json, qc_porter_peer_b.json
+Outputs:
+  - workspace/{Company}_{Date}/qc_audit_trail.json
+  - 原地更新 prediction_waterfall.json（含 qc_deliberation）
+  - 原地更新 porter_analysis.json（含 qc_deliberation）
+Follow agents/qc_resolution_merge.md
+```
+
+**After Phase 3.6:** `prediction_waterfall.json` 与 `porter_analysis.json` 即为**送审后修订版**；后续 Phase 4–5 必须以此为准。**第三节** HTML 中的免责框（概率性估计、β、φ）保持模板原文；合议补充说明写入 `qc_deliberation.methodology_note`，由 Phase 5 填入 `{{METHODOLOGY_DETAIL}}`（见 `agents/report_writer_*.md`）。
 
 ---
 
@@ -219,7 +318,7 @@ python3 scripts/extract_report_template.py --lang cn --sha256 \
   -o workspace/{Company}_{Date}/_locked_cn_skeleton.html
 ```
 
-Then fill **only** `{{PLACEHOLDER}}` markers in the extracted file (or paste into your editor from the same extract) and save as `{Company}_Research_CN.html`. Do not alter the locked HTML/CSS/JS skeleton. **Post-processing caution:** Do **not** delete HTML comment lines that contain `-->` solely because they include illustrative `{{…}}` text — removing the only closing `-->` for a multi-line `<!--` will comment out the Porter/Appendix DOM (see `agents/report_writer_cn.md` 写作规范、`agents/report_validator.md` §5).
+Then fill **only** `{{PLACEHOLDER}}` markers in the extracted file (or paste into your editor from the same extract) and save as `{Company}_Research_CN.html`. Do not alter the locked HTML/CSS/JS skeleton. **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`** — use the **five-`<li>` unordered-list** format and **do not duplicate** force scores in body text (see `references/report_style_guide_cn.md` §波特五力、`references/porter_framework.md` §Phase 5 HTML). **Post-processing caution:** Do **not** delete HTML comment lines that contain `-->` solely because they include illustrative `{{…}}` text — removing the only closing `-->` for a multi-line `<!--` will comment out the Porter/Appendix DOM (see `agents/report_writer_cn.md` 写作规范、`agents/report_validator.md` §5).
 After placeholders are filled, you **may** remove **only** single-line, self-contained instructional comments that still contain sample `{{...}}` text **if** you have **positively verified** that the line is not the closing leg of a multi-line `<!-- ... -->` block (e.g. a standalone `<!-- … {{…}} … -->`). **If there is any doubt, do not delete the comment line** — leave it, or rewrite the comment so it no longer contains `{{` / `}}`, instead of removing a line that might be the only `-->` closing an earlier `<!--`. Deliverables must not contain unreplaced real placeholders; optional comment cleanup must never risk breaking the DOM.
 
 ### If `report_language = en`
@@ -235,7 +334,7 @@ python3 scripts/extract_report_template.py --lang en --sha256 \
   -o workspace/{Company}_{Date}/_locked_en_skeleton.html
 ```
 
-Then fill **only** placeholders and save as `{Company}_Research_EN.html`.
+Then fill **only** placeholders and save as `{Company}_Research_EN.html`. **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. Porter placeholders **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`**: same **five-`<li>` `<ul>`** rules as Chinese (see `references/report_style_guide_en.md` §Porter Five Forces).
 
 **Post-processing:** Same HTML comment rule as Chinese — do **not** strip lines that close a `<!--` block inside the Porter company panel (see `report_writer_en.md`). If you might remove a single-line comment that contains sample `{{...}}` text, apply the same **“only when sure / otherwise leave or reword”** rule as in the Chinese branch above.
 
@@ -259,6 +358,7 @@ Then fill **only** placeholders and save as `{Company}_Research_EN.html`.
 - `macro_factors.json`
 - `news_intel.json`
 - `prediction_waterfall.json`  
+- `qc_audit_trail.json`（若存在：核对合议与 HTML/JSON 无矛盾表述）
 
 Run all checks; fix CRITICAL issues until zero remain.  
 Treat **checklist item 9** in `agents/report_validator.md` (segment/region list must use percentages consistently with `segment_data`, or use amounts only for all items) as a **pre-delivery** fix: do not ship HTML with mixed formats.
