@@ -1115,7 +1115,7 @@ window.addEventListener('resize', () => {
 | `{{KPI1_DIRECTION}}` 等 | class | 每张 KPI 卡与对应 `.kpi-change` **填同一 class**：`up` / `down` / `neutral-kpi`。**第三卡 FCF：** 若两年 FCF 均为负但同比向零收窄，**须**用 `neutral-kpi`，**勿**用 `up`（绿色易误读为已健康）；`{{KPI3_CHANGE}}` 须含**可核对金额**并写明仍未转正（见 `references/report_style_guide_cn.md` §财务概览）。 |
 | `{{KPI1_VALUE}}` … `{{KPI4_VALUE}}` | 文字 | 带单位数值，例如 "39.1亿美元"；**亏损/为负**时主数字用 **负号 `-` 与数字连写**（如 `-16.4亿美元`、`-22.3%`）；**KPI 主数值不加「约」**，直接给数字+单位。勿用「净亏损约」「约负」代替负号 |
 | `{{KPI1_CHANGE}}` | 文字 | 同比变化，例如 "同比 +7.2%"；FCF 双负改善时须写具体收窄金额（见上） |
-| `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>` |
+| `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>`；第四列 **`同比变动` 必须是结论性定调**，不是裸数字或百分比。使用 `references/financial_metrics.md` 的受控词表，例如 `显著改善`、`改善`、`基本持平`、`恶化`、`显著恶化`、`权益缺口收窄`、`权益缺口扩大`、`期末股东权益为负`、`不适用`。数值变化可写在前两列或趋势卡正文，**不得**把 `+0.62%` / `-1.4pct` 塞进第四列。 |
 | `{{SUMMARY_PARA_1}}` … `{{SUMMARY_PARA_3}}` | 文字 | 纯中文叙述；**禁止** `**` 等 Markdown（见上文写作规范） |
 | `{{SUMMARY_PARA_4}}` | 文字 | 第四段：细分行业份额（多年份优先）、赛道定位、口碑/认可度、主要运营地 vs 收入地域；**≈80–120 字**；来源 `financial_analysis.json` → `summary_para_4`；**禁止** Markdown |
 | `{{TREND1_TEXT}}` … `{{TREND3_TEXT}}` | 文字 | 同上；语义类由 `{{TREND1_DIRECTION}}`…`{{TREND3_DIRECTION}}` 控制（`up` / `down`），左边框均为绿色 |
@@ -1132,7 +1132,7 @@ window.addEventListener('resize', () => {
 | `{{PORTER_COMPANY_TEXT}}` | HTML | 公司层面五力正文：**`<ul style="margin:0;padding-left:1.25em;">` + 恰好 5 个 `<li>`**，顺序为供应商→买方→新进入者→替代品→行业内竞争；**勿**在 `<li>` 内重复「X/5」或力的评分起句（雷达与右侧列表已展示）。约 300 字量级。内容来自 `porter_analysis.json` → `company_perspective` 各字段，须为分析句、无分数起句。 |
 | `{{PORTER_INDUSTRY_TEXT}}` | HTML | 行业层面：同上列表格式与顺序；来自 `industry_perspective`。 |
 | `{{PORTER_FORWARD_TEXT}}` | HTML | 前景展望：同上列表格式与顺序；来自 `forward_perspective`。 |
-| `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行 |
+| `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行；列顺序必须匹配模板：因子 / 宏观变化（%） / β系数 / φ值 / 调整幅度（pct） / 方向。最后一列 **`方向` 只填 `正向` / `负向` / `中性`**（用 `adjustment_pct` 的符号判断），不得再次填 `+0.62%`、`+4.55%` 等数值；数值只属于「宏观变化」和「调整幅度」两列。 |
 | `{{MACRO_FACTOR_COMMENTARY}}` | HTML | **来自 `macro_factors.json` → `macro_factor_commentary`（勿在 HTML 中另写）**：2–4 段机构视角传导说明，衔接表中六项合计与瀑布图「宏观调整」柱；可用 `<p>…</p>`，禁止 Markdown；见 `agents/macro_scanner.md` Step 7b |
 | `{{APPENDIX_SOURCE_ROWS}}` | HTML | 附录表 `<tr>…</tr>` 多行。`具体来源` 列：**以信息最初发布方为准**（见 `references/report_style_guide_cn.md`）。**SEC：**含 `data.sec.gov`/`sec.gov` 拉取的 **Form 10-K/10-Q** 全文内容（**MD&A、Note 16 Revenue 等附注均属 SEC 申报文件一部分**）— 统一写 **美国 SEC EDGAR**，括号可标 `Form 10-K`、章节名；若经 `sec_edgar_fetch.py` → `sec_edgar_bundle.json`，仍标 **SEC**（可加「经 XBRL 切片」），勿把 bundle 写成与 SEC 并列的第三方。**非 SEC**（Bloomberg、Reuters、公司 IR 等）则写全名。 |
 | `{{PHI_VALUE}}` | 文字 | 通常为 0.5 |

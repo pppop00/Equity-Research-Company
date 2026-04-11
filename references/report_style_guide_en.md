@@ -57,6 +57,8 @@ Porter list labels (English): **Supplier power**, **Buyer power**, **Threat of n
 
 **Fourth trend card** (between **Free cash flow trend** and **Geographic revenue mix**). Use the **latest filed 10-Q / interim / TTM** (or formal guidance), not a repeat of full-year FY YoY.
 
+**Metrics table final column (`YoY movement`):** This is a qualitative verdict column, not a numeric delta column. Do not put raw cells like `+0.62%`, `-1.4pct`, or `+0.00%` in the final column. Use the controlled labels from `references/financial_metrics.md`: `Significantly improved`, `Improved`, `Stable`, `Deteriorated`, `Significantly deteriorated`, `Equity deficit narrowed`, `Equity deficit widened`, `Ending equity negative`, or `N/A`. Put precise deltas in the value columns, trend card prose, or notes.
+
 - **Data ownership:** Agent 1 (`agents/financial_data_collector.md`) **must** fetch the latest qualifying filing and populate **`financial_data.json` → `latest_interim`**. Downstream steps **do not fabricate** quarterly figures when that object is absent.
 - **YoY vs QoQ:** **Default to YoY** — latest fiscal quarter **vs. the same quarter last year**, or **YTD vs. prior-year YTD** (aligned to the issuer’s fiscal calendar). **Add QoQ vs. the immediately prior quarter** only as a **secondary** clause when sequential inflection matters; label it **sequential** and do not let QoQ **replace** YoY as the headline growth stat unless the narrative is explicitly quarter-on-quarter.
 - **Lead with the period** (e.g., “Per Form 10-Q for the quarter ended …”, “YTD through Q2 FY20XX”). Readers must not confuse this block with the **full-fiscal-year** narratives in the cards above.

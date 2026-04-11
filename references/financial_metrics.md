@@ -76,6 +76,45 @@ If FCF is **positive** and higher than the prior year, `up` is appropriate. If F
 
 ---
 
+## Metrics table YoY movement verdict (`{{METRICS_ROWS}}`)
+
+The Section II metrics table's final column is a **reader-facing conclusion label**, not a raw numeric delta. Do **not** fill it with values like `+0.62%`, `-1.4pct`, or `+4.55%`. Those numbers may appear in the metric value columns or narrative, but the last cell must summarize what the comparison means.
+
+For Chinese reports, use this controlled vocabulary unless a filing-specific edge case requires a clearly equivalent short label:
+
+| Label | Use when |
+|-------|----------|
+| `显著改善` | Materially better YoY: strong margin expansion, large loss-to-profit swing, large FCF improvement, or a ratio moving decisively in the healthy direction. |
+| `改善` | Better YoY, but not dramatic. |
+| `基本持平` | Change is immaterial or within rounding/noise. |
+| `恶化` | Worse YoY, but not severe. |
+| `显著恶化` | Materially worse YoY: sharp margin compression, profit-to-loss swing, large FCF deterioration, or leverage/liquidity moving materially against the company. |
+| `权益缺口收窄` | Shareholders' equity is still negative, but the deficit narrowed YoY. |
+| `权益缺口扩大` | Shareholders' equity is negative and the deficit widened YoY. |
+| `期末股东权益为负` | ROE / debt-to-equity / equity-based ratios are not economically meaningful because ending equity is negative. |
+| `不适用` | Prior-year denominator is missing, zero, or the metric is not comparable. |
+
+For English reports, use the matching controlled labels: `Significantly improved`, `Improved`, `Stable`, `Deteriorated`, `Significantly deteriorated`, `Equity deficit narrowed`, `Equity deficit widened`, `Ending equity negative`, `N/A`.
+
+Classification guidance:
+
+- For "higher is better" metrics (gross margin, operating margin, net margin, ROE, ROA, EPS, FCF margin, interest coverage), a higher current value is `改善`; a lower current value is `恶化`.
+- For "lower is better" risk metrics (asset-liability ratio, debt/equity, net debt/EBITDA, capex intensity if interpreted as cash burden), a lower current value is `改善`; a higher current value is `恶化`.
+- If current and prior values are both negative but current is closer to zero, use `改善` or `权益缺口收窄` depending on the metric. Do not write `+x%` in the verdict cell.
+- If ending shareholders' equity is negative, do not force ROE or debt/equity into a numeric "improved/worse" verdict; use `期末股东权益为负` or the equity-deficit labels.
+
+Example rows:
+
+```html
+<tr><td>毛利率</td><td>46.2%</td><td>45.6%</td><td class="metric-up">改善</td></tr>
+<tr><td>ROE</td><td>不适用</td><td>不适用</td><td class="metric-down">期末股东权益为负</td></tr>
+<tr><td>每股收益（EPS）</td><td>-0.21美元</td><td>-0.38美元</td><td class="metric-up">改善</td></tr>
+```
+
+Validator expectation: `agents/report_validator.md` treats raw numeric-only final-column cells as a pre-delivery warning.
+
+---
+
 ## Trend Classification Logic
 
 For Net Income, Net Margin, and FCF, classify the trend and write the corresponding analysis (2–3 sentences of plain prose only — no Markdown asterisk bold/italic in JSON fields; they paste into HTML as-is):
