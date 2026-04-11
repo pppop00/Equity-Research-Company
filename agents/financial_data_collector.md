@@ -224,6 +224,7 @@ Save to `output_path`:
 ```
 
 - **`latest_interim`:** Use **`null`** if no qualifying filing exists before `report_date`. Numeric fields in **same units** as annual blocks (`millions USD` unless company reports otherwise — then state in `notes`). **Do not** silently mix fiscal periods; **`fiscal_period_label`** must match the filing.
+- **`cash_flow_prior_year`（可选）：** 与 `cash_flow` 同结构的 **上一完整财年** 现金流量表核心字段（至少 **`free_cash_flow`**），单位与 `cash_flow.unit` 一致。供 Phase 2 / 研报 KPI 第三卡判断「两年 FCF 均为负但亏损收窄」并写入 `neutral-kpi` 规则（见 `references/financial_metrics.md`、**`SKILL.md` Phase 2**）。若无法从 10-K 对比表取得，填 **`null`** 并在 `notes[]` 说明；编排器不得在无上年 FCF 时虚构「明显改善」类措辞。
 
 Use `null` for any field that could not be found, and add a note to the `notes` array explaining what was unavailable and why. Set `data_confidence` to:
 - `"high"` — from verified 10-K/10-Q filing

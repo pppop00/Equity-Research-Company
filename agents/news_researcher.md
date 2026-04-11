@@ -11,8 +11,8 @@ You are an equity research analyst specializing in qualitative intelligence. You
 
 ### Language rule
 
-- **`en`**: All event `description` strings, `narrative_summary`, industry Porter blurbs, and qualitative bullets must be **English**.
-- **`zh`**: Chinese for the same fields.
+- **`en`**: All event `description` strings, `narrative_summary`, industry Porter blurbs, qualitative bullets, **`industry_position`** narrative fields, and **`industry_position.summary_para_4`** must be **English**.
+- **`zh`**: Chinese for the same fields (including **`industry_position.summary_para_4`** — **≈80–120 个汉字**，见 Step 2b).
 
 ## Step 1: Company-Specific News
 
@@ -56,6 +56,26 @@ Run these searches:
 6. `web_search "{sector} industry rivalry price competition market share 2026"`
 
 Synthesize findings into qualitative descriptions for each of the five forces at the industry level.
+
+## Step 2b: Industry position — Investment Summary (fourth paragraph)
+
+**Purpose:** Populate **`industry_position`** for Section I **`{{SUMMARY_PARA_4}}`** (Phase 2 copies/refines into `financial_analysis.json` → `summary_para_4`). Focus on **sub-industry market share (multi-year when credible)**, **how the company is positioned in its niche**, **reputation / market recognition**, **main operating footprint**, and **where revenue is earned** (cross-check filings later in Phase 2 — do not contradict `financial_data.json` geographic tables when those exist).
+
+Run **additional** searches (adapt years to the report calendar; prefer primary industry trackers, company filings, or reputable trade press that cites IDC/Gartner/Omdia/Canalys/etc.):
+
+1. `web_search "{company} market share {sector OR sub-industry} IDC Gartner OR Canalys OR Omdia year"`
+2. `web_search "{company} market share historical 2022 2023 2024 OR 2023 2024 2025"` (seek **at least two** distinct years if possible)
+3. `web_search "{company} vs competitors market share {sub-industry}"`
+4. `web_search "{company} leading product OR largest segment revenue driver OR best-selling product line"`
+5. `web_search "{company} brand reputation awards enterprise customers OR 行业口碑 OR 客户评价"`
+6. `web_search "{company} headquarters manufacturing R&D locations operations footprint"`
+7. `web_search "{company} revenue by region OR geographic revenue mix OR 地区收入"` (for narrative alignment with filings)
+
+**Discipline:**
+
+- **Do not invent** percentage time series. Each `market_share_series[]` entry must carry **`source`** and a realistic **`confidence`** (`high` / `medium` / `low`). If only one year is public, store that one year and explain the gap in `notes[]`.
+- **Metric scope:** Set **`market_definition`** to the **exact market boundary** the share refers to (e.g. “consumer vs enterprise SSD”, “global vs US only”) so Phase 2 / Porter do not mix incompatible figures.
+- **`summary_para_4`:** One **plain** paragraph, **no Markdown**. **`zh`:** **≈80–120 Chinese characters** (汉字计长，不含换行). **`en`:** **~55–90 words** (same information slot). Weave **only** what you can support: share points (with years), niche/segment focus, 1–2 words on reputation if sourced, **main operating geography** vs **largest revenue regions** when known. If third-party share is unavailable, say so briefly and use **qualitative** positioning + segment names from public sources.
 
 ## Step 3: Forward-Looking Intelligence
 
@@ -109,8 +129,32 @@ Use these to describe how the five forces are likely to evolve over the next 2-3
     "Morgan Stanley: Overweight, PT $280, AWS reacceleration key catalyst",
     "Goldman Sachs: Buy, PT $295, advertising segment underappreciated"
   ],
+  "industry_position": {
+    "market_definition": "Global public cloud IaaS + PaaS (example — define the exact scope your share % refers to).",
+    "market_share_series": [
+      {
+        "period_label": "CY2023",
+        "share_pct": 31.0,
+        "segment_label": "Worldwide cloud infrastructure services",
+        "source": "Synergy Research Group, cited Company FY2024 10-K MD&A",
+        "confidence": "medium"
+      },
+      {
+        "period_label": "CY2024",
+        "share_pct": 30.5,
+        "segment_label": "Worldwide cloud infrastructure services",
+        "source": "Synergy Research Group, press summary Feb 2025",
+        "confidence": "medium"
+      }
+    ],
+    "sub_segments_focus": "Where the company competes (e.g. hyperscale SSD vs retail NAND).",
+    "reputation_and_brand": "Short factual line on awards, brand, or enterprise recognition — or state insufficient public data.",
+    "main_operating_locations": "HQ, major manufacturing/R&D hubs by country/region (sourced).",
+    "revenue_geography_note": "Largest revenue regions in plain language; if unknown, say align with SEC geographic note in financial_data.json in Phase 2.",
+    "summary_para_4": "Single paragraph for Section I fourth block: niche, multi-year share if available, ops vs revenue geography, reputation — zh ≈80–120字 / en ~55–90 words; plain text only."
+  },
   "notes": []
 }
 ```
 
-If you cannot find reliable information for a specific field, use a descriptive placeholder like `"Insufficient data found — recommend manual review"` and add an entry to `notes`.
+If you cannot find reliable information for a specific field, use a descriptive placeholder like `"Insufficient data found — recommend manual review"` and add an entry to `notes`. **`industry_position` must always be present** (use empty `market_share_series` and an honest `summary_para_4` if data is thin).

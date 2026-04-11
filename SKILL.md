@@ -1,7 +1,7 @@
 ---
 name: equity-research
 description: >
-  Full-stack equity research report generator. Trigger when the user wants to analyze a company, generate an equity research report, fundamental analysis, or stock investment research. Works with a company name (web search) or uploaded filings (10-K / 10-Q PDFs, HK/A-share reports). After the user chooses report language (English or Chinese), outputs one professional interactive HTML report (Sankey revenue flow, macro waterfall, Porter Five Forces). For US SEC API data pulls, the skill asks for a real contact email first (SEC policy); if the user declines, financials fall back to web search.
+  Full-stack equity research report generator. Trigger when the user wants to analyze a company, generate an equity research report, fundamental analysis, or stock investment research. Works with a company name (web search) or uploaded filings (10-K / 10-Q PDFs, HK/A-share reports). P0 mandatory gates (see SKILL.md Step 0A): (1) explicit report language en/zh before any research; (2) when the SEC API path applies, real email or explicit decline before workspace/Phase 1. Outputs one interactive HTML report (Sankey, macro waterfall, Porter). Never skip Step 0A — it is the key to all downstream procedures.
 
   TRIGGER on: "equity research", "research report", "analyze [company]", "financial analysis of [company]", "做研报", "研究报告", "分析[公司]", English/Chinese equivalents, or user uploads a 10-K/10-Q and wants full research (not only a revenue-flow diagram).
 ---
@@ -14,13 +14,30 @@ Generate a professional equity research report for any public company. You are t
 
 ## Step 0A: Mandatory gates — **language + SEC contact (before workspace & Phase 1)**
 
-**Do not create `workspace/`** and **do not start Phase 1** (no agents, no JSON generation) until **both** §0A.1 and §0A.2 below are satisfied for this run.
+### 0A.0 — **P0 硬门禁（不可跳过、不可推断）**
+
+These two gates are **P0**: they are the **key** to every later step. **If they are not satisfied, nothing else in this skill may run.**
+
+| Gate | What must be true before Step 0B / Phase 1 |
+|------|--------------------------------------------|
+| **§0A.1 报告语言** | `report_language` is **`en`** or **`zh`**, resolved **only** as allowed in §0A.1 (explicit table **or** user answer to the language question). |
+| **§0A.2 SEC 邮箱** | Either **(a)** §0A.2 **does not apply** (see below), **or (b)** it applies and the user has supplied a **real email** or an **explicit decline** (`no email` / `不提供邮箱` / unmistakable refusal). |
+
+**Strictly forbidden until both rows above are satisfied for this run** (non-exhaustive):
+
+- Creating **`workspace/`**, writing any **`financial_data.json`** / intermediate JSON, or starting **Phase 1–6**
+- Spawning or simulating **Agents 1–5**, `web_search` / `web_fetch` for **company financials, filings, or industry research** (other than the **single** listing-resolution search allowed in §0A.2 when the primary listing is unclear — and that search is **only** after §0A.1 is complete)
+- Announcing progress such as “正在生成完整研报…”, “Starting Phase 1…”, “collecting 10-K…”, or otherwise behaving as if research has begun
+- **Inferring** `report_language` from the user’s conversational language (e.g. Chinese vs English messages), UI locale, or company country — **not allowed** unless a cue appears in the **explicit table** in §0A.1
+- **Inferring** `financial_data_sec_api = no` when §0A.2 applies — **not allowed** without the user’s **explicit decline** of the SEC API path (or a valid email for `yes`)
+
+**Do not create `workspace/`** and **do not start Phase 1** (no agents, no JSON generation) until **both** §0A.1 and §0A.2 are satisfied **for this run** as defined in the table above.
 
 ---
 
 ### 0A.1 Report language
 
-Resolve `report_language` to exactly one of: **`en`** | **`zh`** before anything else in Step 0A.
+Resolve `report_language` to exactly one of: **`en`** | **`zh`**. This is the **first** gate; resolve it **before** evaluating §0A.2 or performing any allowed `web_search`.
 
 #### When language is already explicit
 
@@ -29,6 +46,8 @@ Treat any of the following as explicit (map and proceed **without** asking):
 | Maps to `report_language = en` | Maps to `report_language = zh` |
 |--------------------------------|----------------------------------|
 | `English`, `EN`, `英文`, `英语`, `in English`, `English report`, `英文研报`, `generate English` | `Chinese`, `ZH`, `中文`, `简体`, `Chinese report`, `中文研报`, `生成中文` |
+
+**Strict rule:** The user **writing in Chinese** or **English** in chat, or asking for a “report” / “研报” **without** one of the phrases above, is **not** sufficient to set `report_language`. Phrases like “做研报”, “analyze Apple”, “equity research” **alone** do **not** set language — you **must** ask the single question below and **stop**.
 
 If the user states both or contradictory cues, ask one short clarification (still **no** workspace / Phase 1).
 
@@ -51,25 +70,29 @@ After the user answers, map **English** → `en`, **Chinese** / **中文** → `
 
 ---
 
-### 0A.2 US SEC EDGAR API — **real contact email gate (same priority as 0A.1)**
+### 0A.2 US SEC EDGAR API — **real contact email gate (P0; same priority as 0A.1)**
+
+This is the **second** gate. Evaluate it **only after** `report_language` is fixed in §0A.1.
 
 SEC fair-access rules require a **truthful, contactable** identifier in the HTTP `User-Agent` when calling `data.sec.gov` (see `scripts/sec_edgar_fetch.py`). The orchestrator **must not** invent, placeholder, or guess an email.
 
 #### When this sub-step applies
 
-Evaluate **after** 0A.1 is done. **All** must be true:
+Evaluate **after** §0A.1 is done. **All** must be true:
 
 1. **No uploaded SEC PDFs** for this run as the primary financial input — i.e. **Mode A** (company name / ticker only). If the user attached **10-K / 10-Q** PDFs (**Mode B/C**), set **`financial_data_sec_api = no`** and **skip** the rest of 0A.2 (Agent 1 uses file extraction per `agents/financial_data_collector.md`).
 2. The research target is **intended as a US-listed SEC periodic filer** (NYSE / Nasdaq / other US exchange; **10-K / 10-Q** on EDGAR). **Treat as US** when the user says e.g. **美股**, **US listing**, **NASDAQ / NYSE**, gives a **bare US ticker** (`MSFT`), or clearly names a **known US-only** listing context. **Treat as non-US** when the user says e.g. **港股 / A股 / 伦敦**, primary listing is clearly non-US, or the company is private / not an SEC periodic filer.
-3. **If listing is unclear**, you may use **at most one** `web_search` whose **sole purpose** is to determine whether the **primary listing** is US SEC — still **no** workspace until 0A.2 is resolved. If the answer is not US SEC, set **`financial_data_sec_api = no`** and skip the email ask.
+3. **If listing is unclear**, you may use **at most one** `web_search` whose **sole purpose** is to determine whether the **primary listing** is US SEC — still **no** workspace until 0A.2 is resolved. **Do not** run this search until §0A.1 is complete. If the answer is not US SEC, set **`financial_data_sec_api = no`** and skip the email ask.
 
 #### When 0A.2 does **not** apply
 
-Set **`financial_data_sec_api = no`** and proceed to Step 0B.
+Set **`financial_data_sec_api = no`** and proceed to Step 0B **only if** §0A.1 is already satisfied. (Examples: Mode B/C with PDFs; clearly non-US listing; private company.)
 
 #### When 0A.2 **does** apply — ask for email (or explicit decline)
 
 **Stop** — do **not** run Step 0B yet — until the user either supplies a **real email** or **explicitly declines** the SEC API path.
+
+You **must** send the email prompt (or the `zh` equivalent) to the user in this case. **Do not** skip the question, **do not** assume decline, and **do not** set `financial_data_sec_api = no` without one of the outcomes in the **Resolve replies** table below.
 
 Use wording that matches **`report_language`**:
 
@@ -112,7 +135,7 @@ If the user **already** supplied one plausible email **and** confirmed a US SEC 
 - **Mode B** — Company name + 10-K PDF → File-based mode  
 - **Mode C** — Company name + 10-K + 10-Q PDF → Full File mode  
 
-**Only after Step 0A (§0A.1 + §0A.2 when applicable) is satisfied**, create:
+**Only after Step 0A is fully satisfied** (§0A.0 P0 table: language resolved **and** §0A.2 either N/A or email/decline resolved), create:
 
 ```
 workspace/{Company}_{Date}/
@@ -234,7 +257,10 @@ Read `financial_data.json`; compute metrics per `references/financial_metrics.md
 **Latest operating update (Section II, fourth trend-card — **最新经营更新** / **Latest operating update**):** Fill **`latest_operating_update`** in `financial_analysis.json` → **`{{LATEST_OPERATING_UPDATE_TEXT}}`** and **`{{TREND_UPDATE_DIRECTION}}`**, using **`financial_data.json` → `latest_interim`** (10-Q / TTM / interim) **as produced by Agent 1**, plus filings and **`news_intel.json`** for guidance. **Lead with the covered period** so readers do not confuse interim momentum with full-year YoY; **headline growth = YoY** unless the user or filing explicitly centers QoQ (then say so). Rules: **`references/financial_metrics.md`** (Latest operating update) and **`references/report_style_guide_{cn|en}.md`** (Latest operating update).  
 **Geographic revenue (Section II, fifth trend-card):** Fill **`geographic_revenue.analysis`** → **`{{GEO_REVENUE_TEXT}}`** from filings / `financial_data.json` (regional amounts, shares, growth, concentration as disclosed). Rules: **`references/financial_metrics.md`** (Geographic revenue mix) — keep the **card text factual**; do not add meta-lines like “this card does not discuss FX.”  
 **Evidence gate for narrative claims:** Any valuation statement in summary / thesis / appendix (e.g. “估值处于历史低位”, target price, upside/downside, cheap/expensive vs history/peers) must be backed by non-null fields in `financial_analysis.json` → `valuation` or by explicitly cited market-data sources in the appendix. If valuation fields are unavailable, remove the valuation claim instead of hand-waving it. Likewise, do not present a live-market conclusion as fact when the underlying market-data fields are `null`.
+**Investment Summary — fourth paragraph (`{{SUMMARY_PARA_4}}`):** Compose **`financial_analysis.json` → `summary_para_4`** from **`news_intel.json` → `industry_position`** (Agent 3 web search: market-share time series, niche definition, reputation, operating vs revenue geography). **Reconcile** with **`financial_data.json`** geographic revenue and segment names — filings **override** inconsistent web snippets. Target length: **≈80–120 Chinese characters** (`zh`) or **~55–90 English words** (`en`). If third-party share data is thin, keep the paragraph honest and qualitative rather than fabricating a series. Plain text only (no Markdown).
+
 **HTML narrative (no Markdown):** All strings that fill `{{SUMMARY_PARA_*}}`, `{{TREND*_TEXT}}`, `{{LATEST_OPERATING_UPDATE_TEXT}}`, `{{GEO_REVENUE_TEXT}}`, thesis, Sankey note, etc. must be **plain text** — do **not** use `**` / `*` / backticks; the template does not run a Markdown processor. See `references/report_style_guide_cn.md` or `report_style_guide_en.md` and `agents/report_writer_*.md`.  
+**KPI 第三卡（自由现金流）方向：** 若两年 FCF 均为负但同比向零收窄，**勿**填 `{{KPI3_DIRECTION}}` = `up`（易与「已健康」混淆）；用 **`neutral-kpi`**，且 `{{KPI3_CHANGE}}` **须带可核对金额**并标明仍未转正。详见 `references/report_style_guide_cn.md` / `references/financial_metrics.md`（KPI card direction）。  
 **If `report_language=en`:** all free-text fields in `financial_analysis.json` must be **English**.  
 **If `zh`:** Chinese prose as before.
 
@@ -381,7 +407,7 @@ python3 scripts/extract_report_template.py --lang cn --sha256 \
   -o workspace/{Company}_{Date}/_locked_cn_skeleton.html
 ```
 
-Then fill **only** `{{PLACEHOLDER}}` markers in the extracted file (or paste into your editor from the same extract) and save as `{Company}_Research_CN.html`. Do not alter the locked HTML/CSS/JS skeleton. **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`** — use the **five-`<li>` unordered-list** format and **do not duplicate** force scores in body text (see `references/report_style_guide_cn.md` §波特五力、`references/porter_framework.md` §Phase 5 HTML). **Post-processing caution:** Do **not** delete HTML comment lines that contain `-->` solely because they include illustrative `{{…}}` text — removing the only closing `-->` for a multi-line `<!--` will comment out the Porter/Appendix DOM (see `agents/report_writer_cn.md` 写作规范、`agents/report_validator.md` §5).
+Then fill **only** `{{PLACEHOLDER}}` markers in the extracted file (or paste into your editor from the same extract) and save as `{Company}_Research_CN.html`. Do not alter the locked HTML/CSS/JS skeleton. **`{{SUMMARY_PARA_4}}`** ← `financial_analysis.json` → `summary_para_4` (industry position / share / geography narrative). **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`** — use the **five-`<li>` unordered-list** format and **do not duplicate** force scores in body text (see `references/report_style_guide_cn.md` §波特五力、`references/porter_framework.md` §Phase 5 HTML). **Post-processing caution:** Do **not** delete HTML comment lines that contain `-->` solely because they include illustrative `{{…}}` text — removing the only closing `-->` for a multi-line `<!--` will comment out the Porter/Appendix DOM (see `agents/report_writer_cn.md` 写作规范、`agents/report_validator.md` §5).
 After placeholders are filled, you **may** remove **only** single-line, self-contained instructional comments that still contain sample `{{...}}` text **if** you have **positively verified** that the line is not the closing leg of a multi-line `<!-- ... -->` block (e.g. a standalone `<!-- … {{…}} … -->`). **If there is any doubt, do not delete the comment line** — leave it, or rewrite the comment so it no longer contains `{{` / `}}`, instead of removing a line that might be the only `-->` closing an earlier `<!--`. Deliverables must not contain unreplaced real placeholders; optional comment cleanup must never risk breaking the DOM.
 
 ### If `report_language = en`
@@ -397,7 +423,7 @@ python3 scripts/extract_report_template.py --lang en --sha256 \
   -o workspace/{Company}_{Date}/_locked_en_skeleton.html
 ```
 
-Then fill **only** placeholders and save as `{Company}_Research_EN.html`. **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. Porter placeholders **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`**: same **five-`<li>` `<ul>`** rules as Chinese (see `references/report_style_guide_en.md` §Porter Five Forces).
+Then fill **only** placeholders and save as `{Company}_Research_EN.html`. **`{{SUMMARY_PARA_4}}`** ← `financial_analysis.json` → `summary_para_4`. **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. Porter placeholders **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`**: same **five-`<li>` `<ul>`** rules as Chinese (see `references/report_style_guide_en.md` §Porter Five Forces).
 
 **Post-processing:** Same HTML comment rule as Chinese — do **not** strip lines that close a `<!--` block inside the Porter company panel (see `report_writer_en.md`). If you might remove a single-line comment that contains sample `{{...}}` text, apply the same **“only when sure / otherwise leave or reword”** rule as in the Chinese branch above.
 
@@ -424,6 +450,7 @@ Then fill **only** placeholders and save as `{Company}_Research_EN.html`. **`{{M
 - `qc_audit_trail.json`（若存在：核对合议与 HTML/JSON 无矛盾表述）
 
 Run all checks; fix CRITICAL issues until zero remain.  
+Treat **checklist item 2** in `agents/report_validator.md` (KPI **`.kpi-value`**: leading **`-`** for negatives—no 「约负」/「净亏损约」/ **no 「约」 on Chinese KPI headline figures**; **`neutral-kpi`** card CSS must match the locked template—red bar + `kpi-down-bg`, not amber-only + white) as a **pre-delivery** fix: do not ship HTML that fails these even if labeled WARNING.
 Treat **checklist item 9** in `agents/report_validator.md` (segment/region list must use percentages consistently with `segment_data`, or use amounts only for all items) as a **pre-delivery** fix: do not ship HTML with mixed formats.
 Treat the following as **pre-delivery blockers** as well, even if they are classified as WARNING in the validator output: narrative claims unsupported by JSON fields, appendix/source dates later than the report date, “real-time/current/latest” wording when the underlying data is knowledge-cutoff or estimated, and geographic mix text that mixes regions with product/brand labels.
 

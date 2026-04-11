@@ -26,6 +26,7 @@ For **Agent 4A** (`agents/report_writer_en.md`). Tone: institutional sell-side /
 | Large USD revenue | $XX.XB / $XXXM | $391.0B, $840M |
 | Percent | XX.X% | 24.6% |
 | YoY change | +X.X% YoY | +7.2% YoY |
+| Negative KPI headline (`{{KPI*_VALUE}}`) | Leading minus on the number | **-22.3%**, **-$164M**, **~-$120M** — do **not** spell out “negative” or “approx. negative” in place of the minus sign |
 | ppt / bps | +X.X pp / X bps | +1.2 pp |
 | P/E | XX.x× | 28.5× |
 | EPS | $X.XX (diluted) | $6.43 |
@@ -36,11 +37,19 @@ Use commas for billions where helpful: **$2,817M** or **$2.8B** — pick one sty
 
 ## Terminology (UI labels)
 
-Use standard U.S. / IFRS-friendly labels in KPIs and tables: **Revenue**, **Cost of revenue**, **Gross profit**, **R&D**, **Sales & marketing**, **G&A**, **Operating income**, **Net income**, **Free cash flow (FCF)**, **Net margin**, **Gross margin**, **Operating margin**, **ROE**, **ROA**, **D/E**, **Interest coverage**, **EPS**.
+Use standard U.S. / IFRS-friendly labels in KPIs and tables: **Revenue**, **Cost of revenue**, **Gross profit**, **R&D**, **Sales & marketing**, **G&A**, **Operating income**, **Net income**, **Free cash flow (FCF)**, **Net margin**, **Gross margin**, **Operating margin**, **ROE**, **ROA**, **D/E**, **Interest coverage**, **EPS`.
+
+**KPI row 3 (FCF) — `{{KPI3_DIRECTION}}` / `{{KPI3_CHANGE}}`:** If **FCF is negative in both** the current and prior fiscal year **but** the current period is **less negative** (cash burn narrowed), do **not** use `up` (green) with vague “significant improvement.” Use **`neutral-kpi`** on both the card and `.kpi-change`, and write **`{{KPI3_CHANGE}}`** with a **quantified** YoY change (e.g. narrower loss in **$M** or **$B**) plus **“still negative”**. Reserve `up` for **positive** FCF that exceeds the prior year. **`neutral-kpi`** uses the **same red KPI card chrome** as `down` (only the **semantic** rule differs: never green while FCF is still negative); `.kpi-change` for `neutral-kpi` uses neutral body color so the sub-line does not read like “deterioration” when the story is burn narrowing.
 
 Sankey node labels (English): **Revenue**, **Cost of revenue**, **Gross profit**, **R&D expense**, **Sales & marketing**, **General & administrative**, **Operating income**, **Taxes & other**, **Net income** (adjust to match your line-item split).
 
 Porter list labels (English): **Supplier power**, **Buyer power**, **Threat of new entrants**, **Threat of substitutes**, **Competitive rivalry**.
+
+---
+
+## Section I — Investment summary (fourth paragraph, `{{SUMMARY_PARA_4}}`)
+
+**Paragraph 4 (~55–90 words):** Industry **niche / sub-industry scope**, **market share** with a **multi-year series when credible** (state the **metric scope** and **source** — IDC/Gartner/Omdia/company-cited trackers, etc.; if unavailable, say so and use segment revenue or qualitative position). **Main operating footprint** (HQ, manufacturing, R&D hubs) vs **largest revenue geographies** — **must align** with **`financial_data.json`** geographic disclosure when present; reconcile with **`news_intel.json` → `industry_position`**. **Reputation / market recognition** (awards, marquee customers) only with sources. Plain text in the placeholder; no Markdown. Phase 2 writes the final prose to **`financial_analysis.json` → `summary_para_4`**.
 
 ---
 

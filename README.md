@@ -2,9 +2,11 @@
 
 An **equity research** skill pack for AI assistants such as **ChatGPT**, **Claude**, and **Cursor**. Give a **company name** and/or upload **financial statement PDFs** (e.g. U.S. **10-K / 10-Q**, Hong Kong or A-share annual / interim reports).
 
-**Report language:** The orchestrator (**`SKILL.md`**) must **ask once** whether the final HTML should be **English** or **Chinese** if the user did not already specify. **Phase 1 must not start** until the user answers. Intermediate JSON and the final report match that language. **English** reports use the same layout as Chinese; output is `{Company}_Research_EN.html` (header: English name + ticker only). Chinese output remains `{Company}_Research_CN.html`.
+**P0 gates (`SKILL.md` Step 0A.0):** Nothing else runs until (1) **report language** is **`en` or `zh`** per explicit cues in §0A.1 or the user’s answer to the language question, and (2) when the **SEC EDGAR API** path applies, the user supplies a **real email** or **explicitly declines** — **no** `workspace/`, **no** Phase 1, **no** company research before that. Do **not** infer language from chat language alone.
 
-**US SEC API (optional path):** For **Mode A** (no uploaded PDFs) and a **US-listed SEC filer**, the orchestrator asks for a **real contact email** (SEC policy) before creating `workspace/`; if the user declines, financials use **web search** only — see **`SKILL.md` Step 0A.2**.
+**Report language:** If the user did not use an explicit phrase from **`SKILL.md` §0A.1**, the orchestrator asks the single English/Chinese question and **stops** until answered. Intermediate JSON and the final report match that language. **English** output: `{Company}_Research_EN.html` (header: English name + ticker only). **Chinese:** `{Company}_Research_CN.html`.
+
+**US SEC API (optional path):** For **Mode A** + **US-listed SEC filer**, the orchestrator **must** prompt for email (or accept decline) per **`SKILL.md` Step 0A.2** before research — never assume `no email` without an explicit user decline.
 
 The workflow collects data, runs financial and industry analysis, and produces **one interactive HTML research report** with a **Sankey revenue flow**, a **macro-factor waterfall chart**, and a **Porter Five Forces** radar.
 

@@ -14,6 +14,8 @@
 
 **第 10–13 项与 WARNING 级别：** 这几条在输出中标记为 **WARNING**，是因为叙述是否越界、来源日期是否矛盾等问题难以像结构缺失或未替换的 `{{…}}` 那样用固定规则 **100% 自动判为 CRITICAL**；**不代表可忽略**。编排器在 `SKILL.md` Phase 6 已将第 10–13 项与第 9 项一样列为交付前必改；有此类 WARNING 时须在交付用户前修正 HTML（及关联 JSON 叙述）。
 
+**第 2 项（KPI 主数值与 `neutral-kpi` 样式）补充：** 下列若判为 **WARNING**，与第 9 项相同，**交付前必须改到通过**，不得把「仅 WARNING」当作可发货。（复盘：曾出现 KPI 用「约负」「净亏损约」代替负号、主数值带「约」、`neutral-kpi` 卡仅用琥珀边+白底与相邻亏损卡不一致等问题——见 §2 细则。）
+
 ## 验证清单（逐项检查，不得跳过）
 
 ### ✅ 1. Section 完整性（结构检查）
@@ -35,10 +37,30 @@
 - `class="kpi-grid"` 下恰好 4 个 `class="kpi-card"`
 - 每张卡片包含：`.kpi-label`, `.kpi-value`, `.kpi-change`, `.kpi-sub`
 - `.kpi-card` 的 class 必须含 `up` 或 `down` 或 `neutral-kpi`（三选一）
-- `.kpi-change` 的 class 必须含 `up` 或 `down`（二选一）
+- `.kpi-change` 的 class 必须与对应卡片一致：`up`、`down` 或 **`neutral-kpi`**（当指标两年均为负但同比向零收窄、或同比「改善」但仍未转正等，避免误用绿色暗示已健康——见 `references/report_style_guide_cn.md` / `report_style_guide_en.md` 财务概览 KPI 条）
 - 与 `financial_data.json` 中的数字交叉核对：营业收入偏差不超过 ±5%
 
-**失败条件：** 卡片数量不是 4 → CRITICAL；数字偏差超 ±5% → WARNING。
+**复盘摘要（此类问题须在 Phase 6 显式拦截，不得再交付）：**
+
+| 问题 | 错误示例 | 正确方向 |
+|------|----------|----------|
+| 负号被口语替代 | 「净利率约负22.3%」「净亏损约16.4亿美元」「自由现金流约负1.2亿」 | 主数值用 **`-` 与数字连写**：`-22.3%`、`-16.4亿美元`、`-1.2亿美元` |
+| KPI 主数值加「约」 | 「约 -16.4亿美元」「约 -1.2亿美元」 | **KPI 主数值不加「约」**，直接数字+单位（四舍五入后）；「约」仅用于正文长句 |
+| `neutral-kpi` 视觉与亏损卡割裂 | 仅琥珀色左边框、白底，与第二、四张红底亏损卡不一致 | 锁定模板中 `.kpi-card.neutral-kpi` 须与亏损卡**同色系**（红边 + `var(--kpi-down-bg)`）；语义仍用 class `neutral-kpi` 避免误用绿色 `up` |
+
+**KPI 主数值（`.kpi-value`）— 交付前必查（与 `references/report_style_guide_cn.md` / `references/financial_metrics.md` 一致）：**
+
+- **中文报告（`lang="zh-CN"`）：** 归母净利润、净利率、自由现金流等若为负，**必须**在 `.kpi-value` 内使用 **ASCII 负号 `-` 紧贴数字**（如 `-22.3%`、`-16.4亿美元`、`-1.2亿美元`）。**禁止**用「约负」「净亏损约」「负向约」等**代替**负号本身。
+- **禁止**在 **`.kpi-value` 内**以「约」修饰主数字（含「约 -16.4亿美元」类写法）——KPI 大字区只保留**直接数字 + 单位**。
+- **英文报告：** 负数用前导 minus（`-$164M`, `-22.3%`），勿用 “negative” / “approx. negative” 替代 **`-`**。
+- **建议扫描（人工或脚本）：** 若任意 `.kpi-value` 文本含子串 **`约负`**、**`净亏损约`**，或匹配「约」紧挨负号/金额 → 判 **WARNING**（必改）。
+
+**`neutral-kpi` 与锁定模板 CSS：**
+
+- **第三卡 FCF** 在「两年均为负但同比向零收窄」时应为 class **`neutral-kpi`**（勿用绿色 `up`），且 HTML 内 `<style>` 中 **`.kpi-card.neutral-kpi`** 必须与 **`references/report_style_guide_cn.md`** 及当前 `agents/report_writer_cn.md` 锁定块一致：**红左边框 + `background: var(--kpi-down-bg)`**（与 `.kpi-card.down` 同视觉层级），**不得**残留仅 **`border-left-color: var(--accent-amber)`** 且无浅红底的旧版写法。
+- **建议：** 若发现 `neutral-kpi` 仍为琥珀边、白底 → **WARNING**（必改：用 `scripts/extract_report_template.py` 抽取的当前骨架替换内联样式相关规则，或整体以最新锁定模板为准）。
+
+**失败条件：** 卡片数量不是 4 → CRITICAL；数字偏差超 ±5% → WARNING；**上述 KPI 版式 / `neutral-kpi` CSS 违反** → **WARNING**（**交付前必改**，与第 9 项同级）。
 
 ---
 

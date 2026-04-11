@@ -32,7 +32,7 @@ This is an **AI skill pack** — not a traditional software application. The "co
 
 ### Execution flow
 
-1. **`SKILL.md`** — The orchestrator. An AI assistant reads and executes this as its instructions. It gates on language selection (EN/ZH), sets up a `workspace/{Company}_{Date}/` output folder, then coordinates parallel agents.
+1. **`SKILL.md`** — The orchestrator. An AI assistant reads and executes this as its instructions. **P0 gates (Step 0A.0):** resolve report language (`en`/`zh`) per explicit rules **and** resolve SEC email or explicit decline when §0A.2 applies — **before** `workspace/`, Phase 1, or any research. Then set up `workspace/{Company}_{Date}/` and coordinate parallel agents.
 2. **`agents/`** — Sub-task instruction files. The orchestrator spawns or calls these (collectors in parallel; optional **dual QC** + **`qc_resolution_merge.md`**). Each produces JSON in the workspace.
 3. **`references/`** — Domain knowledge: financial metric definitions, macro model formulas (φ, β), Porter Five Forces guide, style guides.
 4. **Phase 5 (report generation)** — The AI fills `{{PLACEHOLDER}}` markers in the locked HTML template from `agents/report_writer_cn.md` or `agents/report_writer_en.md`. It must use `scripts/extract_report_template.py` to get the canonical skeleton rather than copying from an existing workspace HTML.

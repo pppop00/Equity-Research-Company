@@ -26,7 +26,7 @@
 ## 输入文件（从 workspace 目录读取）
 
 - `financial_data.json`（含可选 `latest_interim` → 与 `financial_analysis.json` 共同支撑 **`{{LATEST_OPERATING_UPDATE_TEXT}}`**）
-- `financial_analysis.json`（含 `latest_operating_update` → **`{{LATEST_OPERATING_UPDATE_TEXT}}`**、**`{{TREND_UPDATE_DIRECTION}}`**）
+- `financial_analysis.json`（含 `latest_operating_update` → **`{{LATEST_OPERATING_UPDATE_TEXT}}`**、**`{{TREND_UPDATE_DIRECTION}}`**；含 **`summary_para_4`** → **`{{SUMMARY_PARA_4}}`**，由 Phase 2 根据 `news_intel.json` → `industry_position` 与财报核对后写入）
 - `macro_factors.json` — **第三节宏观因子表**的行名（如「中国消费者信心指数」vs「美国消费者信心」）、地域说明与数值均以本文件为准；`{{FACTOR_ROWS}}` 从此处与 `prediction_waterfall.json` **照抄**；`{{MACRO_FACTOR_COMMENTARY}}` 从 **`macro_factor_commentary` 字段原样粘贴**，勿在 HTML 里另写传导阐释或另起一套指标名或改地域。
 - `news_intel.json`
 - `prediction_waterfall.json`（若经 QC：`qc_deliberation` 中的 `summary` / `methodology_note` 须体现在附录方法论与相关叙述中）
@@ -260,12 +260,14 @@ body {
 .kpi-card:hover { box-shadow: var(--shadow-hover); }
 .kpi-card.up   { border-left-color: var(--accent-green); background: var(--kpi-up-bg); }
 .kpi-card.down { border-left-color: var(--accent-red);   background: var(--kpi-down-bg); }
-.kpi-card.neutral-kpi { border-left-color: var(--accent-amber); }
+/* neutral-kpi：语义上区别于 up（勿误用绿色暗示「已健康」），视觉上与亏损卡一致（红边+浅红底），避免琥珀色与相邻亏损卡割裂 */
+.kpi-card.neutral-kpi { border-left-color: var(--accent-red); background: var(--kpi-down-bg); }
 .kpi-label  { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; margin-bottom: 6px; }
 .kpi-value  { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
 .kpi-change { font-size: 12px; font-weight: 600; }
 .kpi-change.up   { color: var(--accent-green); }
 .kpi-change.down { color: var(--accent-red);   }
+.kpi-change.neutral-kpi { color: var(--text-secondary); }
 .kpi-sub    { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 /* --- Metrics Table --- */
 .metrics-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
@@ -510,6 +512,8 @@ body {
     <p class="summary-para">{{SUMMARY_PARA_1}}</p>
     <p class="summary-para">{{SUMMARY_PARA_2}}</p>
     <p class="summary-para">{{SUMMARY_PARA_3}}</p>
+    <!-- 第4段：行业内份额/细分赛道/口碑与认可度/主要运营地与收入来源地（约80-120字）；见 news_intel industry_position + financial_analysis summary_para_4 -->
+    <p class="summary-para">{{SUMMARY_PARA_4}}</p>
 
     <div class="two-col">
       <div class="highlights-box">
@@ -1108,11 +1112,12 @@ window.addEventListener('resize', () => {
 | `{{DATA_SOURCE}}` | 文字 | 页眉一行「数据来源」摘要：按 **`references/report_style_guide_cn.md`（附录与页眉披露口径）** 写**最终权威出处**（如 `主要财务：美国 SEC EDGAR；宏观：FOMC/IMF 等示意`）。勿用仅含 `sec_edgar_bundle.json` 或脚本文件名的表述代替 **SEC**；脚本只是从 SEC 拉数的手段。 |
 | `{{RATING_CLASS}}` | class | `overweight` / `neutral` / `underweight` |
 | `{{RATING_CN}}` | 文字 | 增持 / 中性 / 减持 |
-| `{{KPI1_DIRECTION}}` 等 | class | `up` / `down` / `neutral-kpi` |
-| `{{KPI1_VALUE}}` | 文字 | 带单位数值，例如 "39.1亿美元" |
-| `{{KPI1_CHANGE}}` | 文字 | 同比变化，例如 "同比 +7.2%" |
+| `{{KPI1_DIRECTION}}` 等 | class | 每张 KPI 卡与对应 `.kpi-change` **填同一 class**：`up` / `down` / `neutral-kpi`。**第三卡 FCF：** 若两年 FCF 均为负但同比向零收窄，**须**用 `neutral-kpi`，**勿**用 `up`（绿色易误读为已健康）；`{{KPI3_CHANGE}}` 须含**可核对金额**并写明仍未转正（见 `references/report_style_guide_cn.md` §财务概览）。 |
+| `{{KPI1_VALUE}}` … `{{KPI4_VALUE}}` | 文字 | 带单位数值，例如 "39.1亿美元"；**亏损/为负**时主数字用 **负号 `-` 与数字连写**（如 `-16.4亿美元`、`-22.3%`）；**KPI 主数值不加「约」**，直接给数字+单位。勿用「净亏损约」「约负」代替负号 |
+| `{{KPI1_CHANGE}}` | 文字 | 同比变化，例如 "同比 +7.2%"；FCF 双负改善时须写具体收窄金额（见上） |
 | `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>` |
-| `{{SUMMARY_PARA_1}}` 等 | 文字 | 纯中文/英文叙述；**禁止** `**` 等 Markdown（见上文写作规范） |
+| `{{SUMMARY_PARA_1}}` … `{{SUMMARY_PARA_3}}` | 文字 | 纯中文叙述；**禁止** `**` 等 Markdown（见上文写作规范） |
+| `{{SUMMARY_PARA_4}}` | 文字 | 第四段：细分行业份额（多年份优先）、赛道定位、口碑/认可度、主要运营地 vs 收入地域；**≈80–120 字**；来源 `financial_analysis.json` → `summary_para_4`；**禁止** Markdown |
 | `{{TREND1_TEXT}}` … `{{TREND3_TEXT}}` | 文字 | 同上；语义类由 `{{TREND1_DIRECTION}}`…`{{TREND3_DIRECTION}}` 控制（`up` / `down`），左边框均为绿色 |
 | `{{TREND_UPDATE_DIRECTION}}` | class | `up` / `down`；与 `{{LATEST_OPERATING_UPDATE_TEXT}}` 配套 |
 | `{{LATEST_OPERATING_UPDATE_TEXT}}` | 文字 | **第二节第四张趋势卡（「最新经营更新」）**：数字口径以 **`financial_data.json` → `latest_interim`**（由 Phase 1 财务数据收集 agent 写入）为准；写**边际**经营变化，**主叙事为同比（YoY）**（同季对上年同季或 YTD 对上年 YTD），**环比（QoQ）**仅作补充且须标明「环比」。**首句或段首必须标明覆盖期间**（含申报日）。无可靠季报时可写「最近中期披露不足，以下仍以年报为主」并降低置信表述。见 `references/financial_metrics.md`、`references/report_style_guide_cn.md` |
@@ -1138,9 +1143,9 @@ window.addEventListener('resize', () => {
 
 严格遵守 `references/report_style_guide_cn.md` 中的文风、数字格式和术语。**第五节波特五力**三个占位符的列表格式、不重复分数等要求以该文件「波特五力分析写作规范」为准。核心要求：
 - 结论前置，有数字支撑
-- 归母净利润/自由现金流用中文惯用表达
+- KPI 主数值（营业收入/归母净利润/FCF/净利率）：**负数用 `-` 号**（如 `-22.3%`、`-16.4亿美元`）；**主数值不写「约」**；勿用「净亏损约」「约负22.3%」等代替负号；同比句仍须可核对
 - 美股金额以"亿美元"为单位（大于100亿用"X,XXX亿美元"或"X.X万亿美元"）
 - 禁止口语化和感叹号
-- **HTML 正文占位符不得使用 Markdown**：勿在 `{{SUMMARY_PARA_*}}`、`{{TREND*_TEXT}}`、`{{LATEST_OPERATING_UPDATE_TEXT}}`、`{{GEO_REVENUE_TEXT}}`、`{{INVESTMENT_THESIS}}`、`{{SANKEY_ANALYSIS_TEXT}}` 等字段中写入 `**加粗**`、`*斜体*`、反引号代码等；最终页面不会渲染 Markdown，会出现裸露星号。需强调处用中文「」或必要时少量 `<strong>…</strong>`（慎用以免破坏版式）。
+- **HTML 正文占位符不得使用 Markdown**：勿在 `{{SUMMARY_PARA_*}}`（含第四段）、`{{TREND*_TEXT}}`、`{{LATEST_OPERATING_UPDATE_TEXT}}`、`{{GEO_REVENUE_TEXT}}`、`{{INVESTMENT_THESIS}}`、`{{SANKEY_ANALYSIS_TEXT}}` 等字段中写入 `**加粗**`、`*斜体*`、反引号代码等；最终页面不会渲染 Markdown，会出现裸露星号。需强调处用中文「」或必要时少量 `<strong>…</strong>`（慎用以免破坏版式）。
 - **禁止破坏锁定 HTML 中的注释闭合**：第四节、第五节 company 面板等处曾用多行 `<!-- …` 且下一行含示例 `{{…}}` 再用 `-->` 闭合；若生成脚本按字串删除「含 `{{分数}}` 的行」，会删掉唯一的 `-->`，导致**整段后续 DOM 被浏览器当作注释吞掉**（第五、六节版式全崩）。生成 HTML 时**不得**删除任何可能是**多行注释唯一闭合**的 `-->` 行。
 - **可选：清理单行样例注释**：仅当确认某条注释是独立单行提示、与多行注释闭合无关时，才可删除以免残留 `{{...}}` 触发校验；**不确定则保留**，或改写注释文字而不删行。

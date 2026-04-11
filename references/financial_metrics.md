@@ -65,6 +65,17 @@ These require additional web searches for current market data. Mark as "N/A (mar
 
 ---
 
+## KPI card direction (Phase 5 placeholders, `zh` / `en`)
+
+The locked HTML template applies **`up` / `down` / `neutral-kpi`** to both the **`.kpi-card`** and the **`.kpi-change`** for each KPI (classes must match; see `agents/report_validator.md`). **Headline KPI values:** use a **leading minus** for negatives (e.g. **-22.3%**, **-$1.2B** / 中文 **-22.3%**、**-16.4亿美元**); **do not prefix Chinese KPI amounts with 「约」**—give rounded digits + unit directly. Do not paraphrase with “净亏损约” / “approx. negative” instead of **`-`** (see `references/report_style_guide_cn.md` / `report_style_guide_en.md`).
+
+**Free cash flow (KPI 3) — avoid misleading green when still negative:**  
+If **FCF is negative in both** `current_year` and `prior_year` (from `cash_flow` / `income_statement` era) **but** the current period is **less negative** (improvement toward zero), set **`{{KPI3_DIRECTION}}` = `neutral-kpi`** and write **`{{KPI3_CHANGE}}`** with a **quantified** YoY narrowing (e.g. USD millions converted to the same “亿” convention as the headline value) plus an explicit **“仍未转正 / still negative”** clause. Do **not** use `up` + vague “明显改善 / significant improvement” without numbers — that violates `references/report_style_guide_cn.md` (avoid empty intensifiers) and confuses readers next to loss-making net income cards.
+
+If FCF is **positive** and higher than the prior year, `up` is appropriate. If FCF is **more negative** than the prior year, use `down`.
+
+---
+
 ## Trend Classification Logic
 
 For Net Income, Net Margin, and FCF, classify the trend and write the corresponding analysis (2–3 sentences of plain prose only — no Markdown asterisk bold/italic in JSON fields; they paste into HTML as-is):
@@ -205,6 +216,7 @@ Save to `workspace/{Company}_{Date}/financial_analysis.json`:
   "geographic_revenue": {
     "analysis": "FY2025 net revenue: Americas $X.XB (~43%), Europe ~26%, Greater China ~18%; top region share stable YoY; geographic concentration moderate."
   },
+  "summary_para_4": "Section I fourth paragraph — industry niche, market share (multi-year if sourced in news_intel), main operating footprint vs revenue geography, reputation/recognition. zh ≈80–120 characters; en ~55–90 words. Plain text only. Source: Phase 2 synthesis from news_intel.json → industry_position, reconciled with financial_data.json geographic disclosure.",
   "unit": "millions USD",
   "notes": []
 }

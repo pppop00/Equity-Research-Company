@@ -26,7 +26,7 @@ Additional note: after filling placeholders, you may remove a **single-line** in
 ## Inputs (read from workspace)
 
 - `financial_data.json` (optional **`latest_interim`** — with `financial_analysis.json`, feeds **`{{LATEST_OPERATING_UPDATE_TEXT}}`**)
-- `financial_analysis.json` (`latest_operating_update` → **`{{LATEST_OPERATING_UPDATE_TEXT}}`**, **`{{TREND_UPDATE_DIRECTION}}`**)
+- `financial_analysis.json` (`latest_operating_update` → **`{{LATEST_OPERATING_UPDATE_TEXT}}`**, **`{{TREND_UPDATE_DIRECTION}}`**; **`summary_para_4`** → **`{{SUMMARY_PARA_4}}`** — Phase 2 from `news_intel.json` → `industry_position`, reconciled with filings)
 - `macro_factors.json` — **Canonical source** for Section III factor **row labels** (e.g. `China consumer confidence (NBS)` vs `US Consumer Confidence`), geography, and numbers. Build `{{FACTOR_ROWS}}` from this file plus `prediction_waterfall.json`; copy **`{{MACRO_FACTOR_COMMENTARY}}` verbatim** from `macro_factor_commentary`. **Do not** invent a parallel US-only factor set or relabel factors in HTML only.
 - `news_intel.json`
 - `prediction_waterfall.json` — if QC ran: merge `qc_deliberation.methodology_note` into `{{METHODOLOGY_DETAIL}}` as required.
@@ -265,12 +265,14 @@ body {
 .kpi-card:hover { box-shadow: var(--shadow-hover); }
 .kpi-card.up   { border-left-color: var(--accent-green); background: var(--kpi-up-bg); }
 .kpi-card.down { border-left-color: var(--accent-red);   background: var(--kpi-down-bg); }
-.kpi-card.neutral-kpi { border-left-color: var(--accent-amber); }
+/* neutral-kpi: same loss-card look as down (red); semantic guard is still no green "up" for still-negative FCF */
+.kpi-card.neutral-kpi { border-left-color: var(--accent-red); background: var(--kpi-down-bg); }
 .kpi-label  { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; margin-bottom: 6px; }
 .kpi-value  { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
 .kpi-change { font-size: 12px; font-weight: 600; }
 .kpi-change.up   { color: var(--accent-green); }
 .kpi-change.down { color: var(--accent-red);   }
+.kpi-change.neutral-kpi { color: var(--text-secondary); }
 .kpi-sub    { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 /* --- Metrics Table --- */
 .metrics-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
@@ -511,10 +513,12 @@ body {
   <div class="section" id="section-summary">
     <div class="section-title">I. Investment summary</div>
 
-    <!-- 3段公司介绍，每段约80-120字 -->
+    <!-- 3 intro paragraphs (~80–120 words each for EN where noted in style guide); fourth: industry share / niche / reputation / ops vs revenue geography -->
     <p class="summary-para">{{SUMMARY_PARA_1}}</p>
     <p class="summary-para">{{SUMMARY_PARA_2}}</p>
     <p class="summary-para">{{SUMMARY_PARA_3}}</p>
+    <!-- Fourth paragraph: ~55–90 words; see news_intel industry_position + financial_analysis summary_para_4 -->
+    <p class="summary-para">{{SUMMARY_PARA_4}}</p>
 
     <div class="two-col">
       <div class="highlights-box">
@@ -1104,11 +1108,12 @@ window.addEventListener('resize', () => {
 | `{{DATA_SOURCE}}` | Text | One-line header summary: use the **ultimate publisher** per **`references/report_style_guide_en.md` (Appendix source attribution)** (e.g. `Primary financials: U.S. SEC EDGAR; Macro: FOMC/IMF illustrative`). Do **not** treat `sec_edgar_bundle.json` or the script name as the public-facing source — they are just the fetch path from **SEC**. |
 | `{{RATING_CLASS}}` | class | `overweight` / `neutral` / `underweight` |
 | `{{RATING_EN}}` | Text | Overweight / Neutral / Underweight |
-| `{{KPI1_DIRECTION}}` 等 | class | `up` / `down` / `neutral-kpi` |
-| `{{KPI1_VALUE}}` | Text | Scaled amount, e.g. **$391.0B** |
-| `{{KPI1_CHANGE}}` | Text | e.g. **+7.2% YoY** |
+| `{{KPI1_DIRECTION}}` 等 | class | Same class on the **`.kpi-card`** and **`.kpi-change`**: `up` / `down` / `neutral-kpi`. **KPI 3 (FCF):** if FCF is **negative in both years** but **less negative** YoY, use **`neutral-kpi`** (not `up`) and put a **quantified** narrowing + **“still negative”** in `{{KPI3_CHANGE}}` (see `references/report_style_guide_en.md`, Section II KPI note). |
+| `{{KPI1_VALUE}}` … `{{KPI4_VALUE}}` | Text | Scaled amount, e.g. **$391.0B**; **negatives** use a **leading minus** (**-$164M**, **-22.3%**), not spelled-out “negative” / “approx. negative” instead of **`-`** |
+| `{{KPI1_CHANGE}}` | Text | e.g. **+7.2% YoY**; for dual-negative FCF improvement, include **$** amounts per style guide |
 | `{{METRICS_ROWS}}` | HTML | 逐行 `<tr>` |
-| `{{SUMMARY_PARA_*}}`, `{{TREND*_TEXT}}`, thesis, Sankey note | Text | Plain English/Chinese only; **no** Markdown (`**`, backticks) in values — HTML does not render it |
+| `{{SUMMARY_PARA_1}}`–`{{SUMMARY_PARA_3}}`, `{{TREND*_TEXT}}`, thesis, Sankey note | Text | Plain English only; **no** Markdown (`**`, backticks) in values — HTML does not render it |
+| `{{SUMMARY_PARA_4}}` | Text | Fourth block: sub-industry share (multi-year if sourced), niche, reputation/recognition, main operating footprint vs revenue regions — **~55–90 words**; from `financial_analysis.json` → `summary_para_4`; **no** Markdown |
 | `{{TREND1_DIRECTION}}`…`{{TREND3_DIRECTION}}`, `{{TREND_UPDATE_DIRECTION}}` | class | `up` / `down`; all Section-II trend cards use the same **green** left border |
 | `{{TREND_UPDATE_DIRECTION}}` | class | `up` / `down`; pairs with `{{LATEST_OPERATING_UPDATE_TEXT}}` |
 | `{{LATEST_OPERATING_UPDATE_TEXT}}` | Text | **Fourth Section-II trend card (“Latest operating update”)**: Use **`financial_data.json` → `latest_interim`** (populated by the Phase 1 financial data collector) as the numeric anchor; **lead with YoY** (same quarter last year or YTD vs prior-year YTD), add **QoQ vs prior quarter** only as a labeled sequential extra. **Lead with the period covered** (including filing date). If no reliable interim filing, state that and keep confidence language modest. See `references/financial_metrics.md`, `references/report_style_guide_en.md`. |

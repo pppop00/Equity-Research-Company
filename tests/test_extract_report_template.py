@@ -58,6 +58,7 @@ class TestExtractCnTemplate(unittest.TestCase):
             "const sankeyActualData = {{SANKEY_ACTUAL_JS_DATA}}",
             "{{MACRO_FACTOR_COMMENTARY}}",
             "{{LATEST_OPERATING_UPDATE_TEXT}}",
+            "{{SUMMARY_PARA_4}}",
         ):
             self.assertIn(fragment, html)
 
@@ -103,6 +104,7 @@ class TestExtractEnTemplate(unittest.TestCase):
         self.assertIn("{{RATING_EN}}", html)
         self.assertIn("{{CONFIDENCE_EN}}", html)
         self.assertIn("{{MACRO_FACTOR_COMMENTARY}}", html)
+        self.assertIn("{{SUMMARY_PARA_4}}", html)
 
 
 class TestSha256Stable(unittest.TestCase):
@@ -117,7 +119,7 @@ class TestSha256Stable(unittest.TestCase):
         # 若有意更新 agents/report_writer_cn.md 内模板，需同步改此期望值 / If the fenced template in the md changes, update this expectation.
         self.assertEqual(
             digest,
-            "ccc4739c2230b753c67ba4cf283a7bdc4a9e4c0df93cb2f7664a8c4d09af92bc",
+            "e53b773b1360665277e82016ef70e361558a98ebee99cd9d88f77c501b13ddcf",
         )
 
     def test_en_hash_matches_known_snapshot(self):
@@ -128,7 +130,7 @@ class TestSha256Stable(unittest.TestCase):
         digest = hashlib.sha256(html.encode("utf-8")).hexdigest()
         self.assertEqual(
             digest,
-            "5d284cb590b0b14fbb21e562baa732a6e4dac87395d8b26505f6982b119cf8e0",
+            "77d15944fee35e5a4df378fa5c2af67c5477ce6ecdb32f7ff6e4f34637cd4895",
         )
 
 
