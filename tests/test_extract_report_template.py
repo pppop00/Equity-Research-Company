@@ -55,6 +55,7 @@ class TestExtractCnTemplate(unittest.TestCase):
             'id="chart-waterfall"',
             'id="chart-sankey-actual"',
             "waterfallData = {{WATERFALL_JS_DATA}}",
+            "FORBIDDEN: base_revenue",
             "const sankeyActualData = {{SANKEY_ACTUAL_JS_DATA}}",
             "{{MACRO_FACTOR_COMMENTARY}}",
             "{{LATEST_OPERATING_UPDATE_TEXT}}",
@@ -119,7 +120,7 @@ class TestSha256Stable(unittest.TestCase):
         # 若有意更新 agents/report_writer_cn.md 内模板，需同步改此期望值 / If the fenced template in the md changes, update this expectation.
         self.assertEqual(
             digest,
-            "c7c19b6983c86e0a6d95f0e093da6857f035b1f4aa566c527a77e8f85d7baac0",
+            "b0caf632d92e341a2db6fcdce0a86711f277b1708cc9891db4e65d490046e7f9",
         )
 
     def test_en_hash_matches_known_snapshot(self):
@@ -130,7 +131,7 @@ class TestSha256Stable(unittest.TestCase):
         digest = hashlib.sha256(html.encode("utf-8")).hexdigest()
         self.assertEqual(
             digest,
-            "b704c1ddeef7b9334220dadbe16fa0e65c6332ecae2d89e6a76dc6f406a6f3bb",
+            "ac809c5b99230d99c3986bffc14270877c337b7eb0c751ec45d089032d62d96f",
         )
 
 

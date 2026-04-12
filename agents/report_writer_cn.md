@@ -9,6 +9,7 @@
 3. **不得引入新的 CSS 规则**：如需针对特定内容调整样式，只能用 `style=""` 内联属性，且仅限于颜色 (`color`) 和字重 (`font-weight`)。
 4. **图表容器尺寸固定**：所有 `<div id="chart-*">` 容器的 `width` 和 `height` 必须与模板中一致，不得更改。
 5. **输出单一 `.html` 文件**：完全自包含，文件名 `{公司英文缩写}_Research_CN.html`。
+6. **`{{WATERFALL_JS_DATA}}` 量纲（P0）：** 第三节瀑布图是**营收增速的百分点桥**，`start`/`end`/`value` 须与 `prediction_waterfall.json` 的 **`baseline_growth_pct`、`macro_adjustment_pct`、`company_specific_adjustment_pct`、`predicted_revenue_growth_pct`** 一致（百分点，如 `-3.0` 表示 −3.0%）。**禁止**把 **`base_revenue`**、预测营收绝对额或第四节 Sankey 的**百万美元流量**填进 `waterfallData`（否则会出现「37296.0%」类错误）。详见 `SKILL.md` Phase 5 — `{{WATERFALL_JS_DATA}}`。
 
 ## 可审计生成流程（推荐，唯一结构来源）
 
@@ -814,6 +815,11 @@ function themeColor(lightVal, darkVal) {
 // ============================================================
 
 // --- Waterfall Data ---
+// UNITS (P0): Every start/end/value is a PERCENTAGE POINT for the revenue-GROWTH bridge
+// (e.g. -3.0 => -3.0%). The script appends "%" — do NOT pass decimals like 0.03 for 3%.
+// FORBIDDEN: base_revenue, revenue in $M, or any dollar bridge — Section IV Sankey only.
+// Build from prediction_waterfall.json: baseline_growth_pct, macro_adjustment_pct,
+// company_specific_adjustment_pct, predicted_revenue_growth_pct (per-factor bars only if still in %).
 // Each bar: { label, start, end, value, type }
 // type: "baseline" | "positive" | "negative" | "result"
 const waterfallData = {{WATERFALL_JS_DATA}};
@@ -1125,14 +1131,14 @@ window.addEventListener('resize', () => {
 | `{{TREND_UPDATE_DIRECTION}}` | class | `up` / `down`；与 `{{LATEST_OPERATING_UPDATE_TEXT}}` 配套 |
 | `{{LATEST_OPERATING_UPDATE_TEXT}}` | 文字 | **第二节第四张趋势卡（「最新经营更新」）**：数字口径以 **`financial_data.json` → `latest_interim`**（由 Phase 1 财务数据收集 agent 写入）为准；写**边际**经营变化，**主叙事为同比（YoY）**（同季对上年同季或 YTD 对上年 YTD），**环比（QoQ）**仅作补充且须标明「环比」。**首句或段首必须标明覆盖期间**（含申报日）。无可靠季报时可写「最近中期披露不足，以下仍以年报为主」并降低置信表述。见 `references/financial_metrics.md`、`references/report_style_guide_cn.md` |
 | `{{GEO_REVENUE_TEXT}}` | 文字 | 2–4 句：仅写地区收入——**完整财年**各区域（或主要国家）净营收金额、占比、有机/同比增速（如有）、集中度变化（见 `references/financial_metrics.md` 地区收入结构） |
-| `{{WATERFALL_JS_DATA}}` | JS Array | 见模板注释中的格式示例 |
+| `{{WATERFALL_JS_DATA}}` | JS Array | **仅百分点桥**：与 `prediction_waterfall.json` 中 **`baseline_growth_pct`、`macro_adjustment_pct`、（可选）各因子 `adjustment_pct`、`company_specific_adjustment_pct`、`predicted_revenue_growth_pct`** 一致；`type: "result"` 必须与最终预测增速对齐。**禁止** `base_revenue` / 营收绝对额 / Sankey 的 `$M` 流量。详见锁定模板内 `// --- Waterfall Data ---` 注释与 `SKILL.md` Phase 5。 |
 | `{{SANKEY_YEAR_ACTUAL}}` | 文字 | 与 `financial_data.json` 中「当年」完整财年一致（最新已发布年报，如 FY2025）；参见 `SKILL.md` Step 0C |
 | `{{SANKEY_YEAR_FORECAST}}` | 文字 | 下一完整财年预测标签，与 `prediction_waterfall.json` 的 `predicted_fiscal_year_label` 一致（默认 FY{当年+1}E，如 FY2026E） |
 | `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
 | `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | 同上；由「当年」P&L 按预测营收增速缩放 |
 | `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
 | `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>`，**必须使用 `score-dot s{N}` class**（N=分数四舍五入至整数1-5），示例：`<li><span class="score-dot s2">2</span><span class="score-label">供应商议价能力</span> 2/5 低</li>`。CSS 只定义了 `.score-dot`，不存在 `score-badge`，不得使用其他 class。5力顺序固定：供应商议价能力、买方议价能力、新进入者威胁、替代品威胁、行业竞争强度。 |
-| `{{PORTER_COMPANY_TEXT}}` | HTML | 公司层面五力正文：**`<ul style="margin:0;padding-left:1.25em;">` + 恰好 5 个 `<li>`**，顺序为供应商→买方→新进入者→替代品→行业内竞争；**勿**在 `<li>` 内重复「X/5」或力的评分起句（雷达与右侧列表已展示）。约 300 字量级。内容来自 `porter_analysis.json` → `company_perspective` 各字段，须为分析句、无分数起句。 |
+| `{{PORTER_COMPANY_TEXT}}` | HTML | 公司层面五力正文：**`<ul style="margin:0;padding-left:1.25em;">` + 恰好 5 个 `<li>`**，顺序为供应商→买方→新进入者→替代品→行业内竞争；**勿**用力名+「（X/5）：」作标题式起句。若合议**调分**，该力 `<li>` **须**按 style guide 套入：**「QC合议认为……，并将……评分由 a 调整为 b，原因是……；……」** 再展开论据。见 `references/report_style_guide_cn.md` §波特五力。约 300 字/透视量级。内容来自 `porter_analysis.json` → `company_perspective` 各字段。 |
 | `{{PORTER_INDUSTRY_TEXT}}` | HTML | 行业层面：同上列表格式与顺序；来自 `industry_perspective`。 |
 | `{{PORTER_FORWARD_TEXT}}` | HTML | 前景展望：同上列表格式与顺序；来自 `forward_perspective`。 |
 | `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行；列顺序必须匹配模板：因子 / 宏观变化（%） / β系数 / φ值 / 调整幅度（pct） / 方向。最后一列 **`方向` 只填 `正向` / `负向` / `中性`**（用 `adjustment_pct` 的符号判断），不得再次填 `+0.62%`、`+4.55%` 等数值；数值只属于「宏观变化」和「调整幅度」两列。方向列必须复用现有颜色 class：正向 `<td class="metric-up">正向</td>`，负向 `<td class="metric-down">负向</td>`，中性 `<td>中性</td>`（不加 class）。 |

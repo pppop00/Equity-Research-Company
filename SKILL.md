@@ -421,6 +421,21 @@ Build **`sankeyActualData`** from **`current_year`** P&L in `financial_data.json
 
 ## Phase 5: Report generation (language branch)
 
+### Phase 5 — `{{WATERFALL_JS_DATA}}` (Section III macro waterfall) — **P0 data contract**
+
+The locked template’s D3 waterfall **appends a `%` sign** to every `start` / `end` / `value` number. Those numbers must be **percentage points** for the **revenue-growth bridge** (e.g. `-3.0` means **−3.0%**), **not** decimals like `0.03`, and **not** dollar amounts.
+
+**Build `waterfallData` only from** `prediction_waterfall.json` growth fields, for example:
+
+- **`baseline_growth_pct`** → first bridge step (after `start: 0`, typically `value`/`end` equal to this)
+- **`macro_adjustment_pct`** → one **“宏观调整 / Macro adjustment”** bar (aggregate), **or** per-factor bars **only if** each bar’s `value` is still an **`adjustment_pct`-style percent point** consistent with `macro_factors.json`
+- **`company_specific_adjustment_pct`**
+- **`predicted_revenue_growth_pct`** → the **`type: "result"`** bar must reconcile so the cumulative growth shown matches this field (within rounding).
+
+**Forbidden in `waterfallData`:** **`base_revenue`**, **`predicted_revenue`** (or any revenue in **millions/billions of currency**), Sankey `links[].value`, or any **dollar-denominated** step. Putting **`base_revenue` (e.g. 37296)** into `start`/`end`/`value` produces nonsense labels like **“37296.0%”** — that is a **unit error**, not a formatting tweak.
+
+**Default shape:** Prefer **4–5 bars** (baseline → macro aggregate → company-specific → result), matching `agents/macro_scanner.md` “bridge table → macro bar” unless the orchestrator explicitly extends the waterfall.
+
 ### If `report_language = zh`
 
 **File:** `agents/report_writer_cn.md`  
@@ -434,7 +449,7 @@ python3 scripts/extract_report_template.py --lang cn --sha256 \
   -o workspace/{Company}_{Date}/_locked_cn_skeleton.html
 ```
 
-Then fill **only** `{{PLACEHOLDER}}` markers in the extracted file (or paste into your editor from the same extract) and save as `{Company}_Research_CN.html`. Do not alter the locked HTML/CSS/JS skeleton. **`{{SUMMARY_PARA_1}}`–`{{SUMMARY_PARA_4}}`** ← `financial_analysis.json` → `summary_para_1` … `summary_para_4`; `{{SUMMARY_PARA_2}}` must reflect `edge_insights.json` → `chosen_insight` / `summary_para_2_draft`. **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`** — use the **five-`<li>` unordered-list** format and **do not duplicate** force scores in body text (see `references/report_style_guide_cn.md` §波特五力、`references/porter_framework.md` §Phase 5 HTML). **Post-processing caution:** Do **not** delete HTML comment lines that contain `-->` solely because they include illustrative `{{…}}` text — removing the only closing `-->` for a multi-line `<!--` will comment out the Porter/Appendix DOM (see `agents/report_writer_cn.md` 写作规范、`agents/report_validator.md` §5).
+Then fill **only** `{{PLACEHOLDER}}` markers in the extracted file (or paste into your editor from the same extract) and save as `{Company}_Research_CN.html`. Do not alter the locked HTML/CSS/JS skeleton. **`{{SUMMARY_PARA_1}}`–`{{SUMMARY_PARA_4}}`** ← `financial_analysis.json` → `summary_para_1` … `summary_para_4`; `{{SUMMARY_PARA_2}}` must reflect `edge_insights.json` → `chosen_insight` / `summary_para_2_draft`. **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`** — use the **five-`<li>` unordered-list** format; **do not** use a **title-style** opening like **「力名（X/5）：」** (scores stay on radar and the score list). When dual-QC **changes a Porter score**, the matching `<li>` **should** follow the **sentence template** in `references/report_style_guide_cn.md` §波特五力 (**QC合议认为…，并将…评分由 a 调整为 b，原因是…**; then continue analysis). See `references/porter_framework.md` §Phase 5 HTML. **Post-processing caution:** Do **not** delete HTML comment lines that contain `-->` solely because they include illustrative `{{…}}` text — removing the only closing `-->` for a multi-line `<!--` will comment out the Porter/Appendix DOM (see `agents/report_writer_cn.md` 写作规范、`agents/report_validator.md` §5).
 After placeholders are filled, you **may** remove **only** single-line, self-contained instructional comments that still contain sample `{{...}}` text **if** you have **positively verified** that the line is not the closing leg of a multi-line `<!-- ... -->` block (e.g. a standalone `<!-- … {{…}} … -->`). **If there is any doubt, do not delete the comment line** — leave it, or rewrite the comment so it no longer contains `{{` / `}}`, instead of removing a line that might be the only `-->` closing an earlier `<!--`. Deliverables must not contain unreplaced real placeholders; optional comment cleanup must never risk breaking the DOM.
 
 ### If `report_language = en`
@@ -450,7 +465,7 @@ python3 scripts/extract_report_template.py --lang en --sha256 \
   -o workspace/{Company}_{Date}/_locked_en_skeleton.html
 ```
 
-Then fill **only** placeholders and save as `{Company}_Research_EN.html`. **`{{SUMMARY_PARA_1}}`–`{{SUMMARY_PARA_4}}`** ← `financial_analysis.json` → `summary_para_1` … `summary_para_4`; `{{SUMMARY_PARA_2}}` must reflect `edge_insights.json` → `chosen_insight` / `summary_para_2_draft`. **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. Porter placeholders **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`**: same **five-`<li>` `<ul>`** rules as Chinese (see `references/report_style_guide_en.md` §Porter Five Forces).
+Then fill **only** placeholders and save as `{Company}_Research_EN.html`. **`{{SUMMARY_PARA_1}}`–`{{SUMMARY_PARA_4}}`** ← `financial_analysis.json` → `summary_para_1` … `summary_para_4`; `{{SUMMARY_PARA_2}}` must reflect `edge_insights.json` → `chosen_insight` / `summary_para_2_draft`. **`{{MACRO_FACTOR_COMMENTARY}}`** ← copy **verbatim** from `macro_factors.json` → `macro_factor_commentary`. Porter placeholders **`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}`**: same **five-`<li>` `<ul>`** rules as Chinese — no **title-style** opening like **"Force (4/5):"**; when QC **changes a score**, use the **template** in `references/report_style_guide_en.md` §Porter Five Forces (**Dual-QC deliberation held that …, and adjusted … from *a* to *b*, because …**).
 
 **Post-processing:** Same HTML comment rule as Chinese — do **not** strip lines that close a `<!--` block inside the Porter company panel (see `report_writer_en.md`). If you might remove a single-line comment that contains sample `{{...}}` text, apply the same **“only when sure / otherwise leave or reword”** rule as in the Chinese branch above.
 
@@ -483,6 +498,7 @@ Treat **checklist item 7c** in `agents/report_validator.md` (`macro_regime_conte
 Treat **checklist item 7d** in `agents/report_validator.md` (`edge_insights.json` and investment-summary paragraph 2) as a **pre-delivery** fix: do not ship if the edge insight is missing, generic, unsupported, or absent from `{{SUMMARY_PARA_2}}`.
 Treat **checklist items 8b and 8c** in `agents/report_validator.md` as **pre-delivery** fixes: Section II metrics-table final column must be a qualitative verdict (e.g. `改善`, `恶化`, `权益缺口收窄`), and Section III factor-table final column must be direction (`正向` / `负向` / `中性`) with the required color class for positive/negative cells, never a repeated `+/-x%` numeric adjustment.
 Treat **checklist item 9** in `agents/report_validator.md` (segment/region list must use percentages consistently with `segment_data`, or use amounts only for all items) as a **pre-delivery** fix: do not ship HTML with mixed formats.
+Treat **checklist item 4** (Section III waterfall) in `agents/report_validator.md` as a **pre-delivery** fix: do not ship if **`waterfallData` uses revenue units** (see §4 “Waterfall — unit errors”) or if **`predicted_revenue_growth_pct`** does not match the **`result`** bar within tolerance.
 Treat the following as **pre-delivery blockers** as well, even if they are classified as WARNING in the validator output: narrative claims unsupported by JSON fields, appendix/source dates later than the report date, “real-time/current/latest” wording when the underlying data is knowledge-cutoff or estimated, and geographic mix text that mixes regions with product/brand labels.
 
 **Why some blockers are WARNING, not CRITICAL:** Items 10–13 (and similar content checks) are labeled **WARNING** because a short validator checklist cannot mechanically prove narrative wrongdoing the way it can detect missing sections or stray `{{…}}`. That lower label does **not** mean they may ship as-is — fix them before delivery like item 9, per `agents/report_validator.md`.

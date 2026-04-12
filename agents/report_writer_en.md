@@ -9,6 +9,7 @@ You are a senior equity research analyst. Your task is to fill the **exact HTML 
 3. **Do not add new CSS rules**: If needed, use inline `style=""` limited to `color` and `font-weight`.
 4. **Fixed chart container sizing**: Do not change `width` / `height` on `<div id="chart-*">` if present in template.
 5. **Single self-contained `.html` file**; filename: `{CompanySlug}_Research_EN.html`.
+6. **`{{WATERFALL_JS_DATA}}` units (P0):** The Section III waterfall is a **revenue-growth bridge in percentage points** (`start`/`end`/`value` must align with **`baseline_growth_pct`, `macro_adjustment_pct`, `company_specific_adjustment_pct`, `predicted_revenue_growth_pct`** in `prediction_waterfall.json`). **Do not** put **`base_revenue`**, absolute revenue, or Sankey **$M link values** into `waterfallData` (otherwise labels like **“37296.0%”** appear). See `SKILL.md` Phase 5 — `{{WATERFALL_JS_DATA}}`.
 
 ## Auditable workflow (recommended, single source of truth)
 
@@ -811,6 +812,11 @@ function themeColor(lightVal, darkVal) {
 // ============================================================
 
 // --- Waterfall Data ---
+// UNITS (P0): Every start/end/value is a PERCENTAGE POINT for the revenue-GROWTH bridge
+// (e.g. -3.0 => -3.0%). The script appends "%" — do NOT pass decimals like 0.03 for 3%.
+// FORBIDDEN: base_revenue, revenue in $M, or any dollar bridge — Section IV Sankey only.
+// Build from prediction_waterfall.json: baseline_growth_pct, macro_adjustment_pct,
+// company_specific_adjustment_pct, predicted_revenue_growth_pct (per-factor bars only if still in %).
 // Each bar: { label, start, end, value, type }
 // type: "baseline" | "positive" | "negative" | "result"
 const waterfallData = {{WATERFALL_JS_DATA}};
@@ -1122,14 +1128,14 @@ window.addEventListener('resize', () => {
 | `{{TREND_UPDATE_DIRECTION}}` | class | `up` / `down`; pairs with `{{LATEST_OPERATING_UPDATE_TEXT}}` |
 | `{{LATEST_OPERATING_UPDATE_TEXT}}` | Text | **Fourth Section-II trend card (“Latest operating update”)**: Use **`financial_data.json` → `latest_interim`** (populated by the Phase 1 financial data collector) as the numeric anchor; **lead with YoY** (same quarter last year or YTD vs prior-year YTD), add **QoQ vs prior quarter** only as a labeled sequential extra. **Lead with the period covered** (including filing date). If no reliable interim filing, state that and keep confidence language modest. See `references/financial_metrics.md`, `references/report_style_guide_en.md`. |
 | `{{GEO_REVENUE_TEXT}}` | Text | 2–4 sentences: **full-fiscal-year** regional revenue only — amounts, % of total, growth by region, concentration (`references/financial_metrics.md`, Geographic revenue mix) |
-| `{{WATERFALL_JS_DATA}}` | JS Array | 见模板注释中的格式示例 |
+| `{{WATERFALL_JS_DATA}}` | JS Array | **Percent-point bridge only:** must match `prediction_waterfall.json` (**`baseline_growth_pct`, `macro_adjustment_pct`, optional per-factor `adjustment_pct`, `company_specific_adjustment_pct`, `predicted_revenue_growth_pct`**). The `type: "result"` bar must match final predicted growth. **Forbidden:** `base_revenue`, revenue levels, Sankey `$M` flows. See locked-template comments under `// --- Waterfall Data ---` and `SKILL.md` Phase 5. |
 | `{{SANKEY_YEAR_ACTUAL}}` | Text | Same fiscal label as `financial_data.json` latest full year (see `SKILL.md` Step 0C) |
 | `{{SANKEY_YEAR_FORECAST}}` | Text | Next-fiscal forecast label; must match `prediction_waterfall.json` → `predicted_fiscal_year_label` (default FY{N+1}E) |
 | `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
 | `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | Scaled from actual via predicted revenue growth |
 | `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
 | `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>` 含 score-dot |
-| `{{PORTER_COMPANY_TEXT}}` | HTML | Company tab: one `<ul style="margin:0;padding-left:1.25em;">` with exactly five `<li>` items, order: Supplier → Buyer → New entrants → Substitutes → Rivalry. Do not repeat X/5 or score-prefixed openings in each item (radar + score list show scores). ~300 words. Source: `porter_analysis.json` → `company_perspective` (analysis-only lines per force). |
+| `{{PORTER_COMPANY_TEXT}}` | HTML | Company tab: one `<ul style="margin:0;padding-left:1.25em;">` with exactly five `<li>` items, order: Supplier → Buyer → New entrants → Substitutes → Rivalry. No **title-style** opening like **\"Force (4/5):\"**. If QC **changes a score**, that `<li>` **should** use the template in `references/report_style_guide_en.md`: **Dual-QC deliberation held that …, and adjusted … from *a* to *b*, because …**; then analysis. ~300 words per perspective. Source: `porter_analysis.json` → `company_perspective`. |
 | `{{PORTER_INDUSTRY_TEXT}}` | HTML | Industry tab: same list shape and order; `industry_perspective`. |
 | `{{PORTER_FORWARD_TEXT}}` | HTML | Forward tab: same list shape and order; `forward_perspective`. |
 | `{{FACTOR_ROWS}}` | HTML | Factor table rows from `macro_factors.json`; column order must match the locked template. The final **Direction** cell must be `Positive`, `Negative`, or `Neutral` based on `adjustment_pct`; do **not** put `+0.62%`, `+4.55%`, or any other numeric adjustment in the final direction cell. Reuse the existing color classes: positive `<td class="metric-up">Positive</td>`, negative `<td class="metric-down">Negative</td>`, neutral `<td>Neutral</td>` with no class. |

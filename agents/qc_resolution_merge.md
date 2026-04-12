@@ -32,6 +32,7 @@
 
 4. **输出修改**  
    - **直接更新** `prediction_waterfall.json` 与 `porter_analysis.json` 中被裁定需改的字段（数值、 `key_assumptions`、`notes`、`scores`、各 perspective 段落等）。  
+   - **第五节 HTML（Phase 5）：** 若合议显著改变了 Porter 分数或叙事，编排器须在最终 `{{PORTER_*_TEXT}}` 中体现合议透明，并符合 `references/report_style_guide_{cn|en}.md`。若**某力的雷达分相对初稿被调变**，对应 `<li>` **建议采用**规范句式：**「QC合议认为……，并将……评分由 a 调整为 b，原因是……；……」**（英文：**Dual-QC deliberation held that …, and adjusted … from *a* to *b*, because …**）。**勿**用力名+（X/5）作**标题式起句**；完整审计仍以 `qc_audit_trail.json` 为准。  
    - 若裁定涉及宏观因子表与 `macro_factor_commentary` 的自洽性（合计、符号约定、地域叙事），**同步**修订 `macro_factors.json` 中的 `macro_factor_commentary`（及必要时 `factors[].note`），以便 Phase 5 与 `{{MACRO_FACTOR_COMMENTARY}}` 一致。  
    - 若 QC-B 对 `macro_regime_context`、`company_role`、`sector_regime`、估值/收入混淆、或 sign reversal 的质疑成立，**同步**修订 `macro_factors.json` 中的 `macro_regime_context` 与 `macro_factor_commentary`，并在 `prediction_waterfall.json` → `qc_deliberation.methodology_note` 写清最终采用的 role/regime 传导口径。该口径是叙事和 QC 框架，不是第二套 β 表；只有当数值也被裁定需改时，才同步重算 β/瀑布。
    - 在以上两个文件中各增加（若尚不存在）：

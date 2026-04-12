@@ -86,8 +86,13 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - JS 中 `const waterfallData = [...]` 存在且为非空数组
 - 数组最后一项的 `type` 必须是 `"result"`
 - 第一项的 `type` 必须是 `"baseline"`
-- 所有 `end` 值由前一项的 `end` + `value` 推导出（允许 ±0.01 误差）
-- `start` 和 `end` 数值范围合理：增长率应在 -50% 到 +100% 之间
+- 所有 `end` 值由前一项的 `end` + `value` 推导出（允许 ±0.01 误差）；若编排器使用从 0 累加的**增速桥**，中间各柱应逐步累加至 **`result`** 柱的终点（与 `prediction_waterfall.json` 一致；若采用「先显示基准营收再拆」等变体，**不得**在本图使用美元营收 — 见下条）。
+
+**Waterfall — 量纲错误（CRITICAL，禁止交付）：** 锁定脚本把每个 `start`/`end`/`value` **直接加上 `%` 显示**。这些数字必须是 **`prediction_waterfall.json` 中的百分点增速**，**不得**使用 **`base_revenue`**、预测营收绝对额、或任何 **百万美元级** 营收数字（典型错误：第一根柱 `value: 37296` 对应 `base_revenue`，屏上会显示 **「37296.0%」**）。**自动/人工判定启发式：** 若任一柱的 `start`、`end` 或 `value` 的绝对值 **≥ 200**，视为 **单位错误 → CRITICAL**（正常财年营收增速桥几乎不可能出现 ±200 个百分点；该阈值用于区分「离谱的 $M 误用」与合法但偏高的 `%`）。若绝对值在 **100–200** 之间 → **WARNING**（须人工核对是否真为极端假设增速）。
+
+**Waterfall — 与 JSON 交叉核对（CRITICAL 或 WARNING）：** 读取 `prediction_waterfall.json` 的 **`predicted_revenue_growth_pct`**。在 `waterfallData` 中找到 **`type: "result"`** 的对象：其 **`end`**（若模板约定 `start: 0` 且结果柱用 `end` 表示累计预测增速）或 **`value`**（若与模板示例一致）必须在数值上等于 **`predicted_revenue_growth_pct`**（允许 **±0.05** 四舍五入误差）。**不匹配 → CRITICAL。** 可选：第一根基准柱的 `value` 应等于 **`baseline_growth_pct`**（或与编排器约定的基准步一致）；**宏观合计**应与 **`macro_adjustment_pct`**（及分项之和）一致 — 若明显矛盾 → **WARNING** 以上。
+
+**Waterfall — 合理区间（辅助）：** 在确认单位为百分点后，`start`/`end` 一般落在 **−50 到 +100** 之间（极端情形除外）；此前「超范围」单独标 **WARNING**；**一旦触发「绝对值 ≥ 200」规则，优先按 CRITICAL 处理。**
 
 **Sankey 图：**
 - `<svg id="chart-sankey-actual">` 和 `<svg id="chart-sankey-forecast">` 均存在
@@ -102,7 +107,7 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - 每个数组长度恰好为 5
 - 每个分值在 1-5 之间（整数）
 
-**失败条件：** 容器缺失 → CRITICAL；数据格式错误 → CRITICAL；数值超范围 → WARNING。
+**失败条件：** 容器缺失 → CRITICAL；数据格式错误 → CRITICAL；**瀑布图量纲错误（如误用 `base_revenue`）或 `result` 与 `predicted_revenue_growth_pct` 不一致** → CRITICAL；**数值超范围 / 绝对值 100–200 可疑** → WARNING。
 
 ---
 
