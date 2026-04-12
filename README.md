@@ -17,7 +17,8 @@ The workflow collects data, runs financial and industry analysis, and produces *
 ## What you get
 
 - **Single deliverable:** `{Company}_Research_CN.html` — open locally in a browser; light / dark theme toggle included.
-- **Intermediate JSON:** financials, macro, news intel, prediction waterfall, Porter analysis, optional **`qc_audit_trail.json`** after adversarial QC — easy to audit or pipe into other tools.
+- **Intermediate JSON:** financials (`financial_data.json`), macro factors with **`macro_regime_context`** (`macro_factors.json`), news intel, **`edge_insights.json`** (Agent 4: one evidence-backed “edge” for the summary), prediction waterfall, Porter analysis, optional **`qc_audit_trail.json`** after adversarial QC — easy to audit or pipe into other tools.
+- **Macro + summary depth:** **`macro_regime_context`** ties macro narrative to company role and cycle (not a second β table); **`edge_insights.json`** supplies the second investment-summary paragraph — both wired in **`SKILL.md`** and the listed agents.
 - **Traceable process:** orchestration in **`SKILL.md`** at repo root; sub-tasks in **`agents/`**; formulas and sector β tables in **`references/`**.
 
 > **Note:** Final deliverable is either `*_Research_CN.html` or `*_Research_EN.html` per user choice. Agent instructions may mix English and Chinese; templates are locked separately in `agents/report_writer_cn.md` and `agents/report_writer_en.md`.
@@ -37,15 +38,16 @@ Equity-Research-Skill/
 ├── agents/
 │   ├── report_writer_cn.md  # ★ Locked Chinese HTML template
 │   ├── report_writer_en.md  # ★ Locked English HTML template (same structure)
-│   ├── report_validator.md # HTML structure / data checklist
+│   ├── report_validator.md   # HTML structure / data checklist (runs after report generation)
 │   ├── financial_data_collector.md
 │   ├── macro_scanner.md
 │   ├── news_researcher.md
+│   ├── edge_insight_writer.md  # Non-obvious filing-backed insight → edge_insights.json
 │   ├── qc_macro_peer_a.md / qc_macro_peer_b.md  # Adversarial QC on macro & prediction
 │   ├── qc_porter_peer_a.md / qc_porter_peer_b.md  # Adversarial QC on Porter
 │   └── qc_resolution_merge.md  # Merge QC challenges → updated JSON + qc_audit_trail.json
 ├── references/
-│   ├── prediction_factors.md   # Macro model: φ, β, formulas
+│   ├── prediction_factors.md   # Macro model: φ, β, formulas, sector regime / transmission notes
 │   ├── porter_framework.md     # Porter Five Forces writing guide
 │   ├── financial_metrics.md    # Metric definitions
 │   ├── report_style_guide_cn.md
@@ -84,7 +86,7 @@ If you change the fenced HTML inside `agents/report_writer_*.md`, update the exp
    cd Equity-Research-Skill
    ```
 2. Add this repo to your AI session **context** (folder upload, `@` workspace, or open the project locally).
-3. Instruct the model to **follow `SKILL.md` strictly** and, in Phase 5, to generate HTML using the **locked template** in **`agents/report_writer_cn.md`** or **`agents/report_writer_en.md`** (match the report language chosen in Phase 1).
+3. Instruct the model to **follow `SKILL.md` strictly** and, in Phase 5, to generate HTML using the **locked template** in **`agents/report_writer_cn.md`** or **`agents/report_writer_en.md`** (match the report language resolved in **Step 0A**, before Phase 1).
 4. Provide a **company name** and/or **filing PDFs**. Suggested output folder: `workspace/{Company}_{Date}/`.
 
 ### Cursor
