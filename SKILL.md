@@ -473,7 +473,43 @@ Then fill **only** placeholders and save as `{Company}_Research_EN.html`. **`{{S
 - Use `{{RATING_EN}}`, `{{CONFIDENCE_EN}}` per the English template.  
 - Same structural rules as CN: placeholders only, no new classes/ids.
 
-**Wait for Phase 5 to complete before Phase 6.**
+**Wait for Phase 5 to complete before Phase 5.5.**
+
+---
+
+## Phase 5.5: Final report data validation
+
+**File:** `agents/final_report_data_validator.md`
+
+This phase is the **final professional data validation** pass, not a layout check. Run it on the finished HTML **before** `report_validator.md`.
+
+**Inputs:**
+
+- HTML: `*_Research_CN.html` **or** `*_Research_EN.html`
+- `financial_data.json`
+- `financial_analysis.json`
+- `macro_factors.json`
+- `prediction_waterfall.json`
+- `porter_analysis.json`
+- `edge_insights.json`
+- `news_intel.json`
+- `qc_audit_trail.json`（若存在）
+
+**Required behavior:**
+
+- Recompute explicit formulas and quantity claims in the final report.
+- Catch unit / magnitude mistakes (`亿` vs `B`, `%` vs `pp`, millions vs billions).
+- Reconcile the Section III waterfall totals to `prediction_waterfall.json`.
+- Reconcile Sankey labels and values to the actual P&L bridge; do **not** allow a residual `EBIT - net income` number to be mislabeled as only “interest and tax” when other non-operating items are present.
+- Distinguish **net company-specific adjustment** from **single event sub-items** (e.g. a `+1.5%` Paramount component vs a `+1.0%` overall company-specific total).
+- Detect stale values that survived QC in one place but not another.
+- **Fix upstream JSON / wording first**, then sync the final HTML. Do not patch only the final HTML unless the issue is purely display formatting.
+
+**Output:** `workspace/{Company}_{Date}/final_report_data_validation.json`
+
+**Gate:** Do **not** enter Phase 6 until this audit has **0 CRITICAL** findings. Treat warnings about arithmetic, unit consistency, Sankey semantics, or GAAP/non-GAAP mixing as **pre-delivery fixes** as well.
+
+**Wait for Phase 5.5 to complete before Phase 6.**
 
 ---
 
@@ -490,15 +526,17 @@ Then fill **only** placeholders and save as `{Company}_Research_EN.html`. **`{{S
 - `macro_factors.json`
 - `news_intel.json`
 - `prediction_waterfall.json`  
+- `final_report_data_validation.json`
 - `qc_audit_trail.json`（若存在：核对合议与 HTML/JSON 无矛盾表述）
 
-Run all checks; fix CRITICAL issues until zero remain.  
+Run all checks; fix CRITICAL issues until zero remain. `report_validator.md` is the **delivery / structure / renderability** gate; it is **not** a substitute for the Phase 5.5 final data validation pass.  
 Treat **checklist item 2** in `agents/report_validator.md` (KPI **`.kpi-value`**: leading **`-`** for negatives—no 「约负」/「净亏损约」/ **no 「约」 on Chinese KPI headline figures**; **`neutral-kpi`** card CSS must match the locked template—red bar + `kpi-down-bg`, not amber-only + white) as a **pre-delivery** fix: do not ship HTML that fails these even if labeled WARNING.
 Treat **checklist item 7c** in `agents/report_validator.md` (`macro_regime_context`) as a **pre-delivery** fix: do not ship if role/regime fields are missing or if Section III / methodology contradicts the role-based transmission context.
 Treat **checklist item 7d** in `agents/report_validator.md` (`edge_insights.json` and investment-summary paragraph 2) as a **pre-delivery** fix: do not ship if the edge insight is missing, generic, unsupported, or absent from `{{SUMMARY_PARA_2}}`.
 Treat **checklist items 8b and 8c** in `agents/report_validator.md` as **pre-delivery** fixes: Section II metrics-table final column must be a qualitative verdict (e.g. `改善`, `恶化`, `权益缺口收窄`), and Section III factor-table final column must be direction (`正向` / `负向` / `中性`) with the required color class for positive/negative cells, never a repeated `+/-x%` numeric adjustment.
 Treat **checklist item 9** in `agents/report_validator.md` (segment/region list must use percentages consistently with `segment_data`, or use amounts only for all items) as a **pre-delivery** fix: do not ship HTML with mixed formats.
 Treat **checklist item 4** (Section III waterfall) in `agents/report_validator.md` as a **pre-delivery** fix: do not ship if **`waterfallData` uses revenue units** (see §4 “Waterfall — unit errors”) or if **`predicted_revenue_growth_pct`** does not match the **`result`** bar within tolerance.
+Treat any open arithmetic / reconciliation failures from `final_report_data_validation.json` as **hard blockers** for delivery, even if the HTML still passes structural checks.
 Treat the following as **pre-delivery blockers** as well, even if they are classified as WARNING in the validator output: narrative claims unsupported by JSON fields, appendix/source dates later than the report date, “real-time/current/latest” wording when the underlying data is knowledge-cutoff or estimated, and geographic mix text that mixes regions with product/brand labels.
 
 **Why some blockers are WARNING, not CRITICAL:** Items 10–13 (and similar content checks) are labeled **WARNING** because a short validator checklist cannot mechanically prove narrative wrongdoing the way it can detect missing sections or stray `{{…}}`. That lower label does **not** mean they may ship as-is — fix them before delivery like item 9, per `agents/report_validator.md`.

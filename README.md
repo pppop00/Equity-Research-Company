@@ -17,7 +17,7 @@ The workflow collects data, runs financial and industry analysis, and produces *
 ## What you get
 
 - **Single deliverable:** `{Company}_Research_CN.html` — open locally in a browser; light / dark theme toggle included.
-- **Intermediate JSON:** financials (`financial_data.json`), macro factors with **`macro_regime_context`** (`macro_factors.json`), news intel, **`edge_insights.json`** (Agent 4: one evidence-backed “edge” for the summary), prediction waterfall, Porter analysis, optional **`qc_audit_trail.json`** after adversarial QC — easy to audit or pipe into other tools.
+- **Intermediate JSON:** financials (`financial_data.json`), macro factors with **`macro_regime_context`** (`macro_factors.json`), news intel, **`edge_insights.json`** (Agent 4: one evidence-backed “edge” for the summary), prediction waterfall, Porter analysis, optional **`qc_audit_trail.json`** after adversarial QC, and **`final_report_data_validation.json`** after the final data validation pass — easy to audit or pipe into other tools.
 - **Macro + summary depth:** **`macro_regime_context`** ties macro narrative to company role and cycle (not a second β table); **`edge_insights.json`** supplies the second investment-summary paragraph — both wired in **`SKILL.md`** and the listed agents.
 - **Traceable process:** orchestration in **`SKILL.md`** at repo root; sub-tasks in **`agents/`**; formulas and sector β tables in **`references/`**.
 
@@ -38,7 +38,8 @@ Equity-Research-Skill/
 ├── agents/
 │   ├── report_writer_cn.md  # ★ Locked Chinese HTML template
 │   ├── report_writer_en.md  # ★ Locked English HTML template (same structure)
-│   ├── report_validator.md   # HTML structure / data checklist (runs after report generation)
+│   ├── final_report_data_validator.md  # Final professional data validation before delivery validation
+│   ├── report_validator.md   # HTML structure / delivery checklist (runs after data audit)
 │   ├── financial_data_collector.md
 │   ├── macro_scanner.md
 │   ├── news_researcher.md

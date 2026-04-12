@@ -2,6 +2,8 @@
 
 对生成后的 HTML 执行系统性校验（中文或英文报告共用同一套结构规则）。
 
+**定位说明：** 本 agent 主要负责 **结构完整性、模板契约、图表容器、基础交叉核对、交付前渲染风险**。它**不是**完整的最终数据验证器；显式公式复算、数量级核对、Sankey/利润表语义桥接、GAAP/non-GAAP 混用等问题，应由 `agents/final_report_data_validator.md` 在 Phase 5.5 先行处理。
+
 ## 输入
 
 - 待验证 HTML：`workspace/{Company}_{Date}/{Company}_Research_CN.html` **或** `{Company}_Research_EN.html`（与本次 `report_language` 一致）
@@ -11,6 +13,7 @@
 - `workspace/{Company}_{Date}/macro_factors.json`
 - `workspace/{Company}_{Date}/news_intel.json`
 - `workspace/{Company}_{Date}/prediction_waterfall.json`
+- `workspace/{Company}_{Date}/final_report_data_validation.json`
 - `workspace/{Company}_{Date}/qc_audit_trail.json`（若本次运行包含 Phase 2.6–3.6 对抗审查）
 
 **第 10–13 项与 WARNING 级别：** 这几条在输出中标记为 **WARNING**，是因为叙述是否越界、来源日期是否矛盾等问题难以像结构缺失或未替换的 `{{…}}` 那样用固定规则 **100% 自动判为 CRITICAL**；**不代表可忽略**。编排器在 `SKILL.md` Phase 6 已将第 10–13 项与第 9 项一样列为交付前必改；有此类 WARNING 时须在交付用户前修正 HTML（及关联 JSON 叙述）。
@@ -18,6 +21,8 @@
 **第 2 项（KPI 主数值与 `neutral-kpi` 样式）补充：** 下列若判为 **WARNING**，与第 9 项相同，**交付前必须改到通过**，不得把「仅 WARNING」当作可发货。（复盘：曾出现 KPI 用「约负」「净亏损约」代替负号、主数值带「约」、`neutral-kpi` 卡仅用琥珀边+白底与相邻亏损卡不一致等问题——见 §2 细则。）
 
 **第 7d 项（edge insight）补充：** 若 `edge_insights.json` 缺失、`chosen_insight` 缺少证据，或投资摘要第二段没有体现该洞察，虽可标为 WARNING，但与第 9 项同级，交付前必须修正。
+
+**与 Phase 5.5 的关系：** 若 `final_report_data_validation.json` 仍有未关闭的 **CRITICAL**，或 WARNING 涉及公式 / 数量级 / Sankey 语义 / GAAP 与 non-GAAP 口径混用，则本 validator 即使其余项目通过，也不得判定可交付。
 
 ## 验证清单（逐项检查，不得跳过）
 
