@@ -28,6 +28,7 @@ For the Phase 5 English HTML report writer (`agents/report_writer_en.md`). Tone:
 | YoY change | +X.X% YoY | +7.2% YoY |
 | Negative KPI headline (`{{KPI*_VALUE}}`) | Leading minus on the number | **-22.3%**, **-$164M**, **~-$120M** — do **not** spell out “negative” or “approx. negative” in place of the minus sign |
 | ppt / bps | +X.X pp / X bps | +1.2 pp |
+| Factor-table percent columns | Header includes (%), so cells omit %; nonzero has +/- and up to two decimals; zero is `0` | -4.2, +8.00, +0.15, -0.80, 0 |
 | P/E | XX.x× | 28.5× |
 | EPS | $X.XX (diluted) | $6.43 |
 
@@ -79,6 +80,7 @@ Use four paragraphs, each **90–130 words**, plain English only, no Markdown. E
 
 **Applies to company-level, industry-level, and forward-looking tabs.**
 
+- **Score orientation and color (P0):** Porter scores are **threat / pressure scores**, not company-strength or industry-attractiveness scores. **1-2 = low threat / best / green**, **3 = mixed / amber**, **4-5 = high threat / worst / red**. For Competitive Rivalry, intense price competition should score **4-5 (red)**; near-monopoly or minimal competition should score **1-2 (green)**. Narrative, score dots, and radar values must use this same direction.
 - **~300 words per perspective**, all five forces covered.
 - **HTML shape (Phase 5 — required, all three tabs):** Fill `{{PORTER_COMPANY_TEXT}}`, `{{PORTER_INDUSTRY_TEXT}}`, and `{{PORTER_FORWARD_TEXT}}` each as **one unordered list**: `<ul style="margin:0;padding-left:1.25em;">` containing **exactly five `<li>` items**, in this fixed order: **Supplier power → Buyer power → Threat of new entrants → Threat of substitutes → Competitive rivalry** (same order as the radar axes and the score list). No Markdown in values.
 - **Do not use a title-style opening** like **"Supplier power (4/5):"** as the first words of a bullet — the radar and score list already show the force and score. Lead with **analysis** (may use multiple sentences).

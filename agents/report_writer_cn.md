@@ -10,6 +10,7 @@
 4. **图表容器尺寸固定**：所有 `<div id="chart-*">` 容器的 `width` 和 `height` 必须与模板中一致，不得更改。
 5. **输出单一 `.html` 文件**：完全自包含，文件名 `{公司英文缩写}_Research_CN.html`。
 6. **`{{WATERFALL_JS_DATA}}` 量纲（P0）：** 第三节瀑布图是**营收增速的百分点桥**，`start`/`end`/`value` 须与 `prediction_waterfall.json` 的 **`baseline_growth_pct`、`macro_adjustment_pct`、`company_specific_adjustment_pct`、`predicted_revenue_growth_pct`** 一致（百分点，如 `-3.0` 表示 −3.0%）。**禁止**把 **`base_revenue`**、预测营收绝对额或第四节 Sankey 的**百万美元流量**填进 `waterfallData`（否则会出现「37296.0%」类错误）。详见 `SKILL.md` Phase 5 — `{{WATERFALL_JS_DATA}}`。
+7. **Card1 命名规则（P0）：** 页眉主名位（红色大字，`.company-name-cn`）**必须填写公司中文名**（例如 `苹果`）；其下一行（`.company-name-en`）**必须填写“公司英文名 + 分隔符 + Ticker”**（例如 `Apple Inc. • AAPL`，模板中 `·` 也可），不得把英文名放到主名位、也不得只写 ticker。
 
 ## 可审计生成流程（推荐，唯一结构来源）
 
@@ -653,7 +654,7 @@ body {
           <th>宏观变化（%）</th>
           <th>β系数</th>
           <th>φ值</th>
-          <th>调整幅度（pct）</th>
+          <th>调整幅度（%）</th>
           <th>方向</th>
         </tr>
       </thead>
@@ -855,6 +856,7 @@ const sankeyForecastData = {{SANKEY_FORECAST_JS_DATA}};
 
 // --- Porter Radar Data ---
 // Score order must be: [供应商议价能力, 买方议价能力, 新进入者威胁, 替代品威胁, 行业竞争强度]
+// Score semantics: 1-2 = 低威胁/最好/绿色；3 = 中性/琥珀色；4-5 = 高威胁/最糟/红色。
 const porterScores = {
   company:  {{PORTER_COMPANY_SCORES_ARRAY}},   // e.g. [3, 2, 4, 3, 4]
   industry: {{PORTER_INDUSTRY_SCORES_ARRAY}},
@@ -1040,12 +1042,19 @@ const SANKEY_COLORS_FORECAST = ['#3498db','#e74c3c','#2ecc71','#f39c12','#9b59b6
 
 // --- Radar Chart (Chart.js) ---
 let radarCharts = {};
+function porterScoreColor(score) {
+  const s = Math.max(1, Math.min(5, Math.round(Number(score) || 0)));
+  if (s <= 2) return '#1a8f5a';
+  if (s === 3) return '#d68910';
+  return '#c0392b';
+}
 function drawRadar(canvasId, scores, label) {
   if (radarCharts[canvasId]) { radarCharts[canvasId].destroy(); }
   const isDark = document.documentElement.dataset.theme === 'dark';
   const gridColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(10,33,64,0.10)';
   const textColor = isDark ? '#b0bec5' : '#4a5568';
   const pointColor = isDark ? '#1e90ff' : '#0a2140';
+  const scoreColors = scores.map(porterScoreColor);
 
   radarCharts[canvasId] = new Chart(document.getElementById(canvasId), {
     type: 'radar',
@@ -1057,7 +1066,8 @@ function drawRadar(canvasId, scores, label) {
         backgroundColor: 'rgba(10,33,64,0.12)',
         borderColor: pointColor,
         borderWidth: 2,
-        pointBackgroundColor: pointColor,
+        pointBackgroundColor: scoreColors,
+        pointBorderColor: scoreColors,
         pointRadius: 4,
         pointHoverRadius: 6
       }]
@@ -1110,9 +1120,9 @@ window.addEventListener('resize', () => {
 
 | 占位符 | 类型 | 说明 |
 |--------|------|------|
-| `{{COMPANY_NAME_CN}}` | 文字 | 页眉主标题用**简洁英文公司名**即可（如 **Meta Platforms**、Microsoft Corporation）。勿使用「英文名（中文副标题）」括注形式。正文仍可配合中文叙述需要写「又称……」等。 |
-| `{{COMPANY_NAME_EN}}` | 文字 | 公司英文全称 |
-| `{{TICKER}}` | 文字 | 股票代码，例如 PLAB |
+| `{{COMPANY_NAME_CN}}` | 文字 | **Card1 红色主名位（`.company-name-cn`）必须是公司中文名**，示例：`苹果`、`微软`、`英伟达`。不得填写英文名或 ticker。 |
+| `{{COMPANY_NAME_EN}}` | 文字 | 公司英文全称；在 Card1 第二行与 ticker 组合展示为 `{{COMPANY_NAME_EN}} · {{TICKER}}`（可接受 `•` 作为分隔符）。 |
+| `{{TICKER}}` | 文字 | 股票代码（大写），例如 `AAPL`、`MSFT`；在 Card1 第二行必须与英文名同一行展示。 |
 | `{{EXCHANGE}}` | 文字 | 交易所，例如 NASDAQ |
 | `{{SECTOR}}` | 文字 | 行业，例如 半导体 |
 | `{{REPORT_DATE}}` | 文字 | 报告日期，例如 2026年4月8日 |
@@ -1137,11 +1147,11 @@ window.addEventListener('resize', () => {
 | `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
 | `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | 同上；由「当年」P&L 按预测营收增速缩放 |
 | `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
-| `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>`，**必须使用 `score-dot s{N}` class**（N=分数四舍五入至整数1-5），示例：`<li><span class="score-dot s2">2</span><span class="score-label">供应商议价能力</span> 2/5 低</li>`。CSS 只定义了 `.score-dot`，不存在 `score-badge`，不得使用其他 class。5力顺序固定：供应商议价能力、买方议价能力、新进入者威胁、替代品威胁、行业竞争强度。 |
+| `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>`，**必须使用 `score-dot s{N}` class**（N=分数四舍五入至整数1-5）。评分方向是威胁/压力分：`s1/s2` = 低威胁/绿色，`s3` = 中性/琥珀色，`s4/s5` = 高威胁/红色；竞争越激烈，行业竞争强度分数越高。示例：`<li><span class="score-dot s2">2</span><span class="score-label">供应商议价能力</span> 2/5 低</li>`。CSS 只定义了 `.score-dot`，不存在 `score-badge`，不得使用其他 class。5力顺序固定：供应商议价能力、买方议价能力、新进入者威胁、替代品威胁、行业竞争强度。 |
 | `{{PORTER_COMPANY_TEXT}}` | HTML | 公司层面五力正文：**`<ul style="margin:0;padding-left:1.25em;">` + 恰好 5 个 `<li>`**，顺序为供应商→买方→新进入者→替代品→行业内竞争；**勿**用力名+「（X/5）：」作标题式起句。每条 `<li>` 都应按 style guide 使用 **QC 合议前置句式**，但句式必须由**真实 QC 结果**决定：优先读取 `qc_audit_trail.json` 中该维度的 `score_changed` / `score_before` / `score_after`；若 `score_changed = false`（或文义等价于未改分），写成 **「经QC合议，维持供应商议价能力为3分。……」** 或 **「经QC合议，决定将供应商议价能力评分维持3分不变。……」**；只有当审计轨迹明确显示该维度**从初稿改分**时，才可写成 **「经QC合议，决定将供应商议价能力评分从4分调整为3分。……」**。必须点名具体力名，不要写「本维度」，也**不得为套格式虚构调分**。见 `references/report_style_guide_cn.md` §波特五力。约 300 字/透视量级。内容来自 `porter_analysis.json` → `company_perspective` 各字段。 |
 | `{{PORTER_INDUSTRY_TEXT}}` | HTML | 行业层面：同上列表格式与顺序；来自 `industry_perspective`。 |
 | `{{PORTER_FORWARD_TEXT}}` | HTML | 前景展望：同上列表格式与顺序；来自 `forward_perspective`。 |
-| `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行；列顺序必须匹配模板：因子 / 宏观变化（%） / β系数 / φ值 / 调整幅度（pct） / 方向。最后一列 **`方向` 只填 `正向` / `负向` / `中性`**（用 `adjustment_pct` 的符号判断），不得再次填 `+0.62%`、`+4.55%` 等数值；数值只属于「宏观变化」和「调整幅度」两列。方向列必须复用现有颜色 class：正向 `<td class="metric-up">正向</td>`，负向 `<td class="metric-down">负向</td>`，中性 `<td>中性</td>`（不加 class）。 |
+| `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行；列顺序必须匹配模板：因子 / 宏观变化（%） / β系数 / φ值 / 调整幅度（%） / 方向。第2列与第5列表头已含 `%`，单元格内**不得再写 `%`**；非零值必须带 `+` / `-`，0 只写 `0`（无正负号）。数值最多两位小数，整数输入可补成两位小数（如 `+8` → `+8.00`）；禁止 `-4.1667`、`-3.125`、`+0.14685` 这类长小数。可接受示例：`-4.2`、`+8.00`、`-3.1`、`+0.15`、`-0.80`、`0`。β 与 φ 最多两位小数且不带 `%`。最后一列 **`方向` 只填 `正向` / `负向` / `中性`**（用 `adjustment_pct` 的符号判断），不得再次填 `+0.62`、`+4.55` 等数值；数值只属于「宏观变化」和「调整幅度」两列。方向列必须复用现有颜色 class：正向 `<td class="metric-up">正向</td>`，负向 `<td class="metric-down">负向</td>`，中性 `<td>中性</td>`（不加 class）。 |
 | `{{MACRO_FACTOR_COMMENTARY}}` | HTML | **来自 `macro_factors.json` → `macro_factor_commentary`（勿在 HTML 中另写）**：2–4 段机构视角传导说明，衔接表中六项合计与瀑布图「宏观调整」柱；可用 `<p>…</p>`，禁止 Markdown；见 `agents/macro_scanner.md` Step 7b |
 | `{{APPENDIX_SOURCE_ROWS}}` | HTML | 附录表 `<tr>…</tr>` 多行。`具体来源` 列：**以信息最初发布方为准**（见 `references/report_style_guide_cn.md`）。**SEC：**含 `data.sec.gov`/`sec.gov` 拉取的 **Form 10-K/10-Q** 全文内容（**MD&A、Note 16 Revenue 等附注均属 SEC 申报文件一部分**）— 统一写 **美国 SEC EDGAR**，括号可标 `Form 10-K`、章节名；若经 `sec_edgar_fetch.py` → `sec_edgar_bundle.json`，仍标 **SEC**（可加「经 XBRL 切片」），勿把 bundle 写成与 SEC 并列的第三方。**非 SEC**（Bloomberg、Reuters、公司 IR 等）则写全名。 |
 | `{{PHI_VALUE}}` | 文字 | 通常为 0.5 |

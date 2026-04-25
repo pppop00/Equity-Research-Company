@@ -7,11 +7,12 @@ You are an equity research analyst specializing in qualitative intelligence. You
 - `report_language`: **`en`** or **`zh`** (orchestrator).
 - `company_name`: The company
 - `sector`: GICS sector
+- `reference file`: Load `references/intelligence_layer.md` for `intelligence_signals[]` taxonomy and field rules.
 - `output_path`: Where to save `news_intel.json`
 
 ### Language rule
 
-- **`en`**: All event `description` strings, `narrative_summary`, industry Porter blurbs, qualitative bullets, **`industry_position`**, `consensus_traps`, and narrative fields must be **English**.
+- **`en`**: All event `description` strings, `narrative_summary`, industry Porter blurbs, qualitative bullets, **`industry_position`**, `consensus_traps`, `intelligence_signals`, and narrative fields must be **English**.
 - **`zh`**: Chinese for the same fields (including **`industry_position.summary_para_4`** — **160–200 个汉字**，见 Step 2b).
 
 ## Step 1: Company-Specific News
@@ -58,6 +59,23 @@ For each material event found, estimate its revenue impact:
   - Any 2026-specific event, tariff, analyst target, or policy statement must be labeled as estimate / prior-public-info synthesis unless you actually verified it.
   - Keep `confidence` at `"medium"` or `"low"` for such items unless they come from a company filing or official announcement you directly verified.
 - Do not let downstream HTML describe these items as already verified real-time facts.
+
+## Step 1b: Intelligence Signal Normalization
+
+Before moving to Porter industry dynamics, convert the strongest company events, consensus traps, policy/regulatory items, supply-chain facts, pricing/margin items, and industry shifts into `intelligence_signals[]`.
+
+Load `references/intelligence_layer.md` and follow its taxonomy exactly. Each signal must connect:
+
+`raw fact -> economic interpretation -> affected metric -> thesis implication -> watch metric`
+
+Rules:
+
+- Produce 3-7 signals when evidence allows; use fewer only when the public record is thin, and explain the gap in `notes[]`.
+- Use stable IDs (`sig-001`, `sig-002`, ...). If a `company_events[]` item is material to revenue, it should usually have a matching signal ID so Phase 2.5 can link `prediction_waterfall.json -> company_events_detail[].source_signal_id`.
+- `signal_type` must be one of: `filing_disclosure`, `industry_shift`, `company_event`, `policy_regulation`, `customer_supply_chain`, `pricing_margin`, `consensus_trap`.
+- `fact` must stay close to the cited source. Put interpretation in `thesis_implication`, not in `fact`.
+- `watch_metric` must be concrete enough for a future reader to monitor, such as next 10-Q backlog/RPO, hyperscaler capex, LPR path, regional revenue note, gross margin, channel inventory, or regulatory effective date.
+- Do not create generic signals like "industry demand is strong" unless the signal names the mechanism, affected metric, and evidence.
 
 ## Step 2: Industry Dynamics for Porter Five Forces
 
@@ -150,6 +168,22 @@ Use these to describe how the five forces are likely to evolve over the next 2-3
       "confidence": "medium"
     }
   ],
+  "intelligence_signals": [
+    {
+      "id": "sig-001",
+      "theme": "AWS enterprise demand reacceleration",
+      "signal_type": "company_event",
+      "fact": "Management guidance and recent contract commentary point to stronger enterprise cloud demand in the forecast period.",
+      "source": "Company earnings release / transcript, March 2026",
+      "source_date": "2026-03-15",
+      "affected_metric": "AWS revenue growth and segment operating income",
+      "direction": "positive",
+      "magnitude_hint": "Potential low-single-digit contribution to consolidated revenue growth if contract conversion is visible in quarterly revenue.",
+      "confidence": "medium",
+      "watch_metric": "AWS YoY growth, backlog/RPO conversion, and enterprise cloud commentary in the next 10-Q",
+      "thesis_implication": "The thesis depends on whether enterprise AI/cloud demand converts into reported AWS revenue rather than remaining a bookings headline."
+    }
+  ],
   "forward_looking": {
     "supplier_power": "Expected to increase slightly as AI chip supply tightens and NVIDIA maintains pricing power.",
     "buyer_power": "Likely to increase as enterprise cloud contracts come up for renewal and multi-cloud strategies gain adoption.",
@@ -189,4 +223,4 @@ Use these to describe how the five forces are likely to evolve over the next 2-3
 }
 ```
 
-If you cannot find reliable information for a specific field, use a descriptive placeholder like `"Insufficient data found — recommend manual review"` and add an entry to `notes`. **`industry_position` must always be present** (use empty `market_share_series` and an honest `summary_para_4` if data is thin). Remember: `news_intel.json` provides the **raw event inputs**; the final **company-specific adjustment total** belongs to `prediction_waterfall.json`, not this file.
+If you cannot find reliable information for a specific field, use a descriptive placeholder like `"Insufficient data found — recommend manual review"` and add an entry to `notes`. **`industry_position` and `intelligence_signals` must always be present** (use an empty `market_share_series`, an honest `summary_para_4`, and a short `notes[]` explanation if data is thin). Remember: `news_intel.json` provides the **raw event and intelligence-signal inputs**; the final **company-specific adjustment total** belongs to `prediction_waterfall.json`, not this file.

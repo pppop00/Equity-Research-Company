@@ -10,16 +10,18 @@ An **equity research** skill pack for AI assistants such as **ChatGPT**, **Claud
 
 The workflow collects data, runs financial and industry analysis, and produces **one interactive HTML research report** with a **Sankey revenue flow**, a **macro-factor waterfall chart**, and a **Porter Five Forces** radar.
 
+**Porter score orientation:** Porter scores are threat / pressure scores, not attractiveness scores: **1-2 = low threat / green**, **3 = mixed / amber**, **4-5 = high threat / red**. Intense competitive rivalry should score high/red; minimal competition should score low/green.
+
 **Repository:** [github.com/pppop00/Equity-Research-Skill](https://github.com/pppop00/Equity-Research-Skill)
 
 ---
 
 ## What you get
 
-- **Single deliverable:** `{Company}_Research_CN.html` — open locally in a browser; light / dark theme toggle included.
+- **Single deliverable (language-specific):** `{Company}_Research_CN.html` (zh) or `{Company}_Research_EN.html` (en) — open locally in a browser; light / dark theme toggle included.
 - **Intermediate JSON:** financials (`financial_data.json`), macro factors with **`macro_regime_context`** (`macro_factors.json`), news intel, **`edge_insights.json`** (Agent 4: one evidence-backed “edge” for the summary), prediction waterfall, Porter analysis, **`qc_audit_trail.json`** in the standard full workflow after adversarial QC, and **`final_report_data_validation.json`** after the final data validation pass — easy to audit or pipe into other tools. `prediction_waterfall.json` is the final model source of truth for `company_specific_adjustment_pct`; when `company_events_detail[]` is present it should use the structured raw-to-final bridge fields (`raw_impact_pct`, timing / overlap / run-rate / probability / realization weights, `final_impact_pct`, `adjustment_reason`). `qc_audit_trail.json` may be absent only in intentionally shortened runs that explicitly skip QC.
 - **Macro + summary depth:** **`macro_regime_context`** ties macro narrative to company role and cycle (not a second β table); **`edge_insights.json`** supplies the second investment-summary paragraph — both wired in **`SKILL.md`** and the listed agents.
-- **Traceable process:** orchestration in **`SKILL.md`** at repo root; sub-tasks in **`agents/`**; formulas and sector β tables in **`references/`**.
+- **Traceable process:** machine-readable contract in **`workflow_meta.json`** + orchestration in **`SKILL.md`**; sub-tasks in **`agents/`**; formulas and sector β tables in **`references/`**.
 
 > **Note:** Final deliverable is either `*_Research_CN.html` or `*_Research_EN.html` per user choice. Agent instructions may mix English and Chinese; templates are locked separately in `agents/report_writer_cn.md` and `agents/report_writer_en.md`.
 
@@ -29,12 +31,15 @@ The workflow collects data, runs financial and industry analysis, and produces *
 
 ```
 Equity-Research-Skill/
+├── workflow_meta.json       # ★ Machine-readable workflow contract (gates, phase order, packaging profiles)
 ├── SKILL.md                 # ★ Start here — main orchestration flow
 ├── README.md                # This file
 ├── scripts/
 │   └── extract_report_template.py  # ★ Extract locked HTML fenced block from report_writer_*.md (Phase 5)
+│   └── validate_workflow_meta.py   # Validate workflow_meta.json schema
 ├── tests/
 │   └── test_extract_report_template.py  # CN/EN extraction + CLI + SHA256 snapshot tests
+│   └── test_workflow_meta.py            # workflow_meta contract validation
 ├── agents/
 │   ├── report_writer_cn.md  # ★ Locked Chinese HTML template
 │   ├── report_writer_en.md  # ★ Locked English HTML template (same structure)
@@ -71,6 +76,12 @@ Then replace `{{PLACEHOLDER}}` markers only. See `SKILL.md` Phase 5.
 
 ```bash
 python3 -m unittest discover -s tests -v
+```
+
+**Validate workflow contract only:**
+
+```bash
+python3 scripts/validate_workflow_meta.py --meta workflow_meta.json
 ```
 
 If you change the fenced HTML inside `agents/report_writer_*.md`, update the expected SHA256 hashes in `tests/test_extract_report_template.py`.

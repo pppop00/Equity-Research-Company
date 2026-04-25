@@ -650,7 +650,7 @@ body {
           <th>Macro change (%)</th>
           <th>β</th>
           <th>φ</th>
-          <th>Adj. (ppt)</th>
+          <th>Adjustment (%)</th>
           <th>Direction</th>
         </tr>
       </thead>
@@ -852,6 +852,7 @@ const sankeyForecastData = {{SANKEY_FORECAST_JS_DATA}};
 
 // --- Porter Radar Data ---
 // Score order must be: [Supplier power, Buyer power, New entrants, Substitutes, Rivalry]
+// Score semantics: 1-2 = low threat / best / green; 3 = mixed / amber; 4-5 = high threat / worst / red.
 const porterScores = {
   company:  {{PORTER_COMPANY_SCORES_ARRAY}},   // e.g. [3, 2, 4, 3, 4]
   industry: {{PORTER_INDUSTRY_SCORES_ARRAY}},
@@ -1037,12 +1038,19 @@ const SANKEY_COLORS_FORECAST = ['#3498db','#e74c3c','#2ecc71','#f39c12','#9b59b6
 
 // --- Radar Chart (Chart.js) ---
 let radarCharts = {};
+function porterScoreColor(score) {
+  const s = Math.max(1, Math.min(5, Math.round(Number(score) || 0)));
+  if (s <= 2) return '#1a8f5a';
+  if (s === 3) return '#d68910';
+  return '#c0392b';
+}
 function drawRadar(canvasId, scores, label) {
   if (radarCharts[canvasId]) { radarCharts[canvasId].destroy(); }
   const isDark = document.documentElement.dataset.theme === 'dark';
   const gridColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(10,33,64,0.10)';
   const textColor = isDark ? '#b0bec5' : '#4a5568';
   const pointColor = isDark ? '#1e90ff' : '#0a2140';
+  const scoreColors = scores.map(porterScoreColor);
 
   radarCharts[canvasId] = new Chart(document.getElementById(canvasId), {
     type: 'radar',
@@ -1054,7 +1062,8 @@ function drawRadar(canvasId, scores, label) {
         backgroundColor: 'rgba(10,33,64,0.12)',
         borderColor: pointColor,
         borderWidth: 2,
-        pointBackgroundColor: pointColor,
+        pointBackgroundColor: scoreColors,
+        pointBorderColor: scoreColors,
         pointRadius: 4,
         pointHoverRadius: 6
       }]
@@ -1134,11 +1143,11 @@ window.addEventListener('resize', () => {
 | `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
 | `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | Scaled from actual via predicted revenue growth |
 | `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
-| `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>` 含 score-dot |
+| `{{PORTER_COMPANY_SCORES}}` | HTML | Five `<li>` items with `score-dot s{N}`. Score orientation is threat / pressure: `s1/s2` = low threat / green, `s3` = mixed / amber, `s4/s5` = high threat / red. More intense competitive rivalry means a higher rivalry score. |
 | `{{PORTER_COMPANY_TEXT}}` | HTML | Company tab: one `<ul style="margin:0;padding-left:1.25em;">` with exactly five `<li>` items, order: Supplier → Buyer → New entrants → Substitutes → Rivalry. No **title-style** opening like **\"Force (4/5):\"**. Porter wording must follow the **real QC result** in `qc_audit_trail.json` / `porter_analysis.qc_deliberation`: if the force was **maintained**, use a maintained-score opening such as **"Dual-QC deliberation maintained supplier power at 3/5. …"** or **"After dual-QC deliberation, supplier power remains 3/5. …"**; only if the audit trail proves a real score change may that `<li>` use the from–to adjustment template in `references/report_style_guide_en.md`. Never fabricate a prior score for symmetry. ~300 words per perspective. Source: `porter_analysis.json` → `company_perspective`. |
 | `{{PORTER_INDUSTRY_TEXT}}` | HTML | Industry tab: same list shape and order; `industry_perspective`. |
 | `{{PORTER_FORWARD_TEXT}}` | HTML | Forward tab: same list shape and order; `forward_perspective`. |
-| `{{FACTOR_ROWS}}` | HTML | Factor table rows from `macro_factors.json`; column order must match the locked template. The final **Direction** cell must be `Positive`, `Negative`, or `Neutral` based on `adjustment_pct`; do **not** put `+0.62%`, `+4.55%`, or any other numeric adjustment in the final direction cell. Reuse the existing color classes: positive `<td class="metric-up">Positive</td>`, negative `<td class="metric-down">Negative</td>`, neutral `<td>Neutral</td>` with no class. |
+| `{{FACTOR_ROWS}}` | HTML | Factor table rows from `macro_factors.json`; column order must match the locked template: Factor / Macro change (%) / β / φ / Adjustment (%) / Direction. Because the 2nd and 5th headers already include `%`, the cells must **not** repeat `%`; nonzero values must include `+` or `-`; zero must be exactly `0` with no sign. Numbers may have at most two decimals, and integer inputs may be padded to two decimals (for example `+8` → `+8.00`). Acceptable examples: `-4.2`, `+8.00`, `-3.1`, `+0.15`, `-0.80`, `0`; invalid examples include `+8%`, `-4.1667`, `+0.14685`. β and φ cells may have at most two decimals and must not include `%`. The final **Direction** cell must be `Positive`, `Negative`, or `Neutral` based on `adjustment_pct`; do **not** put `+0.62`, `+4.55`, or any other numeric adjustment in the final direction cell. Reuse the existing color classes: positive `<td class="metric-up">Positive</td>`, negative `<td class="metric-down">Negative</td>`, neutral `<td>Neutral</td>` with no class. |
 | `{{MACRO_FACTOR_COMMENTARY}}` | HTML | **From `macro_factors.json` → `macro_factor_commentary` only** (see `agents/macro_scanner.md` Step 7b). Institutional transmission narrative; `<p>` blocks OK; no Markdown. |
 | `{{APPENDIX_SOURCE_ROWS}}` | HTML | Multiple `<tr>…</tr>`. **Specific source** column: name the **original publisher** (see `references/report_style_guide_en.md`). **SEC:** anything ultimately from **EDGAR / sec.gov / data.sec.gov**, including **MD&A and Note 16 Revenue** inside a **Form 10-K** — label **U.S. SEC EDGAR** (optionally add form + section in parentheses). If populated via `sec_edgar_fetch.py` → `sec_edgar_bundle.json`, still label **SEC** (you may add “XBRL slices”); do **not** imply the bundle is a separate non-SEC origin. Use **Bloomberg**, **Reuters**, **Company IR**, etc. only when that channel is the true first source. |
 | `{{PHI_VALUE}}` | 文字 | 通常为 0.5 |

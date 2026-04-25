@@ -59,6 +59,8 @@ company_specific_adjustment_pct =
   - A monetization / execution haircut. This can be used analogously to a valuation haircut in cases such as weak contractual certainty, low disclosure, difficult channel conversion, or private-company / illiquid realization contexts
 - `final_impact_pct`
   - The model-adopted event contribution after all discounts / adjustments
+- `source_signal_id` (optional)
+  - ID from `news_intel.json -> intelligence_signals[]` when the event maps to a normalized intelligence signal
 - `adjustment_reason`
   - Plain-language explanation for why `final_impact_pct` differs from `raw_impact_pct`
 
@@ -77,6 +79,7 @@ company_specific_adjustment_pct =
   "realization_weight": 1.0,
   "final_impact_pct": 0.4,
   "direction": "positive",
+  "source_signal_id": "sig-001",
   "adjustment_reason": "Only part of the rollout is expected to contribute within FY2026E; the rest falls outside the forecast window.",
   "source": "10-K and FY2025 results release"
 }

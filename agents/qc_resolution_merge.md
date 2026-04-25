@@ -31,7 +31,24 @@
 3. **高严重性优先**  
    - `severity: high` 必须在 `qc_audit_trail` 中有明确 `verdict`，不得静默忽略。
 
-4. **输出修改**  
+4. **Porter 合议打分（A/B 加权 + 阈值门槛）**  
+   - 先执行 P0 方向检查：Porter 分数是**威胁/压力分**，不是行业吸引力分；**1 = 低威胁/最好/绿色，3 = 中性/琥珀色，5 = 高威胁/最糟/红色**。若初稿、Peer A 或 Peer B 把高竞争/高买方权力/高替代威胁当成低分，或把低威胁当成高分，必须在合议中纠正后再加权。
+   - 对每个 Porter 评分单元（`perspective × force`），先读取：
+     - 初稿分：`porter_analysis.json` 的原始整数分（记为 `draft_score`）
+     - A 分：`qc_porter_peer_a.json` 的巴菲特复核分（优先取 `buffett_scores`，缺失则回退到对应 challenge 的 `proposed_score`）
+     - B 分：`qc_porter_peer_b.json` 的芒格复核分（优先取 `munger_scores`，缺失则回退到对应 challenge 的 `proposed_score`）
+   - 计算合议加权均值（默认等权）：
+     - `weighted_score = 0.34 * draft_score + 0.33 * a_score + 0.33 * b_score`
+     - 保留 2 位小数用于审计展示。
+   - 与初稿比较：`delta = abs(weighted_score - draft_score)`  
+     - 若 `delta > 1.00`：触发改分；最终分 `final_score = round(weighted_score)`（四舍五入到整数 1–5，并做边界截断）。  
+     - 若 `delta <= 1.00`：不改分；`final_score = draft_score`。  
+   - 示例（必须按此规则解释）：
+     - 初稿 3 → 合议 4.24：变化 1.24（>1）→ 四舍五入为 4 → 记为“从 3 调整到 4”。
+     - 初稿 3 → 合议 4.56：变化 1.56（>1）→ 四舍五入为 5 → 记为“从 3 调整到 5”。
+     - 初稿 3 → 合议 3.99：变化 0.99（<=1）→ 维持 3 → 记为“维持 3 分”。
+
+5. **输出修改**  
   - **直接更新** `prediction_waterfall.json`、`porter_analysis.json`，以及必要时 `financial_analysis.json` 中被裁定需改的字段（数值、 `key_assumptions`、`notes`、`scores`、各 perspective 段落、摘要/论证文本等）。  
 - **第五节 HTML（Phase 5）：** Porter 三个 tab 的每个 `<li>` 都须体现**最终 QC 合议结论**，但该结论必须是**真实 merge 结果**，不是为了文风要求而反推出来的。中文固定写法如下：  
   - **维持分数：** 只有当该维度在合议后**保留原分**时，才写 **「经QC合议，维持供应商议价能力为3分。……」** 或 **「经QC合议，决定将供应商议价能力评分维持3分不变。……」**  
@@ -54,7 +71,7 @@
 }
 ```
 
-5. **第三节免责声明**  
+6. **第三节免责声明**  
    - **不要**删除或改写 HTML 模板中第三节已有免责框（`report_writer_cn.md` 中「预测数据为概率性估计…」一段）。合议摘要应放在 **`qc_deliberation.summary`** 与附录 **`methodology_note`**，与免责框配合，而不是替换免责框。
 
 ## 输出文件
@@ -86,9 +103,11 @@
         "verdict": "accept_qc|retain_analyst|partial",
         "rationale": "",
         "fields_changed": ["porter_analysis.company_perspective.rivalry", "..."],
+        "weighted_score": 4.24,
+        "delta_vs_draft": 1.24,
         "score_changed": true,
-        "score_before": 4,
-        "score_after": 3
+        "score_before": 3,
+        "score_after": 4
       }
     ]
   }

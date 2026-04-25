@@ -12,6 +12,21 @@ Generate a professional equity research report for any public company. You are t
 
 ---
 
+## Step 0M: Load machine-readable workflow contract (mandatory)
+
+Before Step 0A, load `workflow_meta.json` as the machine-readable contract for this run.
+
+- Treat `workflow_meta.json` as the source of truth for:
+  - gate IDs and preconditions
+  - phase order
+  - packaging profiles in Phase 6 (`strict_18_full_qc_secapi`, `strict_17_full_qc_no_secapi`, `strict_13_fast_no_qc_secapi`, `strict_12_fast_no_qc_no_secapi`)
+- `SKILL.md` and `agents/*.md` remain the narrative execution guide; if there is a conflict on artifact presence or packaging strictness, follow `workflow_meta.json`.
+- Persist run mode flags early (at least in working notes):  
+  `qc_mode = full|fast` and `sec_api_mode = yes|no`  
+  so Phase 6 can select the correct packaging profile instead of forcing unavailable artifacts.
+
+---
+
 ## Step 0A: Mandatory gates — **language + SEC contact (before workspace & Phase 1)**
 
 ### 0A.0 — **P0 硬门禁（不可跳过、不可推断）**
@@ -281,6 +296,8 @@ The Phase 2.5 macro table and Section III must use **macro indicators from the r
 
 **Execution:** produce Porter base analysis using `references/porter_framework.md`.
 
+**P0 scoring orientation:** Porter scores are **threat / pressure scores**, not attractiveness scores: **1 = lowest threat / best / green**, **3 = mixed / amber**, **5 = highest threat / worst / red**. For `rivalry`, intense industry competition or price wars must score high (4-5), while near-monopoly or minimal competition must score low (1-2).
+
 **Output:** `workspace/{Company}_{Date}/porter_analysis.json`.
 
 **Gate:** base Porter analysis complete before Phase 3.5 QC.
@@ -357,6 +374,19 @@ The Phase 2.5 macro table and Section III must use **macro indicators from the r
 
 ---
 
+## Phase 5.2: Card logo production (when card workflow is enabled)
+
+If this run includes card artifacts (`*.card_slots.json`, `01_cover.png`, etc.), run **logo-production-agent first** before any card rendering:
+
+- **Agent call:** `agents/logo_production_agent.md`
+- **Core requirement (P0):** Card1 logo export resolution must be at least **2x** the render slot on both width and height.
+- **Required metadata in `*.card_slots.json`:** `logo_render_width_px`, `logo_render_height_px`, `logo_export_width_px`, `logo_export_height_px`, `logo_scale_factor`
+- **Fallback when render size not provided:** treat legacy slot as `276x328`, so export must be at least `552x656`.
+
+This phase is optional for report-only runs and mandatory for card-output runs.
+
+---
+
 ## Phase 5.5: Final report data validation
 
 **Inputs:** final HTML + all upstream JSON + `qc_audit_trail.json` when present.
@@ -377,11 +407,28 @@ The Phase 2.5 macro table and Section III must use **macro indicators from the r
 
 **Agent call:** `agents/report_validator.md`.
 
-**Output:** final delivery-ready HTML package.
+**Output:** final delivery-ready HTML package + `workspace/{Company}_{Date}/report_validation.txt` + `workspace/{Company}_{Date}/structure_conformance.json`.
 
 **Gate:** resolve CRITICAL plus designated pre-delivery WARNING blockers before delivery.
 
 **Detailed blocker policy:** `agents/report_validator.md`.
+
+### Phase 6 packaging profiles (owned by report validator)
+
+`report_validator` must select one packaging profile from `workflow_meta.json` and write the chosen profile into `structure_conformance.json`.
+
+Selection rule:
+
+1. `qc_mode = full` and `sec_api_mode = yes` → `strict_18_full_qc_secapi`
+2. `qc_mode = full` and `sec_api_mode = no` → `strict_17_full_qc_no_secapi`
+3. `qc_mode = fast` and `sec_api_mode = yes` → `strict_13_fast_no_qc_secapi`
+4. `qc_mode = fast` and `sec_api_mode = no` → `strict_12_fast_no_qc_no_secapi`
+
+Notes:
+
+- `qc_mode = fast` is allowed only when the user explicitly requests a shortened run (same policy as Phase 3.6).
+- `sec_api_mode = no` is valid for non-US, PDF-first runs, or explicit SEC email decline cases; do not force `sec_edgar_bundle.json` in those runs.
+- Cleanup targets remain defined by `workflow_meta.json` + `agents/report_validator.md`.
 
 ---
 
@@ -410,8 +457,10 @@ Summarize: data mode, predicted revenue growth and drivers, data confidence cave
 | File | When |
 |------|------|
 | `references/phase_execution_rules.md` | Detailed constraints for Phases 1-6 |
+| `references/intelligence_layer.md` | Agent 3, Agent 4, Phase 2, Phase 2.5, Phase 6 |
 | `references/prediction_factors.md` | Phase 2.5 |
 | `references/porter_framework.md` | Phase 3 |
 | `references/financial_metrics.md` | Phase 2 |
 | `references/report_style_guide_cn.md` | Phase 5 if `zh` |
 | `references/report_style_guide_en.md` | Phase 5 if `en` |
+| `agents/logo_production_agent.md` | Phase 5.2 when card workflow is enabled |

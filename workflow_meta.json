@@ -1,0 +1,230 @@
+{
+  "version": "1.0.0",
+  "description": "Machine-readable contract for the Equity Research Skill workflow. Use this file as the source of truth for phase ordering, mandatory gates, and packaging profiles.",
+  "gates": [
+    {
+      "id": "0A.1",
+      "name": "report_language",
+      "must_resolve_before": [
+        "0B",
+        "phase_1"
+      ]
+    },
+    {
+      "id": "0A.2",
+      "name": "sec_email_or_decline_when_applicable",
+      "must_resolve_before": [
+        "0B",
+        "phase_1"
+      ]
+    }
+  ],
+  "phase_order": [
+    "phase_1",
+    "phase_1_5",
+    "phase_2",
+    "phase_2_5",
+    "phase_2_6",
+    "phase_3",
+    "phase_3_5",
+    "phase_3_6",
+    "phase_4",
+    "phase_5",
+    "phase_5_2_optional",
+    "phase_5_5",
+    "phase_6"
+  ],
+  "artifacts": {
+    "core": [
+      "financial_data.json",
+      "macro_factors.json",
+      "news_intel.json",
+      "edge_insights.json",
+      "financial_analysis.json",
+      "prediction_waterfall.json",
+      "porter_analysis.json",
+      "final_report_data_validation.json",
+      "report_validation.txt",
+      "structure_conformance.json"
+    ],
+    "locked_skeleton": [
+      "_locked_cn_skeleton.html",
+      "_locked_en_skeleton.html"
+    ],
+    "final_html": [
+      "{Company}_Research_CN.html",
+      "{Company}_Research_EN.html"
+    ],
+    "sec_api_optional": [
+      "sec_edgar_bundle.json"
+    ],
+    "qc_optional": [
+      "qc_macro_peer_a.json",
+      "qc_macro_peer_b.json",
+      "qc_porter_peer_a.json",
+      "qc_porter_peer_b.json",
+      "qc_audit_trail.json"
+    ]
+  },
+  "packaging_profiles": {
+    "strict_18_full_qc_secapi": {
+      "requires_sec_api_bundle": true,
+      "requires_qc_files": true,
+      "required_files_zh": [
+        "sec_edgar_bundle.json",
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "edge_insights.json",
+        "financial_analysis.json",
+        "prediction_waterfall.json",
+        "porter_analysis.json",
+        "qc_macro_peer_a.json",
+        "qc_macro_peer_b.json",
+        "qc_porter_peer_a.json",
+        "qc_porter_peer_b.json",
+        "qc_audit_trail.json",
+        "_locked_cn_skeleton.html",
+        "{Company}_Research_CN.html",
+        "final_report_data_validation.json",
+        "report_validation.txt",
+        "structure_conformance.json"
+      ],
+      "required_files_en": [
+        "sec_edgar_bundle.json",
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "edge_insights.json",
+        "financial_analysis.json",
+        "prediction_waterfall.json",
+        "porter_analysis.json",
+        "qc_macro_peer_a.json",
+        "qc_macro_peer_b.json",
+        "qc_porter_peer_a.json",
+        "qc_porter_peer_b.json",
+        "qc_audit_trail.json",
+        "_locked_en_skeleton.html",
+        "{Company}_Research_EN.html",
+        "final_report_data_validation.json",
+        "report_validation.txt",
+        "structure_conformance.json"
+      ]
+    },
+    "strict_17_full_qc_no_secapi": {
+      "requires_sec_api_bundle": false,
+      "requires_qc_files": true,
+      "required_files_zh": [
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "edge_insights.json",
+        "financial_analysis.json",
+        "prediction_waterfall.json",
+        "porter_analysis.json",
+        "qc_macro_peer_a.json",
+        "qc_macro_peer_b.json",
+        "qc_porter_peer_a.json",
+        "qc_porter_peer_b.json",
+        "qc_audit_trail.json",
+        "_locked_cn_skeleton.html",
+        "{Company}_Research_CN.html",
+        "final_report_data_validation.json",
+        "report_validation.txt",
+        "structure_conformance.json"
+      ],
+      "required_files_en": [
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "edge_insights.json",
+        "financial_analysis.json",
+        "prediction_waterfall.json",
+        "porter_analysis.json",
+        "qc_macro_peer_a.json",
+        "qc_macro_peer_b.json",
+        "qc_porter_peer_a.json",
+        "qc_porter_peer_b.json",
+        "qc_audit_trail.json",
+        "_locked_en_skeleton.html",
+        "{Company}_Research_EN.html",
+        "final_report_data_validation.json",
+        "report_validation.txt",
+        "structure_conformance.json"
+      ]
+    },
+    "strict_13_fast_no_qc_secapi": {
+      "requires_sec_api_bundle": true,
+      "requires_qc_files": false,
+      "required_files_zh": [
+        "sec_edgar_bundle.json",
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "edge_insights.json",
+        "financial_analysis.json",
+        "prediction_waterfall.json",
+        "porter_analysis.json",
+        "_locked_cn_skeleton.html",
+        "{Company}_Research_CN.html",
+        "final_report_data_validation.json",
+        "report_validation.txt",
+        "structure_conformance.json"
+      ],
+      "required_files_en": [
+        "sec_edgar_bundle.json",
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "edge_insights.json",
+        "financial_analysis.json",
+        "prediction_waterfall.json",
+        "porter_analysis.json",
+        "_locked_en_skeleton.html",
+        "{Company}_Research_EN.html",
+        "final_report_data_validation.json",
+        "report_validation.txt",
+        "structure_conformance.json"
+      ]
+    },
+    "strict_12_fast_no_qc_no_secapi": {
+      "requires_sec_api_bundle": false,
+      "requires_qc_files": false,
+      "required_files_zh": [
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "edge_insights.json",
+        "financial_analysis.json",
+        "prediction_waterfall.json",
+        "porter_analysis.json",
+        "_locked_cn_skeleton.html",
+        "{Company}_Research_CN.html",
+        "final_report_data_validation.json",
+        "report_validation.txt",
+        "structure_conformance.json"
+      ],
+      "required_files_en": [
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "edge_insights.json",
+        "financial_analysis.json",
+        "prediction_waterfall.json",
+        "porter_analysis.json",
+        "_locked_en_skeleton.html",
+        "{Company}_Research_EN.html",
+        "final_report_data_validation.json",
+        "report_validation.txt",
+        "structure_conformance.json"
+      ]
+    }
+  },
+  "default_cleanup_targets": [
+    "companyfacts_*.json",
+    "*_10k.html",
+    "tmp*",
+    "*.tmp",
+    "debug_*"
+  ]
+}

@@ -16,6 +16,11 @@
 - `workspace/{Company}_{Date}/porter_analysis.json`
 - `workspace/{Company}_{Date}/final_report_data_validation.json`
 - `workspace/{Company}_{Date}/qc_audit_trail.json`（若本次运行包含 Phase 2.6–3.6 对抗审查）
+- `workflow_meta.json`（根目录；包装 profile 与清理规则）
+- `references/intelligence_layer.md`（报告级情报信号契约；用于第 7e 项）
+- 可选（卡片分支）：`workspace/{Company}_{Date}/**/*.card_slots.json` 与其中 `logo_asset_path` 指向的 `logo_official.png`
+
+**新增职责（profile 模式）：** 本 agent 负责按 `workflow_meta.json` 选择并执行 packaging profile 收口，并写出 `workspace/{Company}_{Date}/report_validation.txt` 与 `workspace/{Company}_{Date}/structure_conformance.json`。
 
 **第 10–13 项与 WARNING 级别：** 这几条在输出中标记为 **WARNING**，是因为叙述是否越界、来源日期是否矛盾等问题难以像结构缺失或未替换的 `{{…}}` 那样用固定规则 **100% 自动判为 CRITICAL**；**不代表可忽略**。编排器在 `SKILL.md` Phase 6 已将第 10–13 项与第 9 项一样列为交付前必改；有此类 WARNING 时须在交付用户前修正 HTML（及关联 JSON 叙述）。
 
@@ -23,9 +28,91 @@
 
 **第 7d 项（edge insight）补充：** 若 `edge_insights.json` 缺失、`chosen_insight` 缺少证据，或投资摘要第二段没有体现该洞察，虽可标为 WARNING，但与第 9 项同级，交付前必须修正。
 
+**第 7e 项（intelligence layer）补充：** 若 `news_intel.json -> intelligence_signals[]` 缺失、信号字段不完整，或最终摘要 / 趋势卡 / 投资逻辑仍是泛泛描述而没有监控变量和证伪触发器，标为 **WARNING（交付前必改）**。
+
 **与 Phase 5.5 的关系：** 若 `final_report_data_validation.json` 仍有未关闭的 **CRITICAL**，或 WARNING 涉及公式 / 数量级 / Sankey 语义 / GAAP 与 non-GAAP 口径混用，则本 validator 即使其余项目通过，也不得判定可交付。
 
 ## 验证清单（逐项检查，不得跳过）
+
+### ✅ 0. Packaging profile 产物结构对照与清理（由本 agent 执行）
+
+从 `workflow_meta.json -> packaging_profiles` 选择 profile，不再强制单一 `strict_18`。
+
+**A. profile 选择规则（必须可追溯）**
+
+1. 先判定 `qc_mode`：  
+   - 若存在 `qc_audit_trail.json` 且有有效裁定内容 → `full`  
+   - 若用户或编排器明确跳过 QC，且 `qc_audit_trail.json` 不存在 → `fast`
+2. 再判定 `sec_api_mode`：  
+   - 若存在 `sec_edgar_bundle.json` 且本轮走 SEC API-first → `yes`  
+   - 其余（非美股 / PDF 模式 / 用户拒绝邮箱 / SEC fallback）→ `no`
+3. 用 `(qc_mode, sec_api_mode)` 映射 profile（见 `workflow_meta.json`）：
+   - `(full, yes)` → `strict_18_full_qc_secapi`
+   - `(full, no)` → `strict_17_full_qc_no_secapi`
+   - `(fast, yes)` → `strict_13_fast_no_qc_secapi`
+   - `(fast, no)` → `strict_12_fast_no_qc_no_secapi`
+
+**B. 必须文件列表**
+
+- 从 `workflow_meta.json` 读取已选 profile 的 `required_files_zh` 或 `required_files_en`（按 `report_language`）。
+- 本 agent 必须写出 `report_validation.txt` 与 `structure_conformance.json`，两者应被包含在 required list。
+
+**C. 默认删除项**
+
+- 从 `workflow_meta.json -> default_cleanup_targets` 读取并执行清理（可追加本地临时文件模式）。
+
+**执行顺序：**
+
+1. 选择 profile 并记录理由。
+2. 扫描工作目录，记录缺失项与额外项。
+3. 删除默认清理项。
+4. 再次扫描确认清理是否完成。
+5. 写出 `report_validation.txt` 与 `structure_conformance.json`。
+
+`structure_conformance.json` 建议结构：
+
+```json
+{
+  "mode": "strict_packaging",
+  "profile": "strict_18_full_qc_secapi",
+  "language": "zh",
+  "status": "pass|critical",
+  "workspace": "workspace/{Company}_{Date}",
+  "required_files": ["...18 items..."],
+  "missing_required_files": [],
+  "deleted_files": [],
+  "forbidden_remaining_files": [],
+  "summary": {
+    "required_count": 18,
+    "missing_count": 0,
+    "deleted_count": 0,
+    "forbidden_remaining_count": 0
+  }
+}
+```
+
+**失败条件：**
+
+- 缺失所选 profile 任一必须文件 → **CRITICAL**
+- 默认删除项执行后仍残留 → **CRITICAL**
+
+### ✅ 0b. Card1 Logo 分辨率（卡片分支存在时）
+
+仅当工作区存在 `*.card_slots.json` 且文件内含 `logo_asset_path` 时执行本项；纯 HTML 研报交付可跳过。
+
+**检查项：**
+
+1. `logo_asset_path` 指向文件必须存在（通常是 `logo_official.png`）。
+2. 从 `*.card_slots.json` 读取 `logo_render_width_px`、`logo_render_height_px`、`logo_export_width_px`、`logo_export_height_px`、`logo_scale_factor`。  
+   若缺少 render 尺寸，按默认槽位 `276x328`。
+3. 读取 logo 图片实际像素宽高（可用 `sips`/等价工具）。
+4. 强制 2x 规则：  
+   - 实际像素宽度 `>= 2 * logo_render_width_px`  
+   - 实际像素高度 `>= 2 * logo_render_height_px`
+5. 若声明了 `logo_export_width_px` / `logo_export_height_px`，需与实际像素一致（允许 ±1 像素误差）。
+6. `logo_scale_factor` 必须 `>= 2`。
+
+**失败条件：** `logo_asset_path` 不存在、元数据缺失、像素尺寸未达 2x、或 `logo_scale_factor < 2` → **WARNING（交付前必改）**。
 
 ### ✅ 1. Section 完整性（结构检查）
 
@@ -112,6 +199,8 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - `const porterScores` 存在，包含 `company`, `industry`, `forward` 三个 key
 - 每个数组长度恰好为 5
 - 每个分值在 1-5 之间（整数）
+- Porter 分值方向必须是威胁/压力分：`1-2` = 低威胁/绿色，`3` = 中性/琥珀色，`4-5` = 高威胁/红色；不得把 5 当作“最好”或把 1 当作“最糟”。
+- 若任一 tab 的行业竞争强度正文明确描述“竞争激烈 / 价格战 / rivalry intense / price war”等高竞争状态，但对应 `porterScores[*][4] < 4`，或明确描述“竞争几乎没有 / monopoly-like / minimal competition”但对应分数 `> 2`，标记为 **WARNING（评分方向疑似反向）**。
 
 **失败条件：** 容器缺失 → CRITICAL；数据格式错误 → CRITICAL；**瀑布图量纲错误（如误用 `base_revenue`）或 `result` 与 `predicted_revenue_growth_pct` 不一致** → CRITICAL；**数值超范围 / 绝对值 100–200 可疑** → WARNING。
 
@@ -124,11 +213,12 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - 每个 panel 内有 `.porter-scores` 列表，恰好 5 个 `<li>`
 - 每个 `<li>` 包含一个 `.score-dot` 元素
 - `.score-dot` 的 class 包含 `s1`-`s5` 之一，与 `porterScores` 数组值对应
+- `.score-dot` 颜色映射必须保持：`.s1/.s2` 使用 `var(--accent-green)`，`.s3` 使用 `var(--accent-amber)`，`.s4/.s5` 使用 `var(--accent-red)`；雷达点颜色也应通过 `porterScoreColor` 或等价逻辑映射为低分绿、高分红。
 - 每个 tab-panel 中有 `.porter-text` 且：若 `<html lang="zh-CN">` 则正文 ≥ **100 个汉字**；若 `<html lang="en-US">`（或 `lang="en"`）则正文 ≥ **450 个英文字符**（约同等信息量）
 - **推荐版式（Phase 5）：** 每个 `.porter-text` 内为**单个 `<ul>` 含恰好 5 个 `<li>`**（顺序对应五力），且**不在** `<li>` 内重复「X/5」起句——见 `references/report_style_guide_cn.md` / `report_style_guide_en.md` 波特五力 / Porter Five Forces。若仅为连续 `<p>` 而无列表 → **WARNING**（风格偏离，交付前可接受但建议对齐技能包规范）。
 - **中文 Porter 句式（Phase 5 新规范）：** 若 `<html lang="zh-CN">`，每个 `<li>` 应以前置的 **QC 合议结论句** 开头，并使用**维持/调整**显式格式，例如 **「经QC合议，维持供应商议价能力为3分。……」** 或 **「经QC合议，决定将供应商议价能力评分从4分调整为3分。……」**。不要只写普通分析段，也不要只在调分时才出现该句式。**同时核对审计链一致性：** 若正文写成“从 X 调整到 Y”，则 `qc_audit_trail.json` / `porter_analysis.qc_deliberation` 中必须存在该维度被采纳并改分的记录；若 `qc_audit_trail.json` 有显式 `score_changed: false`（或 `score_before = score_after`），HTML 就不得写成调整句式；若无记录，则判为 **WARNING（疑似编造调分）**。
 
-**失败条件：** li 数量不是5 → CRITICAL；score-dot class 与数组不符 → WARNING；达不到上述字数/字符门槛 → WARNING；中文 Porter `<li>` 未使用上述 QC 合议维持/调整句式 → WARNING（交付前必改）；正文声称“从 X 调整到 Y”但审计链无对应改分记录，或审计链显式表明 `score_changed: false` / `score_before = score_after` → WARNING（交付前必改）。
+**失败条件：** li 数量不是5 → CRITICAL；score-dot class 与数组不符 → WARNING；score-dot 或雷达点颜色映射反向（例如 s5 绿色、s1 红色）→ WARNING（交付前必改）；达不到上述字数/字符门槛 → WARNING；中文 Porter `<li>` 未使用上述 QC 合议维持/调整句式 → WARNING（交付前必改）；正文声称“从 X 调整到 Y”但审计链无对应改分记录，或审计链显式表明 `score_changed: false` / `score_before = score_after` → WARNING（交付前必改）。
 
 ---
 
@@ -139,6 +229,10 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - `<link>` 中含 **Noto Sans SC**（中文报告）或 **Noto Sans**（英文报告常见）；至少一种 Google Fonts 引用存在
 - `.report-header` 存在
 - `.header-main` / `.header-left` / `.header-right` 存在
+- **Card1 主名位规则（中文报告）：** `.company-name-cn` 必须为公司中文名（红色主名位），不得为英文名或纯 ticker
+- **Card1 次标题规则（按语言分支）：**
+  - 中文报告：`.company-name-en` 必须为“公司英文名 + 分隔符 + ticker”（示例：`Apple Inc. • AAPL`）。
+  - 英文报告：按 `agents/report_writer_en.md` 规则，第一行显示英文公司名，`.company-name-en` 允许仅为 `ticker`。
 - `.rating-badge` class 包含 `overweight` / `neutral` / `underweight` 之一
 - `.header-meta` 存在且包含3个 `<span>`
 - `.header-meta` 中表示数据来源的 `<span>` 文本应为**单行短摘要**，**最终文本长度不得超过 50 个字符**（含中文、英文、空格与标点）；这是为避免页眉横向排版被挤压或换行
@@ -147,7 +241,7 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - `redrawAllCharts()` 函数存在
 - `DOMContentLoaded` 事件监听存在
 
-**失败条件：** 函数缺失 → CRITICAL；badge class 错误 → WARNING；`{{DATA_SOURCE}}` 渲染后超过 50 个字符 → WARNING（交付前必改）。
+**失败条件：** 函数缺失 → CRITICAL；中文报告中 `.company-name-cn` 非中文公司名或误填英文/ticker → WARNING（交付前必改）；`.company-name-en` 与对应语言分支规则不一致 → WARNING（交付前必改）；badge class 错误 → WARNING；`{{DATA_SOURCE}}` 渲染后超过 50 个字符 → WARNING（交付前必改）。
 
 ---
 
@@ -193,6 +287,17 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 
 **失败条件：** `edge_insights.json` 缺失或关键字段为空、证据为空、HTML 第二段未体现 edge insight、或摘要段落仍为旧长度/旧结构 → **WARNING**（交付前必改）。
 
+### ✅ 7e. 情报层信号与可执行投资逻辑
+
+- `news_intel.json` 必须包含 `intelligence_signals` 数组；若公开数据很薄，可为空数组，但 `notes[]` 必须解释限制。正常完整报告应至少有 1 条可追溯信号。
+- 每条 `intelligence_signals[]` 至少包含：`id`、`theme`、`signal_type`、`fact`、`source`、`affected_metric`、`direction`、`confidence`、`watch_metric`、`thesis_implication`。
+- `signal_type` 只能为：`filing_disclosure`、`industry_shift`、`company_event`、`policy_regulation`、`customer_supply_chain`、`pricing_margin`、`consensus_trap`。
+- `edge_insights.json` 必须包含顶层字段：`chosen_signal_ids`、`thesis_variable`、`monitor_metric`、`falsification_trigger`。若 `chosen_signal_ids[]` 非空，其 ID 必须存在于 `news_intel.json -> intelligence_signals[]`。
+- 若 `prediction_waterfall.json -> company_events_detail[]` 中出现 `source_signal_id`，该 ID 必须存在于 `news_intel.json -> intelligence_signals[]`，且对应信号的 `affected_metric` / `thesis_implication` 应与该事件的方向和解释不冲突。
+- HTML 的投资逻辑框、风险提示、Section II 趋势卡或 Section I 第三段中，至少一处应体现可监控变量（来自 `watch_metric` / `monitor_metric`）或证伪条件（来自 `falsification_trigger`）。不能只写“需求强劲、行业景气、公司领先、估值有吸引力”等泛泛表达。
+
+**失败条件：** 信号数组缺失且无解释、信号关键字段为空、`chosen_signal_ids[]` 指向不存在的 ID、`source_signal_id` 无法追溯、或最终 HTML 投资逻辑 / 趋势卡缺少监控变量与证伪条件 → **WARNING**（交付前必改）。
+
 ---
 
 ### ✅ 8. 数字格式检查
@@ -222,18 +327,22 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 
 ---
 
-### ✅ 8c. 宏观因子表最后一列：方向，不得重复调整幅度
+### ✅ 8c. 宏观因子表数值格式与最后一列方向
 
-**适用：** Section III `.factor-table`（表头含 **`调整幅度（pct）`** 和 **`方向`**，或 English equivalents）。
+**适用：** Section III `.factor-table`（表头含 **`宏观变化（%）` / `Macro change (%)`**、**`调整幅度（%）` / `Adjustment (%)`** 和 **`方向` / `Direction`**）。
 
 **规则：**
 
-1. 逐行读取最后一个 `<td>`。该单元格只允许表达方向：中文 `正向` / `负向` / `中性`；英文 `Positive` / `Negative` / `Neutral`。
-2. 第 5 列才是 `adjustment_pct`。最后一列不得出现 `+0.62%`、`-2.0%`、`0.00%`、`pct` 或任何纯数值。
-3. 方向应与第 5 列数值符号一致：正数 → `正向` / `Positive`，负数 → `负向` / `Negative`，零或可忽略 → `中性` / `Neutral`。
-4. 方向列颜色必须复用锁定模板已有 class：正数最后一个 `<td>` 应含 `class="metric-up"`，负数应含 `class="metric-down"`；中性单元格不加方向颜色 class（或保持普通文本色）。不得新增 CSS class 或内联颜色。
+1. 表头第 5 列必须写成 **`调整幅度（%）`** 或 English **`Adjustment (%)`**；不得继续使用 `调整幅度（pct）`、`Adj. (ppt)`、`Adjustment (pct)`。
+2. 逐行读取第 2 列（宏观变化）与第 5 列（调整幅度）。因为表头已经标注 `%`，两列单元格内**不得再出现 `%`**。
+3. 非零数值必须带 `+` 或 `-`；0 必须写成 **`0`**，不得写 `+0`、`+0.00`、`-0.0`、`0%`。
+4. 数值小数最多两位。允许 `-4.2`、`+8.00`、`-3.1`、`+0.15`、`-0.80`、`0`；禁止 `+8%`、`-4.1667`、`-3.125`、`+0.14685`。
+5. 第 3 列 β 与第 4 列 φ 最多两位小数；β 可为负数，但不应出现 `+0.40` 这类正号或 `%`。
+6. 最后一个 `<td>` 只允许表达方向：中文 `正向` / `负向` / `中性`；英文 `Positive` / `Negative` / `Neutral`。最后一列不得出现 `+0.62`、`-2.0`、`0.00`、`%`、`pct` 或任何纯数值。
+7. 方向应与第 5 列数值符号一致：正数 → `正向` / `Positive`，负数 → `负向` / `Negative`，0 → `中性` / `Neutral`。
+8. 方向列颜色必须复用锁定模板已有 class：正数最后一个 `<td>` 应含 `class="metric-up"`，负数应含 `class="metric-down"`；中性单元格不加方向颜色 class（或保持普通文本色）。不得新增 CSS class 或内联颜色。
 
-**失败条件：** 最后一列包含裸数字/百分比/`pct`，方向与调整幅度符号明显冲突，或正/负方向缺少对应 `metric-up` / `metric-down` class → **WARNING**（交付前必改）。
+**失败条件：** 表头仍用 `pct` / `ppt`；第 2 或第 5 列含 `%`、非零缺正负号、0 带正负号、超过两位小数；β/φ 超过两位小数或含 `%`；最后一列包含裸数字/百分比/`pct`；方向与调整幅度符号冲突；正/负方向缺少对应 `metric-up` / `metric-down` class → **WARNING**（交付前必改）。
 
 ---
 
@@ -341,6 +450,9 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 --- 7. 占位符残留 ---
 [PASS] 无残留占位符 ✓
 
+--- 7e. 情报层信号与可执行投资逻辑 ---
+[PASS] intelligence_signals 可追溯，投资逻辑包含监控变量 / 证伪条件 ✓
+
 --- 8. 数字格式 ---
 [PASS] 抽查5个数字，无NaN/undefined，格式规范 ✓
 
@@ -376,10 +488,17 @@ WARNING  警告：1
 状态：⚠️ 通过（含警告）
 ```
 
+并且必须在工作目录写出：
+
+- `workspace/{Company}_{Date}/report_validation.txt`
+- `workspace/{Company}_{Date}/structure_conformance.json`
+
 ## 处理逻辑
 
+- 先执行 **第 0 项 packaging profile**：按 `workflow_meta.json` 选择 profile，完成产物对照、默认删除，并写出 `report_validation.txt` 与 `structure_conformance.json`。
+- 若 profile 收口为 CRITICAL，继续完成本文件其余检查并在总结中明确“不可交付”。
 - 若有 **CRITICAL** 错误：输出报告后，**立即修复 HTML 文件**，修复后重新运行验证直到0个CRITICAL为止。
-- 若只有 **WARNING**：输出报告，提示 orchestrator 人工核查。若 WARNING 含 **第 8b / 8c / 9 / 10 / 11 / 12 / 13 项**，须在最终交付用户前修正 HTML（及与之绑定的 JSON 叙述），勿把内容性错误留给用户兜底。（第 10–13 项因难以自动化升格为 CRITICAL 而标为 WARNING，见上文 **「第 10–13 项与 WARNING 级别」**。）
+- 若只有 **WARNING**：输出报告，提示 orchestrator 人工核查。若 WARNING 含 **第 7d / 7e / 8b / 8c / 9 / 10 / 11 / 12 / 13 项**，须在最终交付用户前修正 HTML（及与之绑定的 JSON 叙述），勿把内容性错误留给用户兜底。（第 10–13 项因难以自动化升格为 CRITICAL 而标为 WARNING，见上文 **「第 10–13 项与 WARNING 级别」**。）
 - 若全部 PASS：输出报告，告知 orchestrator 报告质检通过。
 
 ## 修复优先级
@@ -390,9 +509,10 @@ WARNING  警告：1
 3. 图表数据格式错误 → 修正 JS 数据变量
 4. KPI 卡片数量/class 错误 → 修正 HTML
 5. score-dot 与数组不符 → 同步修正 HTML 和 JS
-6. 第 8b 项：财务指标表第 4 列为裸百分比 → 改成 `显著改善` / `改善` / `恶化` / `权益缺口收窄` 等结论性定调
-7. 第 8c 项：宏观因子表方向列为裸百分比 → 第 5 列保留调整幅度，第 6 列改成 `正向` / `负向` / `中性`
-8. 第 9 项：不对称的分项占比叙述 → 按 `segment_data` 补全括号内占比或整段改为仅金额
-9. 第 10 项：无支撑的估值/目标价结论 → 删除结论或补充市场数据与来源
-10. 第 11 项：来源日期或实时性表述错误 → 改写为估算/知识截止口径，或替换为报告日前已发布来源
-11. 第 12 / 13 项：口径混用或政策叙述矛盾 → 统一维度、国家、时间点与假设表述
+6. 第 7d / 7e 项：edge insight 或 intelligence signals 缺失 → 回填 `news_intel.json` / `edge_insights.json`，并同步摘要、趋势卡、投资逻辑、风险提示
+7. 第 8b 项：财务指标表第 4 列为裸百分比 → 改成 `显著改善` / `改善` / `恶化` / `权益缺口收窄` 等结论性定调
+8. 第 8c 项：宏观因子表方向列为裸百分比 → 第 5 列保留调整幅度，第 6 列改成 `正向` / `负向` / `中性`
+9. 第 9 项：不对称的分项占比叙述 → 按 `segment_data` 补全括号内占比或整段改为仅金额
+10. 第 10 项：无支撑的估值/目标价结论 → 删除结论或补充市场数据与来源
+11. 第 11 项：来源日期或实时性表述错误 → 改写为估算/知识截止口径，或替换为报告日前已发布来源
+12. 第 12 / 13 项：口径混用或政策叙述矛盾 → 统一维度、国家、时间点与假设表述

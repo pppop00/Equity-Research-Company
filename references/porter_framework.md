@@ -115,15 +115,17 @@ Reference guide for conducting the three-perspective Porter Five Forces analysis
 
 Use these anchor descriptions when assigning 1-5 scores for the radar chart:
 
-| Score | Label | Meaning |
-|-------|-------|---------|
-| 1 | Very Low | Force poses negligible threat / company has dominant advantage |
-| 2 | Low | Force is present but manageable; company has structural advantages |
-| 3 | Moderate | Mixed signals; depends on specific circumstances |
-| 4 | High | Force creates meaningful challenges; requires strategic response |
-| 5 | Very High | Force severely constrains profitability or growth |
+| Score | Label | Meaning | Visual |
+|-------|-------|---------|--------|
+| 1 | Very Low | Force poses negligible threat / company has dominant advantage | Green |
+| 2 | Low | Force is present but manageable; company has structural advantages | Green |
+| 3 | Moderate | Mixed signals; depends on specific circumstances | Amber |
+| 4 | High | Force creates meaningful challenges; requires strategic response | Red |
+| 5 | Very High | Force severely constrains profitability or growth | Red |
 
 **Important:** Scores represent the *threat level* for the company, not the strength of the company's position. A score of 5 on Buyer Power = buyers have very high power (bad for the company). A score of 1 = buyers have very little power (good for the company).
+
+**P0 orientation rule:** Never invert the scale into an "attractiveness" or "company strength" score. In this skill, **5 always means the force is worst / most threatening / red**, and **1 always means the force is best / least threatening / green**. For Competitive Rivalry specifically, a brutally competitive industry with price wars should score **4-5 (red)**; a monopoly-like or barely competitive industry should score **1-2 (green)**.
 
 ---
 

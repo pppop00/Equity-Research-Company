@@ -40,11 +40,15 @@ Phase 2 is executed by the orchestrator, not a subagent, so its detailed rules s
   - prefer YoY headline unless filing context explicitly centers QoQ.
 - Geographic revenue card must be factual and filing-grounded; avoid meta/disclaimer filler text.
 - KPI third card (FCF): if both years negative but narrowing toward zero, use `neutral-kpi` class, not `up`. See `references/financial_metrics.md` and `references/report_style_guide_cn.md`.
+- Trend cards should behave like monitorable intelligence cards, not generic business commentary. When `news_intel.json -> intelligence_signals[]` or `edge_insights.json` provides a relevant `watch_metric`, at least one trend card should name the metric to monitor and the direction that would support or weaken the thesis.
 
 ### Narrative Evidence and Language
 
+- Load `references/intelligence_layer.md` before writing the report-bound narrative.
 - Valuation statements require evidence from `financial_analysis.json -> valuation` or explicitly cited appendix data.
 - Do not present live-market conclusions as facts when source fields are null.
+- `investment_thesis` must be an executable thesis: include the core driver, the affected investment variable, and the main monitor or falsification trigger. Do not write only a company description or generic bullish/bearish sentence.
+- Risk bullets should be tied to evidence, a signal, or a monitorable variable where possible; avoid unsupported boilerplate risks.
 - All HTML-bound narrative strings must be plain text (no Markdown symbols).
 - Language lock:
   - `report_language = en` -> English narrative fields
@@ -53,8 +57,8 @@ Phase 2 is executed by the orchestrator, not a subagent, so its detailed rules s
 ### Investment Summary Structure
 
 - `summary_para_1`: business + latest financial performance (zh: 160-200 chars; en: 90-130 words).
-- `summary_para_2`: edge insight interpretation and implication from `edge_insights.json -> summary_para_2_draft`.
-- `summary_para_3`: thesis/catalysts with constraints.
+- `summary_para_2`: edge insight interpretation and implication from `edge_insights.json -> summary_para_2_draft`; it should map to either `edge_insights.json -> chosen_signal_ids[]` or a cited `financial_data.json -> disclosure_quirks[]` item.
+- `summary_para_3`: thesis/catalysts with constraints plus a concrete monitor or falsification trigger from `edge_insights.json -> monitor_metric` / `falsification_trigger` or `news_intel.json -> intelligence_signals[]`.
 - `summary_para_4`: industry position reconciled with filings and geography from `news_intel.json -> industry_position`.
 
 ---
@@ -70,6 +74,7 @@ Phase 2 is executed by the orchestrator, not a subagent, so its detailed rules s
 ### Source-of-Truth Split
 
 - `news_intel.json` = raw event layer (`company_events[].revenue_impact_pct`).
+- `news_intel.json -> intelligence_signals[]` = report-facing signal layer (source facts, affected metric, thesis implication, watch metric).
 - `prediction_waterfall.json` = final model layer (`company_specific_adjustment_pct` and final bridge).
 - Do not maintain competing root-level company-adjustment totals across files.
 
@@ -81,12 +86,15 @@ If `company_events_detail[]` is present, prefer:
 
 and keep `company_specific_adjustment_pct` approximately equal to the sum of event-level `final_impact_pct`.
 
+If an event is derived from `news_intel.json -> intelligence_signals[]`, carry its ID into the event object as optional `source_signal_id`. This keeps the forecast bridge traceable from raw event and signal to final model adjustment.
+
 ### Section III Table Contract
 
 - Factor table final column is direction text:
   - `zh`: `正向` / `负向` / `中性`
   - `en`: `Positive` / `Negative` / `Neutral`
 - Do not repeat numeric percentage values in the direction column.
+- Factor table percent-display columns (`宏观变化（%）` / `Macro change (%)` and `调整幅度（%）` / `Adjustment (%)`) have units in the header, so cells must not repeat `%`; nonzero values must include `+` or `-`; zero is exactly `0`; decimals are capped at two places. Examples: `-4.2`, `+8.00`, `-3.1`, `+0.15`, `-0.80`, `0`; invalid: `+8%`, `-4.1667`, `+0.14685`.
 - Use existing positive/negative CSS classes only where required by locked template conventions.
 
 ### Interim-to-Model Bridge
@@ -136,7 +144,25 @@ Detailed rules for each QC agent live in their respective agent files:
 - `zh` branch uses `agents/report_writer_cn.md` + `references/report_style_guide_cn.md`.
 - `en` branch uses `agents/report_writer_en.md` + `references/report_style_guide_en.md`.
 
-Detailed placeholder rules, Porter comment handling, and post-processing cautions live in the respective `agents/report_writer_*.md` files.
+- Porter scores are threat / pressure scores: `1-2` = low threat / green, `3` = mixed / amber, `4-5` = high threat / red. Do not invert this into an attractiveness score; intense competitive rivalry must be high/red.
+- Detailed placeholder rules, Porter comment handling, and post-processing cautions live in the respective `agents/report_writer_*.md` files.
+
+---
+
+## Phase 5.2: Card Logo Production (Optional Branch)
+
+Apply this branch only when the run includes card deliverables (`*.card_slots.json`, `01_cover.png`, etc.).
+
+- **Order is mandatory:** run `agents/logo_production_agent.md` **before** any Card1 rendering.
+- **Hard requirement:** exported logo resolution must be at least **2x** of Card1 render slot in both dimensions.
+- **Card metadata contract (`*.card_slots.json`):**
+  - `logo_render_width_px`
+  - `logo_render_height_px`
+  - `logo_export_width_px`
+  - `logo_export_height_px`
+  - `logo_scale_factor` (must be `>=2`, default target `2`)
+- **Fallback slot:** if render slot is missing, use `276x328`, thus export must be `>=552x656`.
+- **Quality rule:** do not pass low-resolution bitmaps through naive upscale; prefer official high-res/vec sources and high-quality antialias resampling.
 
 ---
 
