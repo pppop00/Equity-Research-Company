@@ -229,7 +229,7 @@ HTML 中的 `<style>` 块必须包含以下所有变量定义（在 `:root` 或 
 - `<link>` 中含 **Noto Sans SC**（中文报告）或 **Noto Sans**（英文报告常见）；至少一种 Google Fonts 引用存在
 - `.report-header` 存在
 - `.header-main` / `.header-left` / `.header-right` 存在
-- **Card1 主名位规则（中文报告）：** `.company-name-cn` 必须为公司中文名（红色主名位），不得为英文名或纯 ticker
+- **Card1 主名位规则（中文报告）：** `.company-name-cn` 必须为公司中文名（页眉标题主名位，深蓝底衬线大字），不得为英文名或纯 ticker
 - **Card1 次标题规则（按语言分支）：**
   - 中文报告：`.company-name-en` 必须为“公司英文名 + 分隔符 + ticker”（示例：`Apple Inc. • AAPL`）。
   - 英文报告：按 `agents/report_writer_en.md` 规则，第一行显示英文公司名，`.company-name-en` 允许仅为 `ticker`。

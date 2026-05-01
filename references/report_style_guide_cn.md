@@ -43,7 +43,7 @@
 
 ## Card1 命名规范（页眉公司名）
 
-- `.company-name-cn`（红色主名位）必须填写**公司中文名**，示例：`苹果`、`微软`、`英伟达`。  
+- `.company-name-cn`（标题主名位，深蓝页眉上的衬线大字）必须填写**公司中文名**，示例：`苹果`、`微软`、`英伟达`。  
 - `.company-name-en`（下一行）必须填写**英文名 + 分隔符 + ticker**，示例：`Apple Inc. • AAPL`（模板中使用 `·` 也可）。  
 - 禁止把英文名放到 `.company-name-cn`，也禁止 `.company-name-en` 只写 ticker。  
 
@@ -232,4 +232,5 @@
 - **标题字号：** 一级标题 18-20pt，二级标题 14-16pt
 - **正文字号：** 11-12pt，行距 1.6
 - **数字与英文字符：** 建议用等宽字体或 Calibri，确保与中文混排时对齐
-- **颜色规范：** 与英文版保持一致（深蓝 #0a2140、绿色 #1a8f5a、红色 #c0392b）
+- **颜色规范：** 与英文版保持一致——机构研报配色：深蓝主色 `#1a2c4e`、深森林绿 `#2e7d4f`、酒红 `#a83232`、琥珀 `#b8842a`，纸色背景 `#f5f3ee`；以锁定模板 `agents/report_writer_cn.md` 中 `:root` 变量为准（`--primary` / `--accent-green` / `--accent-red` / `--accent-amber` / `--bg`）。
+- **字形分工：** 标题、公司名、KPI 主数值用衬线（Source Serif 4 / Noto Serif SC）；正文与表格用 Noto Sans SC。表格、KPI 数字启用 `font-variant-numeric: tabular-nums` 以对齐。
