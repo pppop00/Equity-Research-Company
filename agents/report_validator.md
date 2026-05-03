@@ -4,6 +4,16 @@
 
 **定位说明：** 本 agent 主要负责 **结构完整性、模板契约、图表容器、基础交叉核对、交付前渲染风险**。它**不是**完整的最终数据验证器；显式公式复算、数量级核对、Sankey/利润表语义桥接、GAAP/non-GAAP 混用等问题，应由 `agents/final_report_data_validator.md` 在 Phase 5.5 先行处理。
 
+## 0. Hard preconditions（先于任何其他检查执行；不通过即 CRITICAL，不得继续）
+
+本 validator 不是「重新评估是否走锁定模板」的入口，而是「锁定模板已被填充」之后的结构与契约校验。任何主动放宽锁定模板要求的行为都是 P5/P6 违规：
+
+1. **锁定骨架必须存在：** `research/_locked_<lang>_skeleton.html`（`<lang> ∈ {cn, en}`）必须在工作目录中。缺失 → CRITICAL；这意味着 P5 跳过了 `tools/research/extract_template.py`，最终 HTML 不可能是合法填充产物。
+2. **`tools/research/validate_report_html.py` 必须已被执行且 exit 0：** 在写出本 agent 自己的 `report_validation.txt` / `structure_conformance.json` 之前，必须自行调用 `python tools/research/validate_report_html.py --run-dir <run_dir> --lang <cn|en>` 并捕获其 JSON 输出。该 JSON 的 `status` 字段（`pass | warn | critical`）即 `structure_conformance.json -> html_template_gate.status` 的合法取值；**禁止**手写为 `not_applicable`、`pass_with_scope_limitations`、`partial_pass`、`scope_limited`、`institution_compat` 或任何工具未输出的字符串。该工具返回 `critical` → 本 agent 输出 CRITICAL 并要求回到 P5 重写，**不得继续**。
+3. **Packaging profile 必须来自白名单：** `structure_conformance.json -> profile` 只允许是 `workflow_meta.json -> packaging_profiles` 中的四个之一：`strict_18_full_qc_secapi`、`strict_17_full_qc_no_secapi`、`strict_13_fast_no_qc_secapi`、`strict_12_fast_no_qc_no_secapi`。选择规则是 `(qc_mode, sec_api_mode)`（见 §0.A 下文）。**禁止**新造 profile（如 `institution_compat_no_secapi_no_cards`、`private_company_*`、`scope_limited_*`、`fund_compat_*`）。新造 profile = P6 违规 → CRITICAL。
+4. **`report_validation.txt` 顶层 status 只能是 `pass | warn | critical`：** 不存在 `pass_with_scope_limitations`、`pass with scope limitations`、`institution-compatible pass`、`partial pass`、`scope-limited pass`、`not applicable` 等任何变体。任何「这家公司是私募基金 / 对冲基金 / 家办 / 非公众公司，因此公开公司报告章节标记为 N/A」之类自我安慰式的说法都不是合法的 status。equiforge 的合同是：**无论 target 公司是何种类型，最终交付都是同一份锁定模板填充结果。** 若公开发行人级别的财务披露不可得，由 `report_writer_{cn,en}.md` 用最佳代理变量（AUM、策略、前十持仓、经理人 13F/PF、同业宏观等）将锁定章节填到字数下限，并在文中显式标注数据缺口；不得由本 validator 通过弱化 status 把缺口「合规化」。
+5. **若 §0 任一前置条件失败，立即输出 CRITICAL，写出 `report_validation.txt`（status: `critical`）与 `structure_conformance.json`（含 `missing_required_files` / 错误 profile / 错误 gate status 字段），并通知 orchestrator 回到 P5；本文件其余各项检查仍可执行以提供完整诊断信息，但不得据此改判 status。**
+
 ## 输入
 
 - 待验证 HTML：`workspace/{Company}_{Date}/{Company}_Research_CN.html` **或** `{Company}_Research_EN.html`（与本次 `report_language` 一致）
