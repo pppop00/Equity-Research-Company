@@ -15,6 +15,22 @@
 5. **`report_validation.txt` 顶层 status 只能是 `pass | warn | critical`：** 不存在 `pass_with_scope_limitations`、`pass with scope limitations`、`institution-compatible pass`、`partial pass`、`scope-limited pass`、`not applicable` 等任何变体。任何「这家公司是私募基金 / 对冲基金 / 家办 / 非公众公司，因此公开公司报告章节标记为 N/A」之类自我安慰式的说法都不是合法的 status。equiforge 的合同是：**无论 target 公司是何种类型，最终交付都是同一份锁定模板填充结果。** 若公开发行人级别的财务披露不可得，由 `report_writer_{cn,en}.md` 用最佳代理变量（AUM、策略、前十持仓、经理人 13F/PF、同业宏观等）将锁定章节填到字数下限，并在文中显式标注数据缺口；不得由本 validator 通过弱化 status 把缺口「合规化」。
 6. **若 §0 任一前置条件失败，立即输出 CRITICAL，写出 `report_validation.txt`（status: `critical`）与 `structure_conformance.json`（含 `missing_required_files` / 错误 profile / 错误 gate status 字段），并通知 orchestrator 回到 P5；本文件其余各项检查仍可执行以提供完整诊断信息，但不得据此改判 status。**
 
+## 0c. Plan v3 硬拒条件（CRITICAL，先于其他结构检查）
+
+Plan v3 锁定模板已迁移到「Porter 单透视 × 5 力 × 6 段」+「Sankey 单面板」+「analyst_call.json sidecar」契约。下列任一项命中即 **CRITICAL，回到 P5 重写**，不得放行：
+
+1. **缺少 `analyst_call.json` sidecar：** HTML 旁应有同前缀 `<Company>_Research_<lang>.analyst_call.json`。缺失 → CRITICAL（plan v3 要求 sidecar 与 HTML 同交付）。
+2. **Porter 旧三透视残留：** HTML 中包含下列任一标识符 / 占位符 → CRITICAL：
+   - `{{PORTER_COMPANY_TEXT}}`、`{{PORTER_INDUSTRY_TEXT}}`、`{{PORTER_FORWARD_TEXT}}`
+   - `chart-radar-company`、`chart-radar-industry`、`chart-radar-forward`
+   - `porter-tabs`、`porter-radar`
+   - `id="porter-panel-company"` / `id="porter-panel-industry"` / `id="porter-panel-forward"`
+3. **Sankey 双面板残留：** HTML 中包含下列任一标识符 / 占位符 → CRITICAL：
+   - `chart-sankey-forecast`、`sankeyForecastData`
+   - `{{SANKEY_FORECAST_JS_DATA}}`、`{{SANKEY_YEAR_FORECAST}}`
+   - `sankey-tabs`、或与 Sankey 并列的 `tab-panel` 兄弟元素
+4. **Porter force-block 段落缺失：** 第五节内每个 `<div class="porter-force-block">` 必须**完整含 6 个 mandatory `<p>` 段落**，class 为 `porter-rating-statement` / `porter-anchor` / `porter-mechanism` / `porter-falsifier` / `porter-signal` / `porter-lookahead`。任一 force-block 缺任一 `<p>` → CRITICAL。
+
 ## 输入
 
 - 待验证 HTML：`workspace/{Company}_{Date}/{Company}_Research_CN.html` **或** `{Company}_Research_EN.html`（与本次 `report_language` 一致）

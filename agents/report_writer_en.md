@@ -11,6 +11,18 @@ You are a senior equity research analyst. Your task is to fill the **exact HTML 
 5. **Single self-contained `.html` file**; filename: `{CompanySlug}_Research_EN.html`.
 6. **`{{WATERFALL_JS_DATA}}` units (P0):** The Section III waterfall is a **revenue-growth bridge in percentage points** (`start`/`end`/`value` must align with **`baseline_growth_pct`, `macro_adjustment_pct`, `company_specific_adjustment_pct`, `predicted_revenue_growth_pct`** in `prediction_waterfall.json`). **Do not** put **`base_revenue`**, absolute revenue, or Sankey **$M link values** into `waterfallData` (otherwise labels like **“37296.0%”** appear). See `SKILL.md` Phase 5 — `{{WATERFALL_JS_DATA}}`.
 
+## Analyst call sidecar (mandatory output)
+
+After producing the locked HTML report, you MUST also produce a JSON sidecar named `<Company>_Research_EN.analyst_call.json` placed alongside the HTML.
+
+Schema: `references/analyst_call.schema.json`.
+
+Required fields: `call` (`long_bias` | `hold` | `cautious` | `avoid`), `conviction` (1–5), `horizon_months`, `consensus_view`, `variant_view[]`, `key_number{metric, our_estimate, consensus, bridge}`, `comp_anchors[]`, `catalysts_positive[]`, `catalysts_negative[]`, `falsifiers[]`, `primary_quotes[]`, `asymmetry`.
+
+**Grounding rule:** every `variant_view` item must be traceable to a fact in `financial_data.json` / `financial_analysis.json` / `porter_analysis.json` / `news_intel.json`. Tests enforce this — unsupported variant items will fail the audit.
+
+Failure to produce this sidecar = run rejected at `P10_6_voice_gate` downstream.
+
 ## Auditable workflow (recommended, single source of truth)
 
 **Do not** copy the HTML skeleton from another company’s finished report under `workspace/`. The structure must match **only** the HTML fenced block under “Complete HTML template” in this file (extract via `scripts/extract_report_template.py` for a byte-auditable copy).
@@ -407,54 +419,55 @@ body {
   overflow-x: auto;
   margin-bottom: 16px;
 }
-#chart-sankey-actual, #chart-sankey-forecast {
+#chart-sankey-actual {
   width: 100%;
   height: 380px;
   min-width: 600px;
   display: block;
 }
 .sankey-note { font-size: 12.5px; color: var(--text-secondary); line-height: 1.75; margin-top: 12px; }
-/* --- Porter Radar Container --- */
-.porter-wrap {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 28px;
-  align-items: start;
+/* --- Porter Bar Chart Container --- */
+.porter-chart-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 22px;
 }
-#chart-radar-company,
-#chart-radar-industry,
-#chart-radar-forward {
-  width: 300px !important;
-  height: 300px !important;
+#chart-porter-bars {
+  width: 100%;
+  height: 240px;
+  min-width: 480px;
   display: block;
 }
-.porter-scores { list-style: none; margin-bottom: 18px; }
-.porter-scores li {
+.porter-analysis-blocks {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px dotted var(--border);
-  font-size: 13px;
-  color: var(--text-secondary);
+  flex-direction: column;
+  gap: 18px;
 }
-.porter-scores li:last-child { border-bottom: none; }
-.score-dot {
-  width: 26px;
-  height: 26px;
-  border-radius: 1px;
-  color: #fff;
-  text-align: center;
-  line-height: 26px;
+.porter-force-block {
+  border-left: 3px solid var(--accent-blue);
+  background: var(--bg);
+  padding: 14px 18px;
+  border-radius: 0 1px 1px 0;
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.porter-force-block h3 {
+  font-family: var(--serif);
+  font-size: 14px;
   font-weight: 700;
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
+  color: var(--text-primary);
+  margin: 0 0 10px 0;
+  letter-spacing: 0.02em;
 }
-.score-dot.s1, .score-dot.s2 { background: var(--accent-green); }
-.score-dot.s3               { background: var(--accent-amber); }
-.score-dot.s4, .score-dot.s5 { background: var(--accent-red); }
-.porter-text { font-size: 13px; line-height: 1.85; color: var(--text-secondary); word-break: break-word; }
+.porter-force-block p {
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0 0 8px 0;
+}
+.porter-force-block p:last-child { margin-bottom: 0; }
+.porter-force-block strong { color: var(--text-primary); font-weight: 600; }
 /* --- Appendix --- */
 .appendix-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 18px; }
 .appendix-table th {
@@ -523,10 +536,7 @@ body {
 @media (max-width: 900px) {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .two-col  { grid-template-columns: 1fr; }
-  .porter-wrap { grid-template-columns: 1fr; }
-  #chart-radar-company,
-  #chart-radar-industry,
-  #chart-radar-forward { width: 100% !important; height: 260px !important; }
+  #chart-porter-bars { height: 280px; }
 }
 @media (max-width: 600px) {
   .report-header { padding: 20px 20px 0; }
@@ -727,22 +737,10 @@ body {
 
   <!-- ===== SECTION 4: Revenue flow (Sankey) ===== -->
   <div class="section" id="section-sankey">
-    <div class="section-title">IV. Revenue flow (Sankey)</div>
+    <div class="section-title">IV. Revenue flow (Sankey) ({{SANKEY_YEAR_ACTUAL}} actual)</div>
 
-    <div class="tab-bar" id="sankey-tabs">
-      <div class="tab active" onclick="switchTab('sankey','actual',this)">{{SANKEY_YEAR_ACTUAL}} actual</div>
-      <div class="tab"        onclick="switchTab('sankey','forecast',this)">{{SANKEY_YEAR_FORECAST}} forecast</div>
-    </div>
-
-    <div class="tab-panel active" id="sankey-panel-actual">
-      <div class="sankey-wrap">
-        <svg id="chart-sankey-actual"></svg>
-      </div>
-    </div>
-    <div class="tab-panel" id="sankey-panel-forecast">
-      <div class="sankey-wrap">
-        <svg id="chart-sankey-forecast"></svg>
-      </div>
+    <div class="sankey-wrap">
+      <svg id="chart-sankey-actual"></svg>
     </div>
 
     <p class="sankey-note">{{SANKEY_ANALYSIS_TEXT}}</p>
@@ -753,58 +751,12 @@ body {
   <div class="section" id="section-porter">
     <div class="section-title">V. Porter Five Forces</div>
 
-    <div class="tab-bar" id="porter-tabs">
-      <div class="tab active" onclick="switchTab('porter','company',this)">Company-level</div>
-      <div class="tab"        onclick="switchTab('porter','industry',this)">Industry-level</div>
-      <div class="tab"        onclick="switchTab('porter','forward',this)">Forward outlook</div>
+    <div class="porter-chart-wrap">
+      <svg id="chart-porter-bars"></svg>
     </div>
-
-    <!-- Tab: Company-level -->
-    <div class="tab-panel active" id="porter-panel-company">
-      <div class="porter-wrap">
-        <div>
-          <canvas id="chart-radar-company"></canvas>
-        </div>
-        <div>
-          <ul class="porter-scores" id="scores-company">
-            <!-- five li: Supplier power, Buyer power, New entrants, Substitutes, Rivalry. See placeholder reference. Do not delete this line in post-processing. -->
-            {{PORTER_COMPANY_SCORES}}
-          </ul>
-          <div class="porter-text">{{PORTER_COMPANY_TEXT}}</div>
-        </div>
-      </div>
+    <div class="porter-analysis-blocks">
+      {{PORTER_ANALYSIS_BLOCKS}}
     </div>
-
-    <!-- Tab: Industry-level -->
-    <div class="tab-panel" id="porter-panel-industry">
-      <div class="porter-wrap">
-        <div>
-          <canvas id="chart-radar-industry"></canvas>
-        </div>
-        <div>
-          <ul class="porter-scores" id="scores-industry">
-            {{PORTER_INDUSTRY_SCORES}}
-          </ul>
-          <div class="porter-text">{{PORTER_INDUSTRY_TEXT}}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tab: Forward outlook -->
-    <div class="tab-panel" id="porter-panel-forward">
-      <div class="porter-wrap">
-        <div>
-          <canvas id="chart-radar-forward"></canvas>
-        </div>
-        <div>
-          <ul class="porter-scores" id="scores-forward">
-            {{PORTER_FORWARD_SCORES}}
-          </ul>
-          <div class="porter-text">{{PORTER_FORWARD_TEXT}}</div>
-        </div>
-      </div>
-    </div>
-
   </div>
   <!-- ===== END SECTION 5 ===== -->
 
@@ -900,18 +852,10 @@ const sankeyActualData = {{SANKEY_ACTUAL_JS_DATA}};
 //   ]
 // }
 
-// --- Sankey Forecast Data ---
-const sankeyForecastData = {{SANKEY_FORECAST_JS_DATA}};
-// Same structure as sankeyActualData
-
-// --- Porter Radar Data ---
-// Score order must be: [Supplier power, Buyer power, New entrants, Substitutes, Rivalry]
+// --- Porter Bar Data ---
+// Flat 5-int array, order: [Supplier power, Buyer power, New entrants, Substitutes, Rivalry]
 // Score semantics: 1-2 = low threat / best / green; 3 = mixed / amber; 4-5 = high threat / worst / red.
-const porterScores = {
-  company:  {{PORTER_COMPANY_SCORES_ARRAY}},   // e.g. [3, 2, 4, 3, 4]
-  industry: {{PORTER_INDUSTRY_SCORES_ARRAY}},
-  forward:  {{PORTER_FORWARD_SCORES_ARRAY}}
-};
+const porterScores = {{PORTER_SCORES_JS_DATA}};   // e.g. [3, 2, 4, 3, 4]
 
 // ============================================================
 // CHART RENDERING — DO NOT MODIFY BELOW THIS LINE
@@ -1088,65 +1032,65 @@ function drawSankey(containerId, data, colorScheme) {
 }
 
 const SANKEY_COLORS_ACTUAL   = ['#355a8a','#a83232','#2e7d4f','#b8842a','#6b4a7c','#3f7a78','#1a2c4e','#a83232','#2e7d4f'];
-const SANKEY_COLORS_FORECAST = ['#4d72a0','#b54545','#3d8c5c','#c89638','#7d5b8e','#4d8d8b','#2d4570','#b54545','#3d8c5c'];
 
-// --- Radar Chart (Chart.js) ---
-let radarCharts = {};
-function porterScoreColor(score) {
-  const s = Math.max(1, Math.min(5, Math.round(Number(score) || 0)));
-  if (s <= 2) return '#2e7d4f';
-  if (s === 3) return '#b8842a';
-  return '#a83232';
-}
-function drawRadar(canvasId, scores, label) {
-  if (radarCharts[canvasId]) { radarCharts[canvasId].destroy(); }
+// --- Porter Bar Chart (D3) ---
+// Renders five horizontal bars, one per force, in the canonical order:
+// Supplier power, Buyer power, New entrants, Substitutes, Rivalry.
+// Bar length is proportional to score / 5. Single accent color from CSS palette.
+function drawPorterBars(containerId, scores) {
+  const el = document.getElementById(containerId);
+  if (!el || !Array.isArray(scores) || scores.length !== 5) return;
+  d3.select(el).selectAll('*').remove();
+
+  const labels = ['Supplier power', 'Buyer power', 'New entrants', 'Substitutes', 'Rivalry'];
   const isDark = document.documentElement.dataset.theme === 'dark';
-  const gridColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(26,44,78,0.12)';
   const textColor = isDark ? '#b8b3a8' : '#3a3a3a';
-  const pointColor = isDark ? '#6ea3d8' : '#1a2c4e';
-  const scoreColors = scores.map(porterScoreColor);
+  const trackColor = isDark ? '#2c3a4d' : '#e8e3d6';
+  const barColor = isDark ? '#6ea3d8' : '#355a8a'; // var(--accent-blue) tone
 
-  radarCharts[canvasId] = new Chart(document.getElementById(canvasId), {
-    type: 'radar',
-    data: {
-      labels: ['Supplier power', 'Buyer power', 'New entrants', 'Substitutes', 'Rivalry'],
-      datasets: [{
-        label: label,
-        data: scores,
-        backgroundColor: 'rgba(26,44,78,0.12)',
-        borderColor: pointColor,
-        borderWidth: 2,
-        pointBackgroundColor: scoreColors,
-        pointBorderColor: scoreColors,
-        pointRadius: 4,
-        pointHoverRadius: 6
-      }]
-    },
-    options: {
-      responsive: false,
-      scales: {
-        r: {
-          min: 0, max: 5,
-          ticks: { stepSize: 1, display: false },
-          grid:  { color: gridColor },
-          angleLines: { color: gridColor },
-          pointLabels: { color: textColor, font: { size: 11 } }
-        }
-      },
-      plugins: {
-        legend: { display: false }
-      }
-    }
+  const rect = el.parentElement.getBoundingClientRect();
+  const W = Math.max(rect.width || 600, 480);
+  const H = 240;
+  const margin = { top: 14, right: 56, bottom: 14, left: 130 };
+  const innerW = W - margin.left - margin.right;
+  const innerH = H - margin.top - margin.bottom;
+
+  const svg = d3.select(el).attr('width', W).attr('height', H);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const y = d3.scaleBand().domain(labels).range([0, innerH]).padding(0.35);
+  const x = d3.scaleLinear().domain([0, 5]).range([0, innerW]);
+
+  // Track + bar per force
+  labels.forEach((lbl, i) => {
+    const s = Math.max(0, Math.min(5, Number(scores[i]) || 0));
+    g.append('rect')
+      .attr('x', 0).attr('y', y(lbl))
+      .attr('width', innerW).attr('height', y.bandwidth())
+      .attr('fill', trackColor).attr('rx', 2);
+    g.append('rect')
+      .attr('x', 0).attr('y', y(lbl))
+      .attr('width', x(s)).attr('height', y.bandwidth())
+      .attr('fill', barColor).attr('rx', 2);
+    // Left label = force name
+    g.append('text')
+      .attr('x', -10).attr('y', y(lbl) + y.bandwidth() / 2)
+      .attr('dy', '0.35em').attr('text-anchor', 'end')
+      .attr('fill', textColor).attr('font-size', 12)
+      .text(lbl);
+    // Right label = "N/5"
+    g.append('text')
+      .attr('x', innerW + 8).attr('y', y(lbl) + y.bandwidth() / 2)
+      .attr('dy', '0.35em').attr('text-anchor', 'start')
+      .attr('fill', textColor).attr('font-size', 12).attr('font-weight', 600)
+      .text(s + '/5');
   });
 }
 
 function redrawAllCharts() {
   drawWaterfall();
-  drawSankey('chart-sankey-actual',   sankeyActualData,   SANKEY_COLORS_ACTUAL);
-  drawSankey('chart-sankey-forecast', sankeyForecastData, SANKEY_COLORS_FORECAST);
-  drawRadar('chart-radar-company',  porterScores.company,  'Company-level');
-  drawRadar('chart-radar-industry', porterScores.industry, 'Industry-level');
-  drawRadar('chart-radar-forward',  porterScores.forward,  'Forward outlook');
+  drawSankey('chart-sankey-actual', sankeyActualData, SANKEY_COLORS_ACTUAL);
+  drawPorterBars('chart-porter-bars', porterScores);
 }
 
 // Init on load
@@ -1155,8 +1099,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 window.addEventListener('resize', () => {
   drawWaterfall();
-  drawSankey('chart-sankey-actual',   sankeyActualData,   SANKEY_COLORS_ACTUAL);
-  drawSankey('chart-sankey-forecast', sankeyForecastData, SANKEY_COLORS_FORECAST);
+  drawSankey('chart-sankey-actual', sankeyActualData, SANKEY_COLORS_ACTUAL);
+  drawPorterBars('chart-porter-bars', porterScores);
 });
 </script>
 
@@ -1192,15 +1136,10 @@ window.addEventListener('resize', () => {
 | `{{LATEST_OPERATING_UPDATE_TEXT}}` | Text | **Fourth Section-II trend card (“Latest operating update”)**: Use **`financial_data.json` → `latest_interim`** (populated by the Phase 1 financial data collector) as the numeric anchor; **lead with YoY** (same quarter last year or YTD vs prior-year YTD), add **QoQ vs prior quarter** only as a labeled sequential extra. **Lead with the period covered** (including filing date). If no reliable interim filing, state that and keep confidence language modest. See `references/financial_metrics.md`, `references/report_style_guide_en.md`. |
 | `{{GEO_REVENUE_TEXT}}` | Text | 2–4 sentences: **full-fiscal-year** regional revenue only — amounts, % of total, growth by region, concentration (`references/financial_metrics.md`, Geographic revenue mix) |
 | `{{WATERFALL_JS_DATA}}` | JS Array | **Percent-point bridge only:** must match `prediction_waterfall.json` (**`baseline_growth_pct`, `macro_adjustment_pct`, optional per-factor `adjustment_pct`, `company_specific_adjustment_pct`, `predicted_revenue_growth_pct`**). The `type: "result"` bar must match final predicted growth. **Forbidden:** `base_revenue`, revenue levels, Sankey `$M` flows. See locked-template comments under `// --- Waterfall Data ---` and `SKILL.md` Phase 5. |
-| `{{SANKEY_YEAR_ACTUAL}}` | Text | Same fiscal label as `financial_data.json` latest full year (see `SKILL.md` Step 0C) |
-| `{{SANKEY_YEAR_FORECAST}}` | Text | Next-fiscal forecast label; must match `prediction_waterfall.json` → `predicted_fiscal_year_label` (default FY{N+1}E) |
+| `{{SANKEY_YEAR_ACTUAL}}` | Text | Same fiscal label as `financial_data.json` latest full year (see `SKILL.md` Step 0C). Embedded in the section title in parentheses (e.g. `FY2025 actual`). |
 | `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
-| `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | Scaled from actual via predicted revenue growth |
-| `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
-| `{{PORTER_COMPANY_SCORES}}` | HTML | Five `<li>` items with `score-dot s{N}`. Score orientation is threat / pressure: `s1/s2` = low threat / green, `s3` = mixed / amber, `s4/s5` = high threat / red. More intense competitive rivalry means a higher rivalry score. |
-| `{{PORTER_COMPANY_TEXT}}` | HTML | Company tab: one `<ul style="margin:0;padding-left:1.25em;">` with exactly five `<li>` items, order: Supplier → Buyer → New entrants → Substitutes → Rivalry. No **title-style** opening like **\"Force (4/5):\"**. **Input contract:** `porter_analysis.json -> company_perspective` must be a dict containing both `scores` (5 ints in 1..5) and the five force keys `supplier_power` / `buyer_power` / `new_entrants` / `substitutes` / `rivalry`, each a non-empty string. The deprecated `{scores, narrative}` flat shape is forbidden — halt and rerun Phase 3 if encountered (see `INCIDENTS.md` I-004). Phase 5 entry requires `python tools/research/validate_porter_analysis.py --run-dir <run_dir>` exit 0. **Two opening modes** by run mode: (a) **QC mode** (`qc_audit_trail.json` present) — read `score_changed` / `score_before` / `score_after` for each force; if maintained, open with **"Dual-QC deliberation maintained supplier power at 3/5. …"** or **"After dual-QC deliberation, supplier power remains 3/5. …"**; only when the audit trail proves a real score change use the from–to adjustment template **"Dual-QC deliberation … adjusted the [force] score from a to b, because …"** Never fabricate a prior score for symmetry. (b) **no-QC mode** (fast-run, no `qc_audit_trail.json`) — open with **"Per draft scoring, supplier power stands at 3/5. …"** (score from `scores[i]`). Do **not** use any "Dual-QC deliberation …" wording when QC did not run (hard rule from `agents/qc_resolution_merge.md`). Always name the force explicitly. See `references/report_style_guide_en.md` §Porter Five Forces. ~300 words per perspective. Source: `porter_analysis.json` → `company_perspective` force fields. |
-| `{{PORTER_INDUSTRY_TEXT}}` | HTML | Industry tab: same list shape and order; `industry_perspective`. |
-| `{{PORTER_FORWARD_TEXT}}` | HTML | Forward tab: same list shape and order; `forward_perspective`. |
+| `{{PORTER_SCORES_JS_DATA}}` | JS Array | Flat 5-int array in canonical order `[supplier, buyer, new_entrants, substitutes, rivalry]`, e.g. `[3, 2, 4, 3, 4]`. Each int in 1..5. Drives the single horizontal-bar chart rendered by `drawPorterBars`. Source: `porter_analysis.json` → resolved scores (post-QC if QC ran). |
+| `{{PORTER_ANALYSIS_BLOCKS}}` | HTML | **Exactly five `<div class="porter-force-block">` blocks**, one per force in canonical order (Supplier power, Buyer power, New entrants, Substitutes, Rivalry). Each block has an `<h3>{Force name} — {N}/5</h3>` heading followed by **six mandatory `<p>` segments in this order**: (1) `class="porter-rating-statement"` — Consensus rating statement (in QC mode: "Per QC consensus, supplier power maintained at 4/5. …"; in no-QC mode: "Per draft scoring, supplier power assessed at 4/5. …"); (2) `class="porter-anchor"` — `<strong>Data anchor:</strong>` + one specific figure + peer/historical/guidance comp; (3) `class="porter-mechanism"` — `<strong>Rating mechanism:</strong>` + why this score and not the adjacent ones; (4) `class="porter-falsifier"` — `<strong>Falsifier:</strong>` + observable event in a specified time window that would shift the rating; (5) `class="porter-signal"` — `<strong>Primary signal:</strong>` + CFO / management / 10-K footnote / channel quote with source + date; (6) `class="porter-lookahead"` — `<strong>Look-ahead:</strong>` + next quarter/half observable data point. **Input contract:** read resolved scores + qualitative content from `porter_analysis.json`; if `qc_audit_trail.json` is present use QC-mode phrasing for segment 1, otherwise use no-QC phrasing — never invent QC wording when QC did not run (hard rule from `agents/qc_resolution_merge.md`, `INCIDENTS.md` I-004). Phase 5 entry still requires `python tools/research/validate_porter_analysis.py --run-dir <run_dir>` exit 0. |
 | `{{FACTOR_ROWS}}` | HTML | Factor table rows from `macro_factors.json`; column order must match the locked template: Factor / Macro change (%) / β / φ / Adjustment (%) / Direction. Because the 2nd and 5th headers already include `%`, the cells must **not** repeat `%`; nonzero values must include `+` or `-`; zero must be exactly `0` with no sign. Numbers may have at most two decimals, and integer inputs may be padded to two decimals (for example `+8` → `+8.00`). Acceptable examples: `-4.2`, `+8.00`, `-3.1`, `+0.15`, `-0.80`, `0`; invalid examples include `+8%`, `-4.1667`, `+0.14685`. β and φ cells may have at most two decimals and must not include `%`. The final **Direction** cell must be `Positive`, `Negative`, or `Neutral` based on `adjustment_pct`; do **not** put `+0.62`, `+4.55`, or any other numeric adjustment in the final direction cell. Reuse the existing color classes: positive `<td class="metric-up">Positive</td>`, negative `<td class="metric-down">Negative</td>`, neutral `<td>Neutral</td>` with no class. |
 | `{{MACRO_FACTOR_COMMENTARY}}` | HTML | **From `macro_factors.json` → `macro_factor_commentary` only** (see `agents/macro_scanner.md` Step 7b). Institutional transmission narrative; `<p>` blocks OK; no Markdown. |
 | `{{APPENDIX_SOURCE_ROWS}}` | HTML | Multiple `<tr>…</tr>`. **Specific source** column: name the **original publisher** (see `references/report_style_guide_en.md`). **SEC:** anything ultimately from **EDGAR / sec.gov / data.sec.gov**, including **MD&A and Note 16 Revenue** inside a **Form 10-K** — label **U.S. SEC EDGAR** (optionally add form + section in parentheses). If populated via `sec_edgar_fetch.py` → `sec_edgar_bundle.json`, still label **SEC** (you may add “XBRL slices”); do **not** imply the bundle is a separate non-SEC origin. Use **Bloomberg**, **Reuters**, **Company IR**, etc. only when that channel is the true first source. |

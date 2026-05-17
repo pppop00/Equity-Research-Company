@@ -54,6 +54,8 @@ class TestExtractCnTemplate(unittest.TestCase):
             'id="section-summary"',
             'id="chart-waterfall"',
             'id="chart-sankey-actual"',
+            'id="chart-porter-bars"',
+            "{{PORTER_ANALYSIS_BLOCKS}}",
             "waterfallData = {{WATERFALL_JS_DATA}}",
             "FORBIDDEN: base_revenue",
             "const sankeyActualData = {{SANKEY_ACTUAL_JS_DATA}}",
@@ -62,6 +64,18 @@ class TestExtractCnTemplate(unittest.TestCase):
             "{{SUMMARY_PARA_4}}",
         ):
             self.assertIn(fragment, html)
+        for forbidden in (
+            'id="chart-radar-company"',
+            'id="chart-radar-industry"',
+            'id="chart-radar-forward"',
+            'id="chart-sankey-forecast"',
+            "{{PORTER_COMPANY_TEXT}}",
+            "{{PORTER_INDUSTRY_TEXT}}",
+            "{{PORTER_FORWARD_TEXT}}",
+            "{{SANKEY_FORECAST_JS_DATA}}",
+            "{{SANKEY_YEAR_FORECAST}}",
+        ):
+            self.assertNotIn(forbidden, html)
 
     def test_placeholders_remain_for_agent_fill(self):
         md = (REPO_ROOT / "agents" / "report_writer_cn.md").read_text(
@@ -91,11 +105,24 @@ class TestExtractEnTemplate(unittest.TestCase):
         html_en = ert.extract_html_fenced(md_en)
         for fragment in (
             'id="section-porter"',
-            'id="chart-radar-forward"',
+            'id="chart-porter-bars"',
+            "{{PORTER_ANALYSIS_BLOCKS}}",
             "toggleTheme",
             "redrawAllCharts",
         ):
             self.assertIn(fragment, html_en)
+        for forbidden in (
+            'id="chart-radar-company"',
+            'id="chart-radar-industry"',
+            'id="chart-radar-forward"',
+            'id="chart-sankey-forecast"',
+            "{{PORTER_COMPANY_TEXT}}",
+            "{{PORTER_INDUSTRY_TEXT}}",
+            "{{PORTER_FORWARD_TEXT}}",
+            "{{SANKEY_FORECAST_JS_DATA}}",
+            "{{SANKEY_YEAR_FORECAST}}",
+        ):
+            self.assertNotIn(forbidden, html_en)
 
     def test_en_placeholders(self):
         md = (REPO_ROOT / "agents" / "report_writer_en.md").read_text(
@@ -120,7 +147,7 @@ class TestSha256Stable(unittest.TestCase):
         # 若有意更新 agents/report_writer_cn.md 内模板，需同步改此期望值 / If the fenced template in the md changes, update this expectation.
         self.assertEqual(
             digest,
-            "71d3b8b8bc0efc9ee76f2d3891984a63ae9310511433606c6536890c73a71267",
+            "e1a82943b11e5029b867140233ba4e0b69e74ae59e5915c2c58fc79b1b835173",
         )
 
     def test_en_hash_matches_known_snapshot(self):
@@ -131,7 +158,7 @@ class TestSha256Stable(unittest.TestCase):
         digest = hashlib.sha256(html.encode("utf-8")).hexdigest()
         self.assertEqual(
             digest,
-            "e9971e8d88ca735dccbe2c6c1926993c5c98e9751eedac3fd9934afd6450ef5c",
+            "073240acd06945d8e8f405d9740bbf6f576d352fb3320e7c796131721f41601e",
         )
 
 

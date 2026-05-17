@@ -1,0 +1,230 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Analyst Call Sidecar (analyst_call.json)",
+  "description": "Sidecar JSON emitted by the report writer alongside the locked HTML. Captures the analyst layer — call, variant view vs consensus, key number bridge, comp anchors, catalysts, falsifiers, primary-source quotes, asymmetry — that downstream consumers (notably Equity Photo Skill's 6-card pack) need to feel like real research notes instead of HTML compression. Introduced in plan v3 to fix card prose drifting toward 公众号 clickbait. See plan v3 for full intent.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "call",
+    "conviction",
+    "horizon_months",
+    "consensus_view",
+    "variant_view",
+    "key_number",
+    "comp_anchors",
+    "catalysts_positive",
+    "catalysts_negative",
+    "falsifiers",
+    "primary_quotes",
+    "asymmetry"
+  ],
+  "properties": {
+    "schema_version": {
+      "description": "Sidecar schema version. Bumped only when the contract changes in a breaking way; consumers should refuse unknown versions.",
+      "type": "integer",
+      "const": 1
+    },
+    "call": {
+      "description": "The analyst's directional call. Deliberately NOT a buy/sell rating — this is the prose stance the cards quote. Allowed: long_bias | hold | cautious | avoid.",
+      "type": "string",
+      "enum": ["long_bias", "hold", "cautious", "avoid"]
+    },
+    "conviction": {
+      "description": "Conviction score 1 (low) to 5 (high). Drives card emphasis and downstream weighting in the cross-validator.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "horizon_months": {
+      "description": "Time horizon over which the call is supposed to play out, in months. Must be >=1. Cards display this verbatim.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "consensus_view": {
+      "description": "What Street/consensus is modeling for the same window. Required so variant_view has something concrete to differ from. >=40 chars to discourage one-liners.",
+      "type": "string",
+      "minLength": 40
+    },
+    "variant_view": {
+      "description": "Specific divergences from consensus with a stated mechanism. 1..4 items. Each item >=30 chars. Cards quote one of these as the headline 'why we differ' line; cross-validator regression-tests each item shares >=3 substantive keywords with upstream JSON evidence (financial_data, financial_analysis, porter_analysis, news_intel).",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": {
+        "type": "string",
+        "minLength": 30
+      }
+    },
+    "key_number": {
+      "description": "The one number the analyst is willing to be judged on. Includes our estimate, consensus, and the bridge that explains the gap. Cards display the bridge as the body line under the key number tile.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric", "our_estimate", "consensus", "bridge"],
+      "properties": {
+        "metric": {
+          "description": "The metric being forecast (e.g. 'non-GAAP gross margin FY26'). >=5 chars.",
+          "type": "string",
+          "minLength": 5
+        },
+        "our_estimate": {
+          "description": "Our point estimate, as a display string (units included, e.g. '52.5%').",
+          "type": "string",
+          "minLength": 1
+        },
+        "consensus": {
+          "description": "Street consensus for the same metric, same period, as a display string.",
+          "type": "string",
+          "minLength": 1
+        },
+        "bridge": {
+          "description": "Decomposition of the gap (e.g. 'Mix shift (+150bps) + ePMR yield (+100bps)'). >=20 chars so the writer cannot stuff a vague phrase.",
+          "type": "string",
+          "minLength": 20
+        }
+      }
+    },
+    "comp_anchors": {
+      "description": "Comparable anchors for the key metric or adjacent metrics. Each entry must include `metric`, `ours`, and AT LEAST ONE additional anchor: any key matching `peer_<name>`, any key matching `historical_<n>y_avg`, or the literal key `management_guide`. This 'at least one anchor' constraint is enforced jointly by JSON Schema (minProperties >= 3 plus propertyNames pattern + required metric+ours forces a third allowed key) AND by tests/test_analyst_call.py.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["metric", "ours"],
+        "minProperties": 3,
+        "propertyNames": {
+          "pattern": "^(metric|ours|management_guide|peer_[A-Za-z0-9_]+|historical_[0-9]+y_avg)$"
+        },
+        "properties": {
+          "metric": {
+            "description": "Metric label (e.g. 'nearline ASP').",
+            "type": "string",
+            "minLength": 3
+          },
+          "ours": {
+            "description": "Our value for this metric as a display string.",
+            "type": "string",
+            "minLength": 1
+          },
+          "management_guide": {
+            "description": "Management's own guide for this metric, if disclosed.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "patternProperties": {
+          "^peer_[A-Za-z0-9_]+$": {
+            "description": "Peer value keyed by peer short name (e.g. peer_STX, peer_AMD).",
+            "type": "string",
+            "minLength": 1
+          },
+          "^historical_[0-9]+y_avg$": {
+            "description": "Historical N-year average for this metric (e.g. historical_3y_avg).",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "catalysts_positive": {
+      "description": "Upcoming events that, if they print as expected, support the call. Each requires event, date_window (e.g. '2026-07' or '2026-07..2026-09'), and implication (>=20 chars).",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event", "date_window", "implication"],
+        "properties": {
+          "event": {
+            "description": "Named event (e.g. 'STX FY-end capacity guide'). >=10 chars.",
+            "type": "string",
+            "minLength": 10
+          },
+          "date_window": {
+            "description": "Date or date range string. Accepts YYYY-MM, YYYY-MM-DD, YYYY-Qn, or 'YYYY-MM..YYYY-MM'.",
+            "type": "string",
+            "pattern": "^[0-9]{4}(-(Q[1-4]|[0-9]{2}(-[0-9]{2})?))(\\.\\.[0-9]{4}(-(Q[1-4]|[0-9]{2}(-[0-9]{2})?)))?$"
+          },
+          "implication": {
+            "description": "What this event would imply for the call if it prints as expected. >=20 chars.",
+            "type": "string",
+            "minLength": 20
+          }
+        }
+      }
+    },
+    "catalysts_negative": {
+      "description": "Events that, if they happen, would damage the call. Each requires event, trigger (specific quantitative threshold), and implication.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event", "trigger", "implication"],
+        "properties": {
+          "event": {
+            "description": "Named event (e.g. 'Hyperscaler capex revision'). >=10 chars.",
+            "type": "string",
+            "minLength": 10
+          },
+          "trigger": {
+            "description": "Specific quantitative trigger (e.g. 'AWS+Azure+GCP FY27 capex YoY <10%'). >=10 chars.",
+            "type": "string",
+            "minLength": 10
+          },
+          "implication": {
+            "description": "What happens to the call if the trigger fires. >=20 chars.",
+            "type": "string",
+            "minLength": 20
+          }
+        }
+      }
+    },
+    "falsifiers": {
+      "description": "Observable signals that would falsify the call within the horizon. Concrete, near-term, measurable. Each >=30 chars. The asymmetry between catalysts (multiple, distant) and falsifiers (few, near, sharp) is the point.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 30
+      }
+    },
+    "primary_quotes": {
+      "description": "Primary-source quotes (CEO/CFO on a call, filing language, regulator statement). The cards prefer these over secondary commentary. Each requires speaker, venue, quote (>=20 chars), and url_or_filing (URL or filing identifier).",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["speaker", "venue", "quote", "url_or_filing"],
+        "properties": {
+          "speaker": {
+            "description": "Person on the record (e.g. 'CFO Wissam Jabre').",
+            "type": "string",
+            "minLength": 3
+          },
+          "venue": {
+            "description": "Venue (e.g. 'FQ3-26 earnings call', '10-K FY25 risk factors').",
+            "type": "string",
+            "minLength": 5
+          },
+          "quote": {
+            "description": "The quoted text, verbatim. >=20 chars.",
+            "type": "string",
+            "minLength": 20
+          },
+          "url_or_filing": {
+            "description": "Either a URL (http/https) or a filing identifier (e.g. '10-K 2025-08-15' or an EDGAR accession).",
+            "type": "string",
+            "pattern": "^(https?://\\S+|[A-Za-z0-9][A-Za-z0-9 _./:\\-]{4,})$"
+          }
+        }
+      }
+    },
+    "asymmetry": {
+      "description": "One-paragraph summary of the bull/bear payoff skew over the stated horizon (e.g. 'Skewed upside: bull 53% achievable on…, bear -18% on…'). >=40 chars. Cards quote this as the closing line on the asymmetry card.",
+      "type": "string",
+      "minLength": 40
+    }
+  }
+}

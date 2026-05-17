@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "call": "long_bias",
+  "conviction": 4,
+  "horizon_months": 18,
+  "consensus_view": "Street modeling NVDA datacenter revenue to decelerate from triple-digit to mid-40s YoY in FY27 as Blackwell airpocket and hyperscaler digestion compress demand.",
+  "variant_view": [
+    "Blackwell rack-scale (GB200 NVL72) shifts revenue mix to systems where ASP per GPU-equivalent is materially higher than consensus models.",
+    "Sovereign AI orders create a non-hyperscaler demand pool that consensus treats as zero through FY27.",
+    "Networking attach (NVLink + Spectrum-X) lifts blended datacenter gross margin above the 70% line consensus considers a ceiling."
+  ],
+  "key_number": {
+    "metric": "non-GAAP datacenter gross margin FY27",
+    "our_estimate": "73.5%",
+    "consensus": "70.0%",
+    "bridge": "Systems mix shift (+200bps) + networking attach (+100bps) + memory cost easing (+50bps) net of HBM4 ramp (-15bps)"
+  },
+  "comp_anchors": [
+    {
+      "metric": "datacenter GPU ASP",
+      "ours": "$36k blended FY27",
+      "peer_AMD": "$15k MI355 list",
+      "historical_3y_avg": "$22k"
+    },
+    {
+      "metric": "datacenter gross margin",
+      "ours": "73.5%",
+      "management_guide": "mid-70s sustained per FQ4-25 commentary"
+    }
+  ],
+  "catalysts_positive": [
+    {
+      "event": "Hyperscaler FY27 capex guides at Q4 prints",
+      "date_window": "2026-01..2026-02",
+      "implication": "If AWS+Azure+GCP+META aggregate >+25% YoY, validates our datacenter run-rate and supports the +200bps mix-shift thesis."
+    },
+    {
+      "event": "Rubin platform tape-out disclosure",
+      "date_window": "2026-Q3",
+      "implication": "Confirms cadence to 1-year product cycle, sustaining ASP power and locking in CY27 visibility."
+    }
+  ],
+  "catalysts_negative": [
+    {
+      "event": "Hyperscaler capex revision",
+      "trigger": "AWS+Azure+GCP FY27 capex YoY <10%",
+      "implication": "Long-cycle accelerator demand re-rates; datacenter revenue growth compresses below consensus and our margin bridge breaks."
+    }
+  ],
+  "falsifiers": [
+    "Q+1 datacenter sequential growth <+5% with networking attach not improving — kills mix-shift mechanism.",
+    "Blackwell systems ASP printed below $3M per NVL72 rack at next conference — kills the rack-scale repricing story."
+  ],
+  "primary_quotes": [
+    {
+      "speaker": "CFO Colette Kress",
+      "venue": "FQ4-25 earnings call",
+      "quote": "Demand for Blackwell is extraordinary and we expect significant Blackwell revenue in Q1.",
+      "url_or_filing": "https://investor.nvidia.com/financial-info/quarterly-results/default.aspx"
+    },
+    {
+      "speaker": "CEO Jensen Huang",
+      "venue": "GTC 2025 keynote",
+      "quote": "We are now in the era of accelerated computing and generative AI, and the runway is measured in trillions.",
+      "url_or_filing": "https://www.nvidia.com/gtc/keynote/"
+    }
+  ],
+  "asymmetry": "Skewed upside: bull case +45% on Rubin pull-forward and sovereign AI orders compounding; bear case -22% on hyperscaler digestion deeper than two quarters."
+}

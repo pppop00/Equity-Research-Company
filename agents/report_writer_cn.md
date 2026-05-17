@@ -42,6 +42,32 @@
 
 ---
 
+## Analyst call sidecar (mandatory output)
+
+After producing the locked HTML report, you MUST also produce a JSON sidecar named `<Company>_Research_CN.analyst_call.json` placed in the same folder as the HTML. This sidecar captures the analyst layer that drives the social cards downstream.
+
+Schema: `references/analyst_call.schema.json` (authoritative — validator runs against this).
+
+Required fields:
+- `call`: one of `long_bias | hold | cautious | avoid`
+- `conviction`: integer 1-5
+- `horizon_months`: integer (typically 12-18)
+- `consensus_view`: 1-3 sentences describing what the Street currently believes (cite sell-side consensus if available; if not, describe the implicit market read)
+- `variant_view`: array of 1-3 strings, each a specific divergence from consensus with the mechanism (not "we are bullish" — "we model 35% nearline ASP YoY vs Street 25% driven by hyperscaler 18-month commits")
+- `key_number`: object with `metric`, `our_estimate`, `consensus`, `bridge` — the single most important quantitative call
+- `comp_anchors`: array of objects with `metric`, `ours`, plus at least one of `peer_<X>` / `historical_3y_avg` / `management_guide`
+- `catalysts_positive`: array of `{event, date_window, implication}`
+- `catalysts_negative`: array of `{event, trigger, implication}`
+- `falsifiers`: array of strings; each is a specific observable event that would invalidate the call
+- `primary_quotes`: array of `{speaker, venue, quote, url_or_filing}` — at least 1 quote per material thesis
+- `asymmetry`: 1-2 sentences naming whether risk/reward is skewed upside or downside and why
+
+Grounding rule: every `variant_view` item must be traceable to a fact in `financial_data.json` / `financial_analysis.json` / `porter_analysis.json` / `news_intel.json`. The cross-validator and `tests/test_analyst_call.py` enforce this.
+
+Failure to produce this sidecar = run is rejected at Phase A5 / P10_6_voice_gate downstream.
+
+---
+
 ## 完整 HTML 模板（逐字输出，仅替换 {{PLACEHOLDER}}）
 
 ```html
@@ -397,54 +423,59 @@ body {
   overflow-x: auto;
   margin-bottom: 16px;
 }
-#chart-sankey-actual, #chart-sankey-forecast {
+#chart-sankey-actual {
   width: 100%;
   height: 380px;
   min-width: 600px;
   display: block;
 }
 .sankey-note { font-size: 12.5px; color: var(--text-secondary); line-height: 1.75; margin-top: 12px; }
-/* --- Porter Radar Container --- */
-.porter-wrap {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 28px;
-  align-items: start;
+/* --- Porter Bar Chart Container --- */
+.porter-chart-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 24px;
 }
-#chart-radar-company,
-#chart-radar-industry,
-#chart-radar-forward {
-  width: 300px !important;
-  height: 300px !important;
+#chart-porter-bars {
+  width: 100%;
+  height: 260px;
+  min-width: 520px;
   display: block;
 }
-.porter-scores { list-style: none; margin-bottom: 18px; }
-.porter-scores li {
+/* --- Porter Per-Force Analysis Blocks --- */
+.porter-analysis-blocks {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px dotted var(--border);
-  font-size: 13px;
+  flex-direction: column;
+  gap: 16px;
+}
+.porter-force-block {
+  border-left: 3px solid var(--accent-blue);
+  background: var(--bg);
+  padding: 14px 18px;
+  border-radius: 0 1px 1px 0;
+}
+.porter-force-block h3 {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  letter-spacing: 0.02em;
+}
+.porter-force-block p {
+  font-size: 12.5px;
+  line-height: 1.85;
   color: var(--text-secondary);
+  margin-bottom: 6px;
+  word-break: break-word;
 }
-.porter-scores li:last-child { border-bottom: none; }
-.score-dot {
-  width: 26px;
-  height: 26px;
-  border-radius: 1px;
-  color: #fff;
-  text-align: center;
-  line-height: 26px;
-  font-weight: 700;
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
+.porter-force-block p:last-child { margin-bottom: 0; }
+.porter-force-block .porter-rating-statement {
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 10px;
 }
-.score-dot.s1, .score-dot.s2 { background: var(--accent-green); }
-.score-dot.s3               { background: var(--accent-amber); }
-.score-dot.s4, .score-dot.s5 { background: var(--accent-red); }
-.porter-text { font-size: 13px; line-height: 1.9; color: var(--text-secondary); word-break: break-word; }
+.porter-force-block strong { color: var(--text-primary); font-weight: 600; }
 /* --- Appendix --- */
 .appendix-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 18px; }
 .appendix-table th {
@@ -511,10 +542,7 @@ body {
 @media (max-width: 900px) {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .two-col  { grid-template-columns: 1fr; }
-  .porter-wrap { grid-template-columns: 1fr; }
-  #chart-radar-company,
-  #chart-radar-industry,
-  #chart-radar-forward { width: 100% !important; height: 260px !important; }
+  #chart-porter-bars { height: 240px; min-width: 420px; }
 }
 @media (max-width: 600px) {
   .report-header { padding: 20px 20px 0; }
@@ -723,24 +751,11 @@ body {
 
   <!-- ===== SECTION 4: 收入流向分析 ===== -->
   <div class="section" id="section-sankey">
-    <div class="section-title">四、收入流向分析（Sankey 桑基图）</div>
+    <div class="section-title">四、收入流向分析（{{SANKEY_YEAR_ACTUAL}} 实际）</div>
 
-    <div class="tab-bar" id="sankey-tabs">
-      <div class="tab active" onclick="switchTab('sankey','actual',this)">{{SANKEY_YEAR_ACTUAL}} 实际</div>
-      <div class="tab"        onclick="switchTab('sankey','forecast',this)">{{SANKEY_YEAR_FORECAST}} 预测</div>
+    <div class="sankey-wrap">
+      <svg id="chart-sankey-actual"></svg>
     </div>
-
-    <div class="tab-panel active" id="sankey-panel-actual">
-      <div class="sankey-wrap">
-        <svg id="chart-sankey-actual"></svg>
-      </div>
-    </div>
-    <div class="tab-panel" id="sankey-panel-forecast">
-      <div class="sankey-wrap">
-        <svg id="chart-sankey-forecast"></svg>
-      </div>
-    </div>
-
     <p class="sankey-note">{{SANKEY_ANALYSIS_TEXT}}</p>
   </div>
   <!-- ===== END SECTION 4 ===== -->
@@ -749,58 +764,12 @@ body {
   <div class="section" id="section-porter">
     <div class="section-title">五、波特五力分析</div>
 
-    <div class="tab-bar" id="porter-tabs">
-      <div class="tab active" onclick="switchTab('porter','company',this)">公司层面</div>
-      <div class="tab"        onclick="switchTab('porter','industry',this)">行业层面</div>
-      <div class="tab"        onclick="switchTab('porter','forward',this)">前景展望</div>
+    <div class="porter-chart-wrap">
+      <svg id="chart-porter-bars"></svg>
     </div>
-
-    <!-- Tab: 公司层面 -->
-    <div class="tab-panel active" id="porter-panel-company">
-      <div class="porter-wrap">
-        <div>
-          <canvas id="chart-radar-company"></canvas>
-        </div>
-        <div>
-          <ul class="porter-scores" id="scores-company">
-            <!-- 5 个 li：供应商议价能力、买方议价能力、新进入者威胁、替代品威胁、行业竞争强度；占位符见下方填充规则，勿删本行注释或引入未闭合的 HTML 注释 -->
-            {{PORTER_COMPANY_SCORES}}
-          </ul>
-          <div class="porter-text">{{PORTER_COMPANY_TEXT}}</div>
-        </div>
-      </div>
+    <div class="porter-analysis-blocks">
+      {{PORTER_ANALYSIS_BLOCKS}}
     </div>
-
-    <!-- Tab: 行业层面 -->
-    <div class="tab-panel" id="porter-panel-industry">
-      <div class="porter-wrap">
-        <div>
-          <canvas id="chart-radar-industry"></canvas>
-        </div>
-        <div>
-          <ul class="porter-scores" id="scores-industry">
-            {{PORTER_INDUSTRY_SCORES}}
-          </ul>
-          <div class="porter-text">{{PORTER_INDUSTRY_TEXT}}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tab: 前景展望 -->
-    <div class="tab-panel" id="porter-panel-forward">
-      <div class="porter-wrap">
-        <div>
-          <canvas id="chart-radar-forward"></canvas>
-        </div>
-        <div>
-          <ul class="porter-scores" id="scores-forward">
-            {{PORTER_FORWARD_SCORES}}
-          </ul>
-          <div class="porter-text">{{PORTER_FORWARD_TEXT}}</div>
-        </div>
-      </div>
-    </div>
-
   </div>
   <!-- ===== END SECTION 5 ===== -->
 
@@ -842,14 +811,6 @@ function toggleTheme() {
   const html = document.documentElement;
   html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
   redrawAllCharts();
-}
-
-// ---------- Tab Switcher ----------
-function switchTab(group, panelId, clickedTab) {
-  document.querySelectorAll('#' + group + '-tabs .tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('[id^="' + group + '-panel-"]').forEach(p => p.classList.remove('active'));
-  clickedTab.classList.add('active');
-  document.getElementById(group + '-panel-' + panelId).classList.add('active');
 }
 
 // ---------- Theme Colors Helper ----------
@@ -896,18 +857,11 @@ const sankeyActualData = {{SANKEY_ACTUAL_JS_DATA}};
 //   ]
 // }
 
-// --- Sankey Forecast Data ---
-const sankeyForecastData = {{SANKEY_FORECAST_JS_DATA}};
-// Same structure as sankeyActualData
-
-// --- Porter Radar Data ---
-// Score order must be: [供应商议价能力, 买方议价能力, 新进入者威胁, 替代品威胁, 行业竞争强度]
-// Score semantics: 1-2 = 低威胁/最好/绿色；3 = 中性/琥珀色；4-5 = 高威胁/最糟/红色。
-const porterScores = {
-  company:  {{PORTER_COMPANY_SCORES_ARRAY}},   // e.g. [3, 2, 4, 3, 4]
-  industry: {{PORTER_INDUSTRY_SCORES_ARRAY}},
-  forward:  {{PORTER_FORWARD_SCORES_ARRAY}}
-};
+// --- Porter Bar Chart Data ---
+// Flat 5-int array, score order must be:
+// [供应商议价能力, 买方议价能力, 新进入者威胁, 替代品威胁, 行业内竞争]
+// Score semantics: 1-2 = 低威胁/绿色；3 = 中性/琥珀色；4-5 = 高威胁/红色。
+const porterScores = {{PORTER_SCORES_JS_DATA}};   // e.g. [3, 2, 4, 3, 4]
 
 // ============================================================
 // CHART RENDERING — DO NOT MODIFY BELOW THIS LINE
@@ -1083,66 +1037,96 @@ function drawSankey(containerId, data, colorScheme) {
     });
 }
 
-const SANKEY_COLORS_ACTUAL   = ['#355a8a','#a83232','#2e7d4f','#b8842a','#6b4a7c','#3f7a78','#1a2c4e','#a83232','#2e7d4f'];
-const SANKEY_COLORS_FORECAST = ['#4d72a0','#b54545','#3d8c5c','#c89638','#7d5b8e','#4d8d8b','#2d4570','#b54545','#3d8c5c'];
+const SANKEY_COLORS_ACTUAL = ['#355a8a','#a83232','#2e7d4f','#b8842a','#6b4a7c','#3f7a78','#1a2c4e','#a83232','#2e7d4f'];
 
-// --- Radar Chart (Chart.js) ---
-let radarCharts = {};
-function porterScoreColor(score) {
-  const s = Math.max(1, Math.min(5, Math.round(Number(score) || 0)));
-  if (s <= 2) return '#2e7d4f';
-  if (s === 3) return '#b8842a';
-  return '#a83232';
-}
-function drawRadar(canvasId, scores, label) {
-  if (radarCharts[canvasId]) { radarCharts[canvasId].destroy(); }
-  const isDark = document.documentElement.dataset.theme === 'dark';
-  const gridColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(26,44,78,0.12)';
+// --- Porter Bar Chart (D3) ---
+// Renders 5 horizontal bars, one per force, in fixed order.
+// Bar length is proportional to score / 5. Color uses a single accent.
+function drawPorterBars(containerId, scores) {
+  const el = document.getElementById(containerId);
+  if (!el || !Array.isArray(scores) || scores.length !== 5) return;
+  d3.select(el).selectAll('*').remove();
+
+  const isDark    = document.documentElement.dataset.theme === 'dark';
   const textColor = isDark ? '#b8b3a8' : '#3a3a3a';
-  const pointColor = isDark ? '#6ea3d8' : '#1a2c4e';
-  const scoreColors = scores.map(porterScoreColor);
+  const gridColor = isDark ? '#2c3a4d' : '#cfc9bd';
+  const barColor  = isDark ? '#c89638' : '#b8842a'; /* var(--accent-amber) */
+  const trackColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(26,44,78,0.06)';
 
-  radarCharts[canvasId] = new Chart(document.getElementById(canvasId), {
-    type: 'radar',
-    data: {
-      labels: ['供应商议价能力', '买方议价能力', '新进入者威胁', '替代品威胁', '行业竞争强度'],
-      datasets: [{
-        label: label,
-        data: scores,
-        backgroundColor: 'rgba(26,44,78,0.12)',
-        borderColor: pointColor,
-        borderWidth: 2,
-        pointBackgroundColor: scoreColors,
-        pointBorderColor: scoreColors,
-        pointRadius: 4,
-        pointHoverRadius: 6
-      }]
-    },
-    options: {
-      responsive: false,
-      scales: {
-        r: {
-          min: 0, max: 5,
-          ticks: { stepSize: 1, display: false },
-          grid:  { color: gridColor },
-          angleLines: { color: gridColor },
-          pointLabels: { color: textColor, font: { size: 11 } }
-        }
-      },
-      plugins: {
-        legend: { display: false }
-      }
-    }
+  const labels = ['供应商议价能力', '买方议价能力', '新进入者威胁', '替代品威胁', '行业内竞争'];
+
+  const rect    = el.parentElement.getBoundingClientRect();
+  const W       = Math.max(rect.width || 600, 520);
+  const H       = 260;
+  const margin  = { top: 12, right: 56, bottom: 12, left: 130 };
+  const innerW  = W - margin.left - margin.right;
+  const innerH  = H - margin.top - margin.bottom;
+
+  const svg = d3.select(el).attr('width', W).attr('height', H);
+  const g = svg.append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const y = d3.scaleBand().domain(labels).range([0, innerH]).padding(0.35);
+  const x = d3.scaleLinear().domain([0, 5]).range([0, innerW]);
+
+  // Track (full-width background bars)
+  labels.forEach((label) => {
+    g.append('rect')
+      .attr('x', 0).attr('y', y(label))
+      .attr('width', innerW).attr('height', y.bandwidth())
+      .attr('fill', trackColor).attr('rx', 2);
   });
+
+  // Value bars
+  labels.forEach((label, i) => {
+    const score = Math.max(0, Math.min(5, Number(scores[i]) || 0));
+    g.append('rect')
+      .attr('x', 0).attr('y', y(label))
+      .attr('width', x(score)).attr('height', y.bandwidth())
+      .attr('fill', barColor).attr('rx', 2);
+  });
+
+  // Left labels (force names)
+  g.append('g').selectAll('text')
+    .data(labels).join('text')
+    .attr('x', -10)
+    .attr('y', d => y(d) + y.bandwidth() / 2)
+    .attr('dy', '0.35em')
+    .attr('text-anchor', 'end')
+    .attr('fill', textColor)
+    .attr('font-size', 12)
+    .text(d => d);
+
+  // Right labels (score / 5)
+  g.append('g').selectAll('text')
+    .data(labels).join('text')
+    .attr('x', innerW + 8)
+    .attr('y', d => y(d) + y.bandwidth() / 2)
+    .attr('dy', '0.35em')
+    .attr('text-anchor', 'start')
+    .attr('fill', textColor)
+    .attr('font-size', 12)
+    .attr('font-weight', 600)
+    .text((d, i) => {
+      const s = Math.max(0, Math.min(5, Number(scores[i]) || 0));
+      return s + '/5';
+    });
+
+  // Optional faint vertical gridlines at 1..4
+  for (let v = 1; v <= 4; v++) {
+    g.append('line')
+      .attr('x1', x(v)).attr('x2', x(v))
+      .attr('y1', 0).attr('y2', innerH)
+      .attr('stroke', gridColor)
+      .attr('stroke-dasharray', '2,3')
+      .attr('opacity', 0.5);
+  }
 }
 
 function redrawAllCharts() {
   drawWaterfall();
-  drawSankey('chart-sankey-actual',   sankeyActualData,   SANKEY_COLORS_ACTUAL);
-  drawSankey('chart-sankey-forecast', sankeyForecastData, SANKEY_COLORS_FORECAST);
-  drawRadar('chart-radar-company',  porterScores.company,  '公司层面');
-  drawRadar('chart-radar-industry', porterScores.industry, '行业层面');
-  drawRadar('chart-radar-forward',  porterScores.forward,  '前景展望');
+  drawSankey('chart-sankey-actual', sankeyActualData, SANKEY_COLORS_ACTUAL);
+  drawPorterBars('chart-porter-bars', porterScores);
 }
 
 // Init on load
@@ -1151,8 +1135,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 window.addEventListener('resize', () => {
   drawWaterfall();
-  drawSankey('chart-sankey-actual',   sankeyActualData,   SANKEY_COLORS_ACTUAL);
-  drawSankey('chart-sankey-forecast', sankeyForecastData, SANKEY_COLORS_FORECAST);
+  drawSankey('chart-sankey-actual', sankeyActualData, SANKEY_COLORS_ACTUAL);
+  drawPorterBars('chart-porter-bars', porterScores);
 });
 </script>
 
@@ -1188,15 +1172,10 @@ window.addEventListener('resize', () => {
 | `{{LATEST_OPERATING_UPDATE_TEXT}}` | 文字 | **第二节第四张趋势卡（「最新经营更新」）**：数字口径以 **`financial_data.json` → `latest_interim`**（由 Phase 1 财务数据收集 agent 写入）为准；写**边际**经营变化，**主叙事为同比（YoY）**（同季对上年同季或 YTD 对上年 YTD），**环比（QoQ）**仅作补充且须标明「环比」。**首句或段首必须标明覆盖期间**（含申报日）。无可靠季报时可写「最近中期披露不足，以下仍以年报为主」并降低置信表述。见 `references/financial_metrics.md`、`references/report_style_guide_cn.md` |
 | `{{GEO_REVENUE_TEXT}}` | 文字 | 2–4 句：仅写地区收入——**完整财年**各区域（或主要国家）净营收金额、占比、有机/同比增速（如有）、集中度变化（见 `references/financial_metrics.md` 地区收入结构） |
 | `{{WATERFALL_JS_DATA}}` | JS Array | **仅百分点桥**：与 `prediction_waterfall.json` 中 **`baseline_growth_pct`、`macro_adjustment_pct`、（可选）各因子 `adjustment_pct`、`company_specific_adjustment_pct`、`predicted_revenue_growth_pct`** 一致；`type: "result"` 必须与最终预测增速对齐。**禁止** `base_revenue` / 营收绝对额 / Sankey 的 `$M` 流量。详见锁定模板内 `// --- Waterfall Data ---` 注释与 `SKILL.md` Phase 5。 |
-| `{{SANKEY_YEAR_ACTUAL}}` | 文字 | 与 `financial_data.json` 中「当年」完整财年一致（最新已发布年报，如 FY2025）；参见 `SKILL.md` Step 0C |
-| `{{SANKEY_YEAR_FORECAST}}` | 文字 | 下一完整财年预测标签，与 `prediction_waterfall.json` 的 `predicted_fiscal_year_label` 一致（默认 FY{当年+1}E，如 FY2026E） |
-| `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
-| `{{SANKEY_FORECAST_JS_DATA}}` | JS Object | 同上；由「当年」P&L 按预测营收增速缩放 |
-| `{{PORTER_COMPANY_SCORES_ARRAY}}` | JS Array | `[3,2,4,3,4]` 对应5力 |
-| `{{PORTER_COMPANY_SCORES}}` | HTML | 5个 `<li>`，**必须使用 `score-dot s{N}` class**（N=分数四舍五入至整数1-5）。评分方向是威胁/压力分：`s1/s2` = 低威胁/绿色，`s3` = 中性/琥珀色，`s4/s5` = 高威胁/红色；竞争越激烈，行业竞争强度分数越高。示例：`<li><span class="score-dot s2">2</span><span class="score-label">供应商议价能力</span> 2/5 低</li>`。CSS 只定义了 `.score-dot`，不存在 `score-badge`，不得使用其他 class。5力顺序固定：供应商议价能力、买方议价能力、新进入者威胁、替代品威胁、行业竞争强度。 |
-| `{{PORTER_COMPANY_TEXT}}` | HTML | 公司层面五力正文：**`<ul style="margin:0;padding-left:1.25em;">` + 恰好 5 个 `<li>`**，顺序为供应商→买方→新进入者→替代品→行业内竞争；**勿**用力名+「（X/5）：」作标题式起句。**输入硬契约：** `porter_analysis.json -> company_perspective` 必须是 dict 且同时含 `scores`（5 个 1–5 整数）与五个力字段（`supplier_power` / `buyer_power` / `new_entrants` / `substitutes` / `rivalry`），每项为非空字符串。`{scores, narrative}` 的扁平形态 = 输入违规 → **halt，要求 Phase 3 重跑**；不得把 `narrative` 单字符串直接灌进 `.porter-text`（已知 incident，见 `INCIDENTS.md` I-004）。Phase 5 进入前 `python tools/research/validate_porter_analysis.py --run-dir <run_dir>` 必须 exit 0。**句式按运行模式分两套：**（a）**QC 模式**（`qc_audit_trail.json` 存在）——读取该维度的 `score_changed` / `score_before` / `score_after`：未改分写 **「经QC合议，维持供应商议价能力为3分。……」** 或 **「经QC合议，决定将供应商议价能力评分维持3分不变。……」**；改分写 **「经QC合议，决定将供应商议价能力评分从4分调整为3分。……」**。**不得为套格式虚构调分**。（b）**no-QC 模式**（fast-run，无 `qc_audit_trail.json`）——使用 **「基于初稿评分，供应商议价能力为3分。……」** 固定句式（分数取 `scores[i]`），**禁止**出现"经QC合议"字样（见 `agents/qc_resolution_merge.md`）。必须点名具体力名，不要写「本维度」。见 `references/report_style_guide_cn.md` §波特五力。约 300 字/透视量级。内容来自 `porter_analysis.json` → `company_perspective` 各力字段。 |
-| `{{PORTER_INDUSTRY_TEXT}}` | HTML | 行业层面：同上列表格式与顺序；来自 `industry_perspective`。 |
-| `{{PORTER_FORWARD_TEXT}}` | HTML | 前景展望：同上列表格式与顺序；来自 `forward_perspective`。 |
+| `{{SANKEY_YEAR_ACTUAL}}` | 文字 | 与 `financial_data.json` 中「当年」完整财年一致（最新已发布年报，如 FY2025）；同时作为第四节标题中的年份；参见 `SKILL.md` Step 0C |
+| `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}`；第四节仅保留**实际**桑基图，**已移除**预测桑基图（`SANKEY_FORECAST_JS_DATA` / `SANKEY_YEAR_FORECAST` 已废弃，不得在新模板中出现） |
+| `{{PORTER_SCORES_JS_DATA}}` | JS Array | **扁平 5-int 数组** `[s1, s2, s3, s4, s5]`（所有元素为 1–5 的整数），顺序固定为 **供应商议价能力 → 买方议价能力 → 新进入者威胁 → 替代品威胁 → 行业内竞争**。已**不再**使用 `{company, industry, forward}` 三透视对象结构。输入来自 `porter_analysis.json`（取经合议后的最终评分；若有 `qc_audit_trail.json` 则取 QC 后的 `score_after`，否则取初稿 `scores`）。 |
+| `{{PORTER_ANALYSIS_BLOCKS}}` | HTML | **5 个 `<div class="porter-force-block">` 块**，顺序固定为供应商→买方→新进入者→替代品→行业内竞争；每个块包含 `<h3>力名 — N/5</h3>` 以及**6 个必备段落**（顺序固定，每段以 `<p>` 包裹）：(1) `<p class="porter-rating-statement">` 评级合议陈述；(2) `<p class="porter-anchor"><strong>Data anchor：</strong>…</p>` 一个具体数字 + peer/历史/guidance 对比，30–60 字；(3) `<p class="porter-mechanism"><strong>评级机制：</strong>…</p>` 为什么是此分而非别的分，60–100 字；(4) `<p class="porter-falsifier"><strong>Falsifier：</strong>…</p>` 可观测的证伪条件（若 X 在 Y 时间内发生则评级上调/下调），40–80 字；(5) `<p class="porter-signal"><strong>Primary signal：</strong>…</p>` CFO / 管理层 / 10-K footnote / 产业访谈直引 + 出处 + 日期，40–80 字；(6) `<p class="porter-lookahead"><strong>Look-ahead：</strong>…</p>` 下季/下半年要看的具体可观测数据点，30–60 字。**评级合议句式按运行模式分两套：**（a）**QC 模式**（`qc_audit_trail.json` 存在）——读取该维度的 `score_changed` / `score_before` / `score_after`：未改分写 **「经QC合议，维持供应商议价能力为N分。……」**；改分写 **「经QC合议，决定将供应商议价能力评分从M分调整为N分。……」**。**不得为套格式虚构调分**。（b）**no-QC 模式**（fast-run，无 `qc_audit_trail.json`）——使用 **「基于初稿评分，供应商议价能力为N分。……」** 固定句式（分数取 `scores[i]`），**禁止**出现"经QC合议"字样（见 `agents/qc_resolution_merge.md`）。**输入硬契约：** `porter_analysis.json -> company_perspective` 必须是 dict 且同时含 `scores`（5 个 1–5 整数）与五个力字段（`supplier_power` / `buyer_power` / `new_entrants` / `substitutes` / `rivalry`）；`{scores, narrative}` 的扁平形态 = 输入违规 → **halt，要求 Phase 3 重跑**（已知 incident，见 `INCIDENTS.md` I-004）。Phase 5 进入前 `python tools/research/validate_porter_analysis.py --run-dir <run_dir>` 必须 exit 0。 |
 | `{{FACTOR_ROWS}}` | HTML | 预测因子明细表行；列顺序必须匹配模板：因子 / 宏观变化（%） / β系数 / φ值 / 调整幅度（%） / 方向。第2列与第5列表头已含 `%`，单元格内**不得再写 `%`**；非零值必须带 `+` / `-`，0 只写 `0`（无正负号）。数值最多两位小数，整数输入可补成两位小数（如 `+8` → `+8.00`）；禁止 `-4.1667`、`-3.125`、`+0.14685` 这类长小数。可接受示例：`-4.2`、`+8.00`、`-3.1`、`+0.15`、`-0.80`、`0`。β 与 φ 最多两位小数且不带 `%`。最后一列 **`方向` 只填 `正向` / `负向` / `中性`**（用 `adjustment_pct` 的符号判断），不得再次填 `+0.62`、`+4.55` 等数值；数值只属于「宏观变化」和「调整幅度」两列。方向列必须复用现有颜色 class：正向 `<td class="metric-up">正向</td>`，负向 `<td class="metric-down">负向</td>`，中性 `<td>中性</td>`（不加 class）。 |
 | `{{MACRO_FACTOR_COMMENTARY}}` | HTML | **来自 `macro_factors.json` → `macro_factor_commentary`（勿在 HTML 中另写）**：2–4 段机构视角传导说明，衔接表中六项合计与瀑布图「宏观调整」柱；可用 `<p>…</p>`，禁止 Markdown；见 `agents/macro_scanner.md` Step 7b |
 | `{{APPENDIX_SOURCE_ROWS}}` | HTML | 附录表 `<tr>…</tr>` 多行。`具体来源` 列：**以信息最初发布方为准**（见 `references/report_style_guide_cn.md`）。**SEC：**含 `data.sec.gov`/`sec.gov` 拉取的 **Form 10-K/10-Q** 全文内容（**MD&A、Note 16 Revenue 等附注均属 SEC 申报文件一部分**）— 统一写 **美国 SEC EDGAR**，括号可标 `Form 10-K`、章节名；若经 `sec_edgar_fetch.py` → `sec_edgar_bundle.json`，仍标 **SEC**（可加「经 XBRL 切片」），勿把 bundle 写成与 SEC 并列的第三方。**非 SEC**（Bloomberg、Reuters、公司 IR 等）则写全名。 |

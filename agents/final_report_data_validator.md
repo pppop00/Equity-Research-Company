@@ -7,14 +7,16 @@
 ## 输入
 
 - `workspace/{Company}_{Date}/{Company}_Research_CN.html` **或** `{Company}_Research_EN.html`
+- `workspace/{Company}_{Date}/{Company}_Research_CN.analyst_call.json` **或** `{Company}_Research_EN.analyst_call.json`（plan v3 新增 sidecar）
+- `references/analyst_call.schema.json`（plan v3 sidecar schema）
 - `workspace/{Company}_{Date}/financial_data.json`
 - `workspace/{Company}_{Date}/financial_analysis.json`
 - `workspace/{Company}_{Date}/macro_factors.json`
 - `workspace/{Company}_{Date}/prediction_waterfall.json`
-- `workspace/{Company}_{Date}/porter_analysis.json`
+- `workspace/{Company}_{Date}/porter_analysis.json`（v2 形态：5 force × 6 segment）
 - `workspace/{Company}_{Date}/edge_insights.json`
 - `workspace/{Company}_{Date}/news_intel.json`
-- `workspace/{Company}_{Date}/qc_audit_trail.json`（若存在）
+- `workspace/{Company}_{Date}/qc_audit_trail.json`（若存在，v2 schema）
 
 ## 核心定位
 
@@ -102,10 +104,17 @@
 
 ### 6. Sankey 与利润表 / 现金流的桥接一致性
 
-- 对 `sankey_actual_data` 与 `sankey_forecast_data` 做会计桥检查。
+**Plan v3 单面板硬契约：** 第四节 Sankey 现在是**单面板**（仅历史口径 `sankey_actual_data` / `chart-sankey-actual`）。HTML 中**不得**残留：
+- `<svg id="chart-sankey-forecast">` 或 `<canvas id="chart-sankey-forecast">`
+- `const sankeyForecastData` / `sankeyForecastData = ...`
+- 占位符 `{{SANKEY_FORECAST_JS_DATA}}` / `{{SANKEY_YEAR_FORECAST}}`
+- `class="sankey-tabs"` 或与 Sankey 并列的 `tab-panel` 兄弟元素
+出现任一项 → **CRITICAL（回到 P5 重写）**。
+
+- 对 `sankey_actual_data` 做会计桥检查（已无 `sankey_forecast_data` 这一节点）。
 - 至少验证：
   - `revenue = cost buckets + operating_income`
-  - 若节点名写为“利息及税项净额”，则其数值必须与该标签含义一致；**不得**把 `EBIT - Net income` 的残差直接命名为“利息及税项”，除非已证明不存在其他重大非经营项目。
+  - 若节点名写为"利息及税项净额"，则其数值必须与该标签含义一致；**不得**把 `EBIT - Net income` 的残差直接命名为"利息及税项"，除非已证明不存在其他重大非经营项目。
 - 若 `financial_data.json` 同时存在：
   - `operating_income`
   - `interest_expense`
@@ -114,11 +123,12 @@
   - `net_income`
   则必须检查：
   - 是否存在重大 `other_non_operating_items`
-  - Sankey 是否错误地把“利息 + 税项 + 其他净项目”压缩成错误标签
+  - Sankey 是否错误地把"利息 + 税项 + 其他净项目"压缩成错误标签
 - 若无法在当前数据下精确拆开，允许使用更宽的标签，例如：
   - `利息、税项及其他非经营项目净额`
   - `Below-EBIT items (net)`
 - **失败条件：**
+  - 第四节存在 forecast Sankey 残留（任一前述标识符 / 占位符 / tab 容器）→ **CRITICAL**
   - Sankey 标签与底层数值语义不匹配 → **CRITICAL**
   - Sankey 导出的净利润逻辑与风险/摘要中的利息负担说法自相矛盾 → **CRITICAL**
 
@@ -152,21 +162,56 @@
   - `stale_value_not_reconciled`：QC 后旧值未完全替换
   - `wording_ambiguity`：分项与总项、口径边界或上下文限定不清
 
-### 10. Porter QC 审计链一致性
+### 10. Porter QC 审计链一致性（v2 schema）
 
 - 若存在 `qc_audit_trail.json`，必须核对：
-  - `porter_analysis.json` 的相关段落是否与审计轨迹一致；
-  - HTML 第五节 Porter 三个 tab 的维持/调整表述是否与审计轨迹一致；
-  - 是否存在 **审计轨迹写“维持原分”**，但 HTML 或 `porter_analysis.json` 却写成 **“从 X 调整到 Y”** 的情况；
-  - 是否存在 **peer challenge 被采纳但只是 reasoning / classification 修正**，结果下游误写成改分。
-- 对每个 Porter 维度，至少判断：
+  - 顶层 `schema_version: 2` 与 `qc_audit_trail_present: true`；`resolution_status` 为 `merged`（若为 `blocked` 则报告未达交付门槛，直接 CRITICAL）。
+  - `forces[]` 恰好 5 条，固定 key 顺序 `supplier_power / buyer_power / new_entrants / substitutes / rivalry`，每条含 `score_changed` / `score_before` / `score_after` / `qc_deliberation` / `segment_audit`。
+  - `segment_audit` 6 个键值仅限 `ok | adjusted | missing`；任意 `missing` → CRITICAL（合议本应 block，不应交付）。
+  - `porter_analysis.json` 的 v2 形态（5 force × 6 segment）与审计轨迹一致；HTML 第五节 5 个 `<div class="porter-force-block">` 的维持/调整起句与审计轨迹一致。
+  - 是否存在 **审计轨迹写"维持原分"** 但 HTML 或 `porter_analysis.json` 却写成 **"从 X 调整到 Y"** 的情况。
+  - 是否存在 **peer challenge 被采纳但只是 reasoning / segment 重写**，结果下游误写成改分。
+- 对每个 force，至少判断：
   - `final_score`
-  - `score_changed`（若 `qc_audit_trail` 有显式字段则直接使用；否则根据 resolution 文义判断）
+  - `score_changed`（直接使用 `qc_audit_trail.forces[*].score_changed`；不要根据文义猜）
   - HTML / JSON 是否使用了匹配的 maintained-score 或 adjusted-from-to wording
+  - 6 个 segment 在 HTML 中是否实际填充了与审计轨迹 `adjusted` / `ok` 标记一致的内容（`adjusted` 段必须可见改写痕迹）
 - **失败条件：**
-  - 审计链与 HTML / `porter_analysis.json` 对“维持 / 调整”结论不一致 → **CRITICAL**
-  - `qc_audit_trail` 无法支持 HTML 中的 “from X to Y” 叙述 → **CRITICAL**
+  - `qc_audit_trail.json` 顶层缺 `schema_version: 2` 或 `forces[]` 数量 ≠ 5 → **CRITICAL**
+  - 任一 `segment_audit` 键为 `missing` 但报告仍交付 → **CRITICAL**
+  - 审计链与 HTML / `porter_analysis.json` 对"维持 / 调整"结论不一致 → **CRITICAL**
+  - `qc_audit_trail` 无法支持 HTML 中的 "from X to Y" 叙述 → **CRITICAL**
   - QC 后仍残留旧的 pre-QC wording 或旧分值 → **CRITICAL**
+
+### 11. Analyst call sidecar（plan v3 新增，必查）
+
+- HTML 文件旁必须存在 `<Company>_Research_<lang>.analyst_call.json`（与 HTML 同目录、同前缀、`.analyst_call.json` 后缀）。缺失 → **CRITICAL**。
+- 该 sidecar 必须通过 `references/analyst_call.schema.json` 的 schema 校验。schema-invalid（缺必填字段、类型错误、枚举越界）→ **CRITICAL**。
+- 顶层必须至少包含：`call`、`variant_view[]`、`catalysts[]`、`falsifiers[]`、`primary_quotes[]`、`report_language`。
+- **变体观点 grounding 检查（plan v3 硬契约）：** 对 `variant_view[]` 的每一条，提取所有 ≥4 字符的非停用词关键词（中文按汉字串切分后剔除常见停用词；英文按 token 化后剔除 stopwords）。该条 `variant_view[i]` 必须与下列任一文件中的内容**至少共享 3 个**实质关键词：
+  - `financial_data.json`
+  - `financial_analysis.json`
+  - `porter_analysis.json`
+  - `news_intel.json`
+- 共享关键词不足 3 个 → 视为变体观点无证据支撑 → **CRITICAL**（每条 variant_view 单独判定，列出具体缺失项）。
+- `primary_quotes[]` 每条必须含 `text` / `source` / `date`，至少 `source` 与 `date` 非空字符串；缺失 → **CRITICAL**。
+- `catalysts[]` 与 `falsifiers[]` 必须分别 ≥1 条，每条含可观测事件 + 时间窗口；空数组或仅有套话 → **WARNING（交付前必改）**。
+- HTML 正文中的分析师 call、变体观点段或主要引用应能与 sidecar 一一映射；HTML 写了 sidecar 没有的 call / quote → **CRITICAL（伪造 sidecar 内容）**。
+
+### 12. Porter HTML 单透视 + 6 段结构（plan v3 v2 schema）
+
+- HTML 第五节内必须存在**恰好 5 个**`<div class="porter-force-block">`，顺序对应 5 力（供应商议价能力 / 买方议价能力 / 新进入者威胁 / 替代品威胁 / 行业内竞争 — `supplier_power / buyer_power / new_entrants / substitutes / rivalry`）。
+- 每个 `porter-force-block` 内必须包含**恰好 1 个** `<h3>`（力名）+ **恰好 6 个** `<p>` 段落，class 分别为：
+  1. `porter-rating-statement`
+  2. `porter-anchor`
+  3. `porter-mechanism`
+  4. `porter-falsifier`
+  5. `porter-signal`
+  6. `porter-lookahead`
+- `porter-rating-statement` 必须命中 QC / no-QC 白名单起句（与 `agents/report_validator.md` §5 一致）。
+- HTML 中**不得**残留任何旧三透视 / tab 标记：`{{PORTER_COMPANY_TEXT}}` / `{{PORTER_INDUSTRY_TEXT}}` / `{{PORTER_FORWARD_TEXT}}` / `chart-radar-company` / `chart-radar-industry` / `chart-radar-forward` / `porter-tabs` / `porter-radar` / `id="porter-panel-company"` 等。出现任一项 → **CRITICAL（P5 未切换到 v2 模板）**。
+- 缺少任意 `force-block`，或任一 block 缺任一 mandatory `<p>` → **CRITICAL**。
+- 多于 6 个 `<p>`、或 `<p>` class 不在白名单内 → **WARNING（交付前必改）**。
 
 ## 修复顺序
 
