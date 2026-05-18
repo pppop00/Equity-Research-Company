@@ -432,10 +432,10 @@ body {
   overflow-x: auto;
   margin-bottom: 22px;
 }
-#chart-porter-bars {
+#chart-porter-pentagon {
   width: 100%;
-  height: 240px;
-  min-width: 480px;
+  height: 380px;
+  min-width: 360px;
   display: block;
 }
 .porter-analysis-blocks {
@@ -536,7 +536,7 @@ body {
 @media (max-width: 900px) {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .two-col  { grid-template-columns: 1fr; }
-  #chart-porter-bars { height: 280px; }
+  #chart-porter-pentagon { height: 320px; min-width: 320px; }
 }
 @media (max-width: 600px) {
   .report-header { padding: 20px 20px 0; }
@@ -752,7 +752,7 @@ body {
     <div class="section-title">V. Porter Five Forces</div>
 
     <div class="porter-chart-wrap">
-      <svg id="chart-porter-bars"></svg>
+      <svg id="chart-porter-pentagon"></svg>
     </div>
     <div class="porter-analysis-blocks">
       {{PORTER_ANALYSIS_BLOCKS}}
@@ -1033,64 +1033,117 @@ function drawSankey(containerId, data, colorScheme) {
 
 const SANKEY_COLORS_ACTUAL   = ['#355a8a','#a83232','#2e7d4f','#b8842a','#6b4a7c','#3f7a78','#1a2c4e','#a83232','#2e7d4f'];
 
-// --- Porter Bar Chart (D3) ---
-// Renders five horizontal bars, one per force, in the canonical order:
+// --- Porter Pentagon Radar (D3 SVG) ---
+// Renders a 5-vertex pentagon radar, one vertex per force in canonical order:
 // Supplier power, Buyer power, New entrants, Substitutes, Rivalry.
-// Bar length is proportional to score / 5. Single accent color from CSS palette.
-function drawPorterBars(containerId, scores) {
+// Each vertex sits at radius proportional to score/5 from the pentagon
+// centre; the vertex dot is coloured by threat level (1 = greenest / lowest
+// threat, 5 = reddest / highest threat). The colour gradient matches human
+// risk intuition: redder dot = bigger problem at that force.
+function drawPorterPentagon(containerId, scores) {
   const el = document.getElementById(containerId);
   if (!el || !Array.isArray(scores) || scores.length !== 5) return;
   d3.select(el).selectAll('*').remove();
 
+  const isDark      = document.documentElement.dataset.theme === 'dark';
+  const textColor   = isDark ? '#b8b3a8' : '#3a3a3a';
+  const gridColor   = isDark ? '#3a4a5d' : '#cfc9bd';
+  const strokeColor = isDark ? '#6ea3d8' : '#355a8a';
+  const fillColor   = isDark ? 'rgba(110,163,216,0.18)' : 'rgba(53,90,138,0.12)';
+
+  // Threat-level palette (1 = lowest threat / greenest, 5 = highest / reddest).
+  // Mirrors references/report_style_guide_cn.md §波特五力分析颜色.
+  const PORTER_THREAT_COLORS = ['#2e7d4f', '#8aba65', '#d4a73d', '#cd6a4a', '#a83232'];
+  function porterColor(s) {
+    const c = Math.max(1, Math.min(5, Math.round(Number(s) || 0)));
+    return PORTER_THREAT_COLORS[c - 1];
+  }
+
   const labels = ['Supplier power', 'Buyer power', 'New entrants', 'Substitutes', 'Rivalry'];
-  const isDark = document.documentElement.dataset.theme === 'dark';
-  const textColor = isDark ? '#b8b3a8' : '#3a3a3a';
-  const trackColor = isDark ? '#2c3a4d' : '#e8e3d6';
-  const barColor = isDark ? '#6ea3d8' : '#355a8a'; // var(--accent-blue) tone
 
   const rect = el.parentElement.getBoundingClientRect();
-  const W = Math.max(rect.width || 600, 480);
-  const H = 240;
-  const margin = { top: 14, right: 56, bottom: 14, left: 130 };
-  const innerW = W - margin.left - margin.right;
-  const innerH = H - margin.top - margin.bottom;
+  const W    = Math.max(rect.width || 480, 360);
+  const H    = Math.min(W, 380);
+  const cx   = W / 2, cy = H / 2;
+  const R    = Math.min(cx - 90, cy - 50);
 
   const svg = d3.select(el).attr('width', W).attr('height', H);
-  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
-  const y = d3.scaleBand().domain(labels).range([0, innerH]).padding(0.35);
-  const x = d3.scaleLinear().domain([0, 5]).range([0, innerW]);
+  const N = 5;
+  const angles = labels.map(function(_, i) {
+    return -Math.PI / 2 + (2 * Math.PI * i) / N;
+  });
 
-  // Track + bar per force
-  labels.forEach((lbl, i) => {
+  // Concentric pentagon grid at score=1..5
+  for (let ring = 1; ring <= 5; ring++) {
+    const pts = angles.map(function(a) {
+      const r = (R * ring) / 5;
+      return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    });
+    svg.append('polygon')
+      .attr('points', pts.map(function(p) { return p.join(','); }).join(' '))
+      .attr('fill', 'none')
+      .attr('stroke', gridColor)
+      .attr('stroke-width', ring === 5 ? 1.0 : 0.5)
+      .attr('opacity', 0.6);
+  }
+
+  // Axis spokes
+  angles.forEach(function(a) {
+    svg.append('line')
+      .attr('x1', cx).attr('y1', cy)
+      .attr('x2', cx + R * Math.cos(a))
+      .attr('y2', cy + R * Math.sin(a))
+      .attr('stroke', gridColor)
+      .attr('stroke-width', 0.5)
+      .attr('opacity', 0.6);
+  });
+
+  // Filled threat polygon
+  const scorePoints = angles.map(function(a, i) {
     const s = Math.max(0, Math.min(5, Number(scores[i]) || 0));
-    g.append('rect')
-      .attr('x', 0).attr('y', y(lbl))
-      .attr('width', innerW).attr('height', y.bandwidth())
-      .attr('fill', trackColor).attr('rx', 2);
-    g.append('rect')
-      .attr('x', 0).attr('y', y(lbl))
-      .attr('width', x(s)).attr('height', y.bandwidth())
-      .attr('fill', barColor).attr('rx', 2);
-    // Left label = force name
-    g.append('text')
-      .attr('x', -10).attr('y', y(lbl) + y.bandwidth() / 2)
-      .attr('dy', '0.35em').attr('text-anchor', 'end')
-      .attr('fill', textColor).attr('font-size', 12)
-      .text(lbl);
-    // Right label = "N/5"
-    g.append('text')
-      .attr('x', innerW + 8).attr('y', y(lbl) + y.bandwidth() / 2)
-      .attr('dy', '0.35em').attr('text-anchor', 'start')
-      .attr('fill', textColor).attr('font-size', 12).attr('font-weight', 600)
-      .text(s + '/5');
+    const r = (R * s) / 5;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  });
+  svg.append('polygon')
+    .attr('points', scorePoints.map(function(p) { return p.join(','); }).join(' '))
+    .attr('fill', fillColor)
+    .attr('stroke', strokeColor)
+    .attr('stroke-width', 1.5);
+
+  // Vertex dots coloured by threat level — the at-a-glance carrier of severity.
+  scorePoints.forEach(function(p, i) {
+    const s = Math.max(1, Math.min(5, Math.round(Number(scores[i]) || 1)));
+    svg.append('circle')
+      .attr('cx', p[0]).attr('cy', p[1])
+      .attr('r', 7)
+      .attr('fill', porterColor(s))
+      .attr('stroke', isDark ? '#1a2c4e' : '#ffffff')
+      .attr('stroke-width', 1.5);
+  });
+
+  // Outer labels with score appended
+  angles.forEach(function(a, i) {
+    const labelR = R + 28;
+    const lx = cx + labelR * Math.cos(a);
+    const ly = cy + labelR * Math.sin(a);
+    let anchor = 'middle';
+    if (Math.cos(a) > 0.3) anchor = 'start';
+    else if (Math.cos(a) < -0.3) anchor = 'end';
+    svg.append('text')
+      .attr('x', lx).attr('y', ly)
+      .attr('text-anchor', anchor)
+      .attr('dominant-baseline', 'middle')
+      .attr('fill', textColor)
+      .attr('font-size', 12)
+      .text(labels[i] + ' ' + scores[i] + '/5');
   });
 }
 
 function redrawAllCharts() {
   drawWaterfall();
   drawSankey('chart-sankey-actual', sankeyActualData, SANKEY_COLORS_ACTUAL);
-  drawPorterBars('chart-porter-bars', porterScores);
+  drawPorterPentagon('chart-porter-pentagon', porterScores);
 }
 
 // Init on load
@@ -1100,7 +1153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('resize', () => {
   drawWaterfall();
   drawSankey('chart-sankey-actual', sankeyActualData, SANKEY_COLORS_ACTUAL);
-  drawPorterBars('chart-porter-bars', porterScores);
+  drawPorterPentagon('chart-porter-pentagon', porterScores);
 });
 </script>
 
@@ -1138,7 +1191,7 @@ window.addEventListener('resize', () => {
 | `{{WATERFALL_JS_DATA}}` | JS Array | **Percent-point bridge only:** must match `prediction_waterfall.json` (**`baseline_growth_pct`, `macro_adjustment_pct`, optional per-factor `adjustment_pct`, `company_specific_adjustment_pct`, `predicted_revenue_growth_pct`**). The `type: "result"` bar must match final predicted growth. **Forbidden:** `base_revenue`, revenue levels, Sankey `$M` flows. See locked-template comments under `// --- Waterfall Data ---` and `SKILL.md` Phase 5. |
 | `{{SANKEY_YEAR_ACTUAL}}` | Text | Same fiscal label as `financial_data.json` latest full year (see `SKILL.md` Step 0C). Embedded in the section title in parentheses (e.g. `FY2025 actual`). |
 | `{{SANKEY_ACTUAL_JS_DATA}}` | JS Object | `{nodes:[...],links:[...]}` |
-| `{{PORTER_SCORES_JS_DATA}}` | JS Array | Flat 5-int array in canonical order `[supplier, buyer, new_entrants, substitutes, rivalry]`, e.g. `[3, 2, 4, 3, 4]`. Each int in 1..5. Drives the single horizontal-bar chart rendered by `drawPorterBars`. Source: `porter_analysis.json` → resolved scores (post-QC if QC ran). |
+| `{{PORTER_SCORES_JS_DATA}}` | JS Array | Flat 5-int array in canonical order `[supplier, buyer, new_entrants, substitutes, rivalry]`, e.g. `[3, 2, 4, 3, 4]`. Each int in 1..5. Drives the pentagon radar rendered by `drawPorterPentagon` — each vertex is positioned at radius score/5 from centre, with the vertex dot coloured by threat level (1 = greenest, 5 = reddest). Source: `porter_analysis.json` → resolved scores (post-QC if QC ran). |
 | `{{PORTER_ANALYSIS_BLOCKS}}` | HTML | **Exactly five `<div class="porter-force-block">` blocks**, one per force in canonical order (Supplier power, Buyer power, New entrants, Substitutes, Rivalry). Each block has an `<h3>{Force name} — {N}/5</h3>` heading followed by **six mandatory `<p>` segments in this order**: (1) `class="porter-rating-statement"` — Consensus rating statement (in QC mode: "Per QC consensus, supplier power maintained at 4/5. …"; in no-QC mode: "Per draft scoring, supplier power assessed at 4/5. …"); (2) `class="porter-anchor"` — `<strong>Data anchor:</strong>` + one specific figure + peer/historical/guidance comp; (3) `class="porter-mechanism"` — `<strong>Rating mechanism:</strong>` + why this score and not the adjacent ones; (4) `class="porter-falsifier"` — `<strong>Falsifier:</strong>` + observable event in a specified time window that would shift the rating; (5) `class="porter-signal"` — `<strong>Primary signal:</strong>` + CFO / management / 10-K footnote / channel quote with source + date; (6) `class="porter-lookahead"` — `<strong>Look-ahead:</strong>` + next quarter/half observable data point. **Input contract:** read resolved scores + qualitative content from `porter_analysis.json`; if `qc_audit_trail.json` is present use QC-mode phrasing for segment 1, otherwise use no-QC phrasing — never invent QC wording when QC did not run (hard rule from `agents/qc_resolution_merge.md`, `INCIDENTS.md` I-004). Phase 5 entry still requires `python tools/research/validate_porter_analysis.py --run-dir <run_dir>` exit 0. |
 | `{{FACTOR_ROWS}}` | HTML | Factor table rows from `macro_factors.json`; column order must match the locked template: Factor / Macro change (%) / β / φ / Adjustment (%) / Direction. Because the 2nd and 5th headers already include `%`, the cells must **not** repeat `%`; nonzero values must include `+` or `-`; zero must be exactly `0` with no sign. Numbers may have at most two decimals, and integer inputs may be padded to two decimals (for example `+8` → `+8.00`). Acceptable examples: `-4.2`, `+8.00`, `-3.1`, `+0.15`, `-0.80`, `0`; invalid examples include `+8%`, `-4.1667`, `+0.14685`. β and φ cells may have at most two decimals and must not include `%`. The final **Direction** cell must be `Positive`, `Negative`, or `Neutral` based on `adjustment_pct`; do **not** put `+0.62`, `+4.55`, or any other numeric adjustment in the final direction cell. Reuse the existing color classes: positive `<td class="metric-up">Positive</td>`, negative `<td class="metric-down">Negative</td>`, neutral `<td>Neutral</td>` with no class. |
 | `{{MACRO_FACTOR_COMMENTARY}}` | HTML | **From `macro_factors.json` → `macro_factor_commentary` only** (see `agents/macro_scanner.md` Step 7b). Institutional transmission narrative; `<p>` blocks OK; no Markdown. |

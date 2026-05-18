@@ -436,10 +436,10 @@ body {
   overflow-x: auto;
   margin-bottom: 24px;
 }
-#chart-porter-bars {
+#chart-porter-pentagon {
   width: 100%;
-  height: 260px;
-  min-width: 520px;
+  height: 380px;
+  min-width: 360px;
   display: block;
 }
 /* --- Porter Per-Force Analysis Blocks --- */
@@ -542,7 +542,7 @@ body {
 @media (max-width: 900px) {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .two-col  { grid-template-columns: 1fr; }
-  #chart-porter-bars { height: 240px; min-width: 420px; }
+  #chart-porter-pentagon { height: 320px; min-width: 320px; }
 }
 @media (max-width: 600px) {
   .report-header { padding: 20px 20px 0; }
@@ -765,7 +765,7 @@ body {
     <div class="section-title">五、波特五力分析</div>
 
     <div class="porter-chart-wrap">
-      <svg id="chart-porter-bars"></svg>
+      <svg id="chart-porter-pentagon"></svg>
     </div>
     <div class="porter-analysis-blocks">
       {{PORTER_ANALYSIS_BLOCKS}}
@@ -1039,94 +1039,122 @@ function drawSankey(containerId, data, colorScheme) {
 
 const SANKEY_COLORS_ACTUAL = ['#355a8a','#a83232','#2e7d4f','#b8842a','#6b4a7c','#3f7a78','#1a2c4e','#a83232','#2e7d4f'];
 
-// --- Porter Bar Chart (D3) ---
-// Renders 5 horizontal bars, one per force, in fixed order.
-// Bar length is proportional to score / 5. Color uses a single accent.
-function drawPorterBars(containerId, scores) {
+// --- Porter Pentagon Radar (D3 SVG) ---
+// Renders a 5-vertex pentagon radar, one vertex per force in fixed order:
+// 供应商议价能力 → 买方议价能力 → 新进入者威胁 → 替代品威胁 → 行业内竞争.
+// Each vertex is positioned at radius proportional to score/5 from the
+// pentagon centre, and the vertex dot is coloured by threat level (1=深绿
+// best / 5=深红 worst). The colour gradient matches human risk intuition:
+// the redder the dot, the higher the threat at that force; the closer to
+// the centre the dot sits, the lower the threat.
+function drawPorterPentagon(containerId, scores) {
   const el = document.getElementById(containerId);
   if (!el || !Array.isArray(scores) || scores.length !== 5) return;
   d3.select(el).selectAll('*').remove();
 
-  const isDark    = document.documentElement.dataset.theme === 'dark';
-  const textColor = isDark ? '#b8b3a8' : '#3a3a3a';
-  const gridColor = isDark ? '#2c3a4d' : '#cfc9bd';
-  const barColor  = isDark ? '#c89638' : '#b8842a'; /* var(--accent-amber) */
-  const trackColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(26,44,78,0.06)';
+  const isDark      = document.documentElement.dataset.theme === 'dark';
+  const textColor   = isDark ? '#b8b3a8' : '#3a3a3a';
+  const gridColor   = isDark ? '#3a4a5d' : '#cfc9bd';
+  const strokeColor = isDark ? '#6ea3d8' : '#355a8a';
+  const fillColor   = isDark ? 'rgba(110,163,216,0.18)' : 'rgba(53,90,138,0.12)';
+
+  // Threat-level palette (1 = lowest threat / greenest, 5 = highest / reddest).
+  // Matches references/report_style_guide_cn.md §波特五力分析颜色.
+  const PORTER_THREAT_COLORS = ['#2e7d4f', '#8aba65', '#d4a73d', '#cd6a4a', '#a83232'];
+  function porterColor(s) {
+    const c = Math.max(1, Math.min(5, Math.round(Number(s) || 0)));
+    return PORTER_THREAT_COLORS[c - 1];
+  }
 
   const labels = ['供应商议价能力', '买方议价能力', '新进入者威胁', '替代品威胁', '行业内竞争'];
 
-  const rect    = el.parentElement.getBoundingClientRect();
-  const W       = Math.max(rect.width || 600, 520);
-  const H       = 260;
-  const margin  = { top: 12, right: 56, bottom: 12, left: 130 };
-  const innerW  = W - margin.left - margin.right;
-  const innerH  = H - margin.top - margin.bottom;
+  const rect = el.parentElement.getBoundingClientRect();
+  const W    = Math.max(rect.width || 480, 360);
+  const H    = Math.min(W, 380);
+  const cx   = W / 2, cy = H / 2;
+  // Leave outer margin for labels (~70px on left/right, ~50px top/bottom).
+  const R    = Math.min(cx - 90, cy - 50);
 
   const svg = d3.select(el).attr('width', W).attr('height', H);
-  const g = svg.append('g')
-    .attr('transform', `translate(${margin.left},${margin.top})`);
 
-  const y = d3.scaleBand().domain(labels).range([0, innerH]).padding(0.35);
-  const x = d3.scaleLinear().domain([0, 5]).range([0, innerW]);
-
-  // Track (full-width background bars)
-  labels.forEach((label) => {
-    g.append('rect')
-      .attr('x', 0).attr('y', y(label))
-      .attr('width', innerW).attr('height', y.bandwidth())
-      .attr('fill', trackColor).attr('rx', 2);
+  // Vertex angles: 5 evenly spaced, starting at -π/2 (top), going clockwise.
+  const N = 5;
+  const angles = labels.map(function(_, i) {
+    return -Math.PI / 2 + (2 * Math.PI * i) / N;
   });
 
-  // Value bars
-  labels.forEach((label, i) => {
-    const score = Math.max(0, Math.min(5, Number(scores[i]) || 0));
-    g.append('rect')
-      .attr('x', 0).attr('y', y(label))
-      .attr('width', x(score)).attr('height', y.bandwidth())
-      .attr('fill', barColor).attr('rx', 2);
-  });
-
-  // Left labels (force names)
-  g.append('g').selectAll('text')
-    .data(labels).join('text')
-    .attr('x', -10)
-    .attr('y', d => y(d) + y.bandwidth() / 2)
-    .attr('dy', '0.35em')
-    .attr('text-anchor', 'end')
-    .attr('fill', textColor)
-    .attr('font-size', 12)
-    .text(d => d);
-
-  // Right labels (score / 5)
-  g.append('g').selectAll('text')
-    .data(labels).join('text')
-    .attr('x', innerW + 8)
-    .attr('y', d => y(d) + y.bandwidth() / 2)
-    .attr('dy', '0.35em')
-    .attr('text-anchor', 'start')
-    .attr('fill', textColor)
-    .attr('font-size', 12)
-    .attr('font-weight', 600)
-    .text((d, i) => {
-      const s = Math.max(0, Math.min(5, Number(scores[i]) || 0));
-      return s + '/5';
+  // Concentric pentagon grid at score=1..5 (faint rings for scale).
+  for (let ring = 1; ring <= 5; ring++) {
+    const pts = angles.map(function(a) {
+      const r = (R * ring) / 5;
+      return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
     });
-
-  // Optional faint vertical gridlines at 1..4
-  for (let v = 1; v <= 4; v++) {
-    g.append('line')
-      .attr('x1', x(v)).attr('x2', x(v))
-      .attr('y1', 0).attr('y2', innerH)
+    svg.append('polygon')
+      .attr('points', pts.map(function(p) { return p.join(','); }).join(' '))
+      .attr('fill', 'none')
       .attr('stroke', gridColor)
-      .attr('stroke-dasharray', '2,3')
-      .attr('opacity', 0.5);
+      .attr('stroke-width', ring === 5 ? 1.0 : 0.5)
+      .attr('opacity', 0.6);
   }
+
+  // Axis spokes from centre to each vertex.
+  angles.forEach(function(a) {
+    svg.append('line')
+      .attr('x1', cx).attr('y1', cy)
+      .attr('x2', cx + R * Math.cos(a))
+      .attr('y2', cy + R * Math.sin(a))
+      .attr('stroke', gridColor)
+      .attr('stroke-width', 0.5)
+      .attr('opacity', 0.6);
+  });
+
+  // Filled threat polygon (the actual scores).
+  const scorePoints = angles.map(function(a, i) {
+    const s = Math.max(0, Math.min(5, Number(scores[i]) || 0));
+    const r = (R * s) / 5;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  });
+  svg.append('polygon')
+    .attr('points', scorePoints.map(function(p) { return p.join(','); }).join(' '))
+    .attr('fill', fillColor)
+    .attr('stroke', strokeColor)
+    .attr('stroke-width', 1.5);
+
+  // Vertex dots coloured by threat level — this is the visual carrier of
+  // "how bad is this force?" The dot's colour reads at a glance; its
+  // position is the redundant cue.
+  scorePoints.forEach(function(p, i) {
+    const s = Math.max(1, Math.min(5, Math.round(Number(scores[i]) || 1)));
+    svg.append('circle')
+      .attr('cx', p[0]).attr('cy', p[1])
+      .attr('r', 7)
+      .attr('fill', porterColor(s))
+      .attr('stroke', isDark ? '#1a2c4e' : '#ffffff')
+      .attr('stroke-width', 1.5);
+  });
+
+  // Force labels (outer perimeter, with score appended).
+  angles.forEach(function(a, i) {
+    const labelR = R + 28;
+    const lx = cx + labelR * Math.cos(a);
+    const ly = cy + labelR * Math.sin(a);
+    let anchor = 'middle';
+    if (Math.cos(a) > 0.3) anchor = 'start';
+    else if (Math.cos(a) < -0.3) anchor = 'end';
+    svg.append('text')
+      .attr('x', lx).attr('y', ly)
+      .attr('text-anchor', anchor)
+      .attr('dominant-baseline', 'middle')
+      .attr('fill', textColor)
+      .attr('font-size', 12)
+      .text(labels[i] + ' ' + scores[i] + '/5');
+  });
 }
 
 function redrawAllCharts() {
   drawWaterfall();
   drawSankey('chart-sankey-actual', sankeyActualData, SANKEY_COLORS_ACTUAL);
-  drawPorterBars('chart-porter-bars', porterScores);
+  drawPorterPentagon('chart-porter-pentagon', porterScores);
 }
 
 // Init on load
@@ -1136,7 +1164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('resize', () => {
   drawWaterfall();
   drawSankey('chart-sankey-actual', sankeyActualData, SANKEY_COLORS_ACTUAL);
-  drawPorterBars('chart-porter-bars', porterScores);
+  drawPorterPentagon('chart-porter-pentagon', porterScores);
 });
 </script>
 
@@ -1190,6 +1218,10 @@ window.addEventListener('resize', () => {
 - KPI 主数值（营业收入/归母净利润/FCF/净利率）：**负数用 `-` 号**（如 `-22.3%`、`-16.4亿美元`）；**主数值不写「约」**；勿用「净亏损约」「约负22.3%」等代替负号；同比句仍须可核对
 - 美股金额以"亿美元"为单位（大于100亿用"X,XXX亿美元"或"X.X万亿美元"）
 - 禁止口语化和感叹号
+- **符号/比较语/中英混杂三大写作准则**——参 `references/report_style_guide_cn.md` §"符号与比较语规范" + §"中英混杂规范"。三条最高频踩坑：
+  - **绝对量前不加 +**：`净收益10.17亿美元` ✓ ／ `净收益+10.17亿美元` ✗（"+" 是相对变化标记，不能装饰绝对量）
+  - **+N% 必须显式标比较基**：`Q1收入同比增加34%` ✓ ／ `Q1收入+34%` ✗（即便卡片字数紧也不能砍掉"同比/环比"）
+  - **比较语/单位/缩写一律中文**：`恒定汇率口径下同比增长10%` ✓ ／ `+10% CC` ✗（公司名、产品名、GAAP/ARR/RPO/cRPO 等行业术语保留英文；CC / YoY / QoQ / FX 等必须翻译）
 - **HTML 正文占位符不得使用 Markdown**：勿在 `{{SUMMARY_PARA_*}}`（含第四段）、`{{TREND*_TEXT}}`、`{{LATEST_OPERATING_UPDATE_TEXT}}`、`{{GEO_REVENUE_TEXT}}`、`{{INVESTMENT_THESIS}}`、`{{SANKEY_ANALYSIS_TEXT}}` 等字段中写入 `**加粗**`、`*斜体*`、反引号代码等；最终页面不会渲染 Markdown，会出现裸露星号。需强调处用中文「」或必要时少量 `<strong>…</strong>`（慎用以免破坏版式）。
 - **禁止破坏锁定 HTML 中的注释闭合**：第四节、第五节 company 面板等处曾用多行 `<!-- …` 且下一行含示例 `{{…}}` 再用 `-->` 闭合；若生成脚本按字串删除「含 `{{分数}}` 的行」，会删掉唯一的 `-->`，导致**整段后续 DOM 被浏览器当作注释吞掉**（第五、六节版式全崩）。生成 HTML 时**不得**删除任何可能是**多行注释唯一闭合**的 `-->` 行。
 - **可选：清理单行样例注释**：仅当确认某条注释是独立单行提示、与多行注释闭合无关时，才可删除以免残留 `{{...}}` 触发校验；**不确定则保留**，或改写注释文字而不删行。

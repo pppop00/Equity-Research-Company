@@ -54,7 +54,7 @@ class TestExtractCnTemplate(unittest.TestCase):
             'id="section-summary"',
             'id="chart-waterfall"',
             'id="chart-sankey-actual"',
-            'id="chart-porter-bars"',
+            'id="chart-porter-pentagon"',
             "{{PORTER_ANALYSIS_BLOCKS}}",
             "waterfallData = {{WATERFALL_JS_DATA}}",
             "FORBIDDEN: base_revenue",
@@ -105,7 +105,7 @@ class TestExtractEnTemplate(unittest.TestCase):
         html_en = ert.extract_html_fenced(md_en)
         for fragment in (
             'id="section-porter"',
-            'id="chart-porter-bars"',
+            'id="chart-porter-pentagon"',
             "{{PORTER_ANALYSIS_BLOCKS}}",
             "toggleTheme",
             "redrawAllCharts",
@@ -147,7 +147,7 @@ class TestSha256Stable(unittest.TestCase):
         # 若有意更新 agents/report_writer_cn.md 内模板，需同步改此期望值 / If the fenced template in the md changes, update this expectation.
         self.assertEqual(
             digest,
-            "e1a82943b11e5029b867140233ba4e0b69e74ae59e5915c2c58fc79b1b835173",
+            "dfc491919a5bc2be171d2dd8898957853b1ec196876a57fbb8e1b53d63030ed8",
         )
 
     def test_en_hash_matches_known_snapshot(self):
@@ -158,7 +158,7 @@ class TestSha256Stable(unittest.TestCase):
         digest = hashlib.sha256(html.encode("utf-8")).hexdigest()
         self.assertEqual(
             digest,
-            "073240acd06945d8e8f405d9740bbf6f576d352fb3320e7c796131721f41601e",
+            "ddaaa38f731811be49c64204deff525940a42a1563283398b4321f0e51d9f838",
         )
 
 
