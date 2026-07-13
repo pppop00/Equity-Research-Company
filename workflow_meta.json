@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Machine-readable contract for the Equity Research Skill workflow. Use this file as the source of truth for phase ordering, mandatory gates, packaging profiles, the institutional-memory bracket (P_INCIDENT_PRECHECK / P_INCIDENT_POSTCHECK), and the Phase 5.7 adversarial review.",
   "memory_files": ["MEMORY.md", "INCIDENTS.md"],
   "memory_files_note": "MEMORY.md and INCIDENTS.md are load-bearing project memory and must be loaded verbatim into the session's system prompt at session start. INCIDENTS.md is append-only — new entries arrive via .claude/commands/log-incident.md (the human-gated /log-incident slash command).",
@@ -52,6 +52,40 @@
     "phase_incident_postcheck"
   ],
   "phase_definitions": {
+    "phase_1": {
+      "blocking": true,
+      "parallelism": "bounded_parallel",
+      "concurrency": 3,
+      "agents": [
+        "agents/financial_data_collector.md",
+        "agents/macro_scanner.md",
+        "agents/news_researcher.md",
+        "agents/company_context_researcher.md"
+      ],
+      "produces": [
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "company_context_research.json"
+      ]
+    },
+    "phase_2": {
+      "blocking": true,
+      "executor": "orchestrator",
+      "reads": [
+        "financial_data.json",
+        "macro_factors.json",
+        "news_intel.json",
+        "company_context_research.json"
+      ],
+      "produces": [
+        "financial_analysis.json",
+        "company_quality.json",
+        "country_lens.json",
+        "metric_basis.json"
+      ],
+      "executor_note": "Normalize company quality, country mechanisms, and metric definitions per references/company-country-context.md. Missing required metric keys block; not_comparable with a sourced reason is valid."
+    },
     "phase_incident_precheck": {
       "alias": "P_INCIDENT_PRECHECK",
       "blocking": true,
@@ -95,6 +129,10 @@
   "artifacts": {
     "core": [
       "financial_data.json",
+      "company_context_research.json",
+      "company_quality.json",
+      "country_lens.json",
+      "metric_basis.json",
       "macro_factors.json",
       "news_intel.json",
       "edge_insights.json",

@@ -1,14 +1,18 @@
 ---
 name: equity-research
 description: >
-  Full-stack equity research report generator built on the Anamnesis Pattern (cross-session institutional memory + scheduled adversarial review). Trigger when the user wants to analyze a company, generate an equity research report, fundamental analysis, or stock investment research. Works with a company name (web search) or uploaded filings (10-K / 10-Q PDFs, HK/A-share reports). P0 mandatory gates (see SKILL.md Step 0A): (1) explicit report language en/zh before any research; (2) when the SEC API path applies, real email or explicit decline before workspace/Phase 1. Non-skippable bracket: P_INCIDENT_PRECHECK reads INCIDENTS.md before any work; Phase 5.7 fires two adversarial attackers (red_team_numeric + red_team_narrative); P_INCIDENT_POSTCHECK re-checks every accumulated rule before delivery — flagged blocks delivery. Outputs one interactive HTML report (Sankey, macro waterfall, Porter). Never skip Step 0A — it is the key to all downstream procedures.
+  Full-stack listed-company research for a company-to-country knowledge map: how the company earns,
+  which variables determine results, where primary risks arise, and how institutions and culture
+  shape it. Produces an auditable locked-template HTML evidence base plus financial, company-quality,
+  country-lens, and metric-basis artifacts. P0 language and applicable SEC-email gates remain blocking;
+  institutional-memory pre/post checks and adversarial review remain non-skippable.
 
   TRIGGER on: "equity research", "research report", "analyze [company]", "financial analysis of [company]", "做研报", "研究报告", "分析[公司]", English/Chinese equivalents, or user uploads a 10-K/10-Q and wants full research (not only a revenue-flow diagram).
 ---
 
 # Equity Research Skill
 
-Generate a professional equity research report for any public company. You are the orchestrator — you coordinate data collection, analysis, and report writing, either via parallel subagents (Claude Code) or sequentially (Claude.ai).
+Generate a professional evidence base for a listed company. The product task is: **through one listed company, help the reader understand how it earns, which variables determine results, where its main risks arise, and how national institutions and culture shape it.** The locked HTML remains the audit base; downstream schema-v5 cards are a knowledge map, not an investment recommendation or CFA lesson.
 
 This skill implements the **Anamnesis Pattern** (cross-session institutional memory + scheduled adversarial review). See `references/anamnesis_pattern.md` for the methodology; see `INCIDENTS.md` for the accumulated failure rules; see `MEMORY.md` for project invariants.
 
@@ -240,7 +244,7 @@ The Phase 2.5 macro table and Section III must use **macro indicators from the r
 
 ---
 
-## Phase 1: Parallel data collection via Agents 1–3
+## Phase 1: Four research jobs, concurrency cap 3
 
 **Inputs:** `company_name`, `report_language`, Step 0A/0C/0D outputs (`financial_data_sec_api`, `SEC_EDGAR_USER_AGENT` when applicable, `Y_cal`, `primary_operating_geography`), uploaded files.
 
@@ -249,16 +253,19 @@ The Phase 2.5 macro table and Section III must use **macro indicators from the r
 - Agent 1: `agents/financial_data_collector.md` → `workspace/{Company}_{Date}/financial_data.json`
 - Agent 2: `agents/macro_scanner.md` → `workspace/{Company}_{Date}/macro_factors.json`
 - Agent 3: `agents/news_researcher.md` → `workspace/{Company}_{Date}/news_intel.json`
+- Agent 4: `agents/company_context_researcher.md` → `workspace/{Company}_{Date}/company_context_research.json`
 
-**Output:** three base JSON files above.
+Run the four jobs with a hard concurrency cap of 3. Start the fourth as soon as one slot is free; do not silently exceed the cap.
 
-**Gate:** do not leave Phase 1 until Agent 1/2/3 all complete successfully.
+**Output:** four base JSON files above.
+
+**Gate:** do not leave Phase 1 until all four complete successfully.
 
 **Detailed execution rules, exceptions, and formatting constraints:** `references/phase_execution_rules.md` (Phase 1 section).
 
 ---
 
-## Phase 1.5: Agent 4 — Edge Insight Writer
+## Phase 1.5: Edge Insight Writer
 
 **Inputs:** `financial_data.json`, `news_intel.json`, `report_language`, `company_name`.
 

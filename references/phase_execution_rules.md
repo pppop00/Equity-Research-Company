@@ -9,11 +9,21 @@ Agent-specific rules live in `agents/*.md` — each agent file now includes a "D
 
 ## Phase 1: Orchestration Details
 
-- Start Agent 1, Agent 2, and Agent 3 in parallel when possible.
+- Schedule financial, macro, news, and company-context research with a hard concurrency cap of 3.
 - Agent prompts must always include `Report language: {en|zh}`.
-- Agent 4 may start after Agent 1 and Agent 3 finish; Agent 2 may still be running.
-- Do not leave Phase 1 until all of `financial_data.json`, `macro_factors.json`, and `news_intel.json` exist.
+- The edge insight writer may start after financial and news research finish; macro or context research may still be running if a concurrency slot is free.
+- Do not leave Phase 1 until `financial_data.json`, `macro_factors.json`, `news_intel.json`, and `company_context_research.json` exist.
 - **Post-collection reconciliation (orchestrator duty):** After `financial_data.json` and `news_intel.json` exist, re-check `macro_factors.json -> macro_regime_context` against filing geography and industry news. If materially inconsistent, revise context/commentary or rerun Agent 2.
+
+### Phase 2 context normalization
+
+Combine `company_context_research.json` with the other Phase 1 artifacts and emit `company_quality.json`, `country_lens.json`, and `metric_basis.json` using `references/company-country-context.md`.
+
+- The Metric Basis Registry must cover FCF, ROE, capex, net debt, fiscal year, currency/unit, geographic revenue, and valuation.
+- Each basis states original company definition, standardized formula, sources, and `comparable | adjusted | not_comparable`.
+- Missing registry coverage is blocking; honest `not_comparable` with a reason is allowed.
+- Company quality has no aggregate score.
+- Country Lens keeps incorporation/listing/operations/revenue geography separate and rejects stereotypes.
 
 ---
 
